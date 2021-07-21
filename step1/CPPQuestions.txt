@@ -1,0 +1,38 @@
+1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
+2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
+3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
+4. Explain the keyword: static. What does it mean in each context?
+5. When are static member variables initialized? 
+6. What is the difference between R-Values and L-Values?
+7. Is this code safe? If so why? If not why?
+	std::string foo()
+	{
+		std::string something = “avalue”;
+		return something;
+	}
+	
+	Bonus: What would most compilers do with this code?
+8. Why would you use new rather than malloc when allocating an object? Likewise, what’s the difference between free and delete?
+9. Explain the purpose of std::move, and std::forward. 
+10. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
+11. What are the some of the principles of object-oriented programming?
+12. Explain inheritance vs composition vs aggregation?
+13. Should you always initialize variables? 
+14. Write a program (or multiple) in a known programming language to do the following:
+	a. Query for installed windows patches. 
+	b. Query for installed Linux Packages
+	c. Query for installed Mac Packages
+15. Write a program (or multiple) in a known programming language to do the following:
+	a. Query for windows system information. 
+	b. Query for Linux system information
+	c. Query Mac system information
+16. What concept(s) in C++ would you use to manage resources automatically?
+	a. How important are these concepts? 	
+	b. What tools are you familiar with for tracking resource allocations? 
+17. What security concerns have you come across in the past and how have you addressed them?
+18. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
+19. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
+20. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
+	a. Consider both a long term and short-term solutions. 
+21. What concerns do you had supporting legacy operating systems? (If any)
+22. Tell us about a project you worked on that you found to be interesting or unusual.
