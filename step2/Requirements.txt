@@ -1,0 +1,11 @@
+
+Please write small program in C++ to do the following:
+	a. Query for installed OS patches
+	b. Query for general system information 
+	c. Feel free to add any functionality you feel will showcase your abilities. 
+	
+You are free to use whatever compiler/platform you are most comfortable with. You may also use an online C++ compiler such as http://cpp.sh/ if you wish, if you do so please be sure to make a note of it as a comment in your code.
+
+We expect your program to be able to run across Windows, Linux and Mac. 
+
+At the top of you main function, please add a paragraph that explains what developer driven validation you took and what process you would expect to take if we were to bring this code to production. If you are unable to confirm compilation and execution on any particular OS, please state so in the first scentence of this paragraph.
