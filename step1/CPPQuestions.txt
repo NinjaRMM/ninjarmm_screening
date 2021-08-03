@@ -7,12 +7,12 @@
 7. Is this code safe? If so why? If not why?
 	std::string foo()
 	{
-		std::string something = ìavalueî;
+		std::string something = ‚Äúavalue‚Äù;
 		return something;
 	}
 	
 	Bonus: What would most compilers do with this code?
-8. Why would you use new rather than malloc when allocating an object? Likewise, whatís the difference between free and delete?
+8. Why would you use new rather than malloc when allocating an object? Likewise, what‚Äôs the difference between free and delete?
 9. Explain the purpose of std::move, and std::forward. 
 10. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
 11. What are the some of the principles of object-oriented programming?
@@ -34,3 +34,6 @@
 	a. Consider both a long term and short-term solutions. 
 21. What concerns do you had supporting legacy operating systems? (If any)
 22. Tell us about a project your worked on that you found to be interesting or unusual.
+
+
+change
