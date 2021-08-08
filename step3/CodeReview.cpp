@@ -10,6 +10,8 @@ Comments are encouraged.
 
 */
 
+// I think we are missing a lot of #includes here.
+
 struct ThirdPartyAVSoftware
 {
     std::wstring Name;
@@ -28,6 +30,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
     HRESULT hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&PtrProductList));
     if (FAILED(hr))
     {
+        // These should be logged somewhere?
         std::cout << "Failed to create WSCProductList object. ";
         return false;
     }
@@ -63,6 +66,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         {
             PtrProduct->Release();
             std::cout << "Failed to query AV product name.";
+            // besides the first continue I don't think  we should have the rest since partial info is better then none.
             continue;
         }
 
@@ -111,7 +115,8 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         thirdPartyAVSoftware.DefinitionStatus = definitionState;
         thirdPartyAVSoftware.DefinitionUpdateTime = timestamp;
         thirdPartyAVSoftware.Description = state;
-        thirdPartyAVSoftware.ProductState = state;
+        thirdPartyAVSoftware.ProductState = ProductStatus;
+        // should duplicate names be checked?
         thirdPartyAVSoftwareMap[thirdPartyAVSoftware.Name] = thirdPartyAVSoftware;
 
     }
