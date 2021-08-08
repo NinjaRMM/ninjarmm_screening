@@ -82,9 +82,15 @@ Yes, much easier to find errors if you set a a point to null vs it being set to 
 	a. How important are these concepts? 	
 	b. What tools are you familiar with for tracking resource allocations? 
 17. What security concerns have you come across in the past and how have you addressed them?
+I used Keycloak to sercure endpoints.
+
 18. Name some tools and/or techniques that you personally find to be the most helpful surrounding development. 
+TDD and writing simple code
 19. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
+
 20. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
+Adding a unit test library is necessary for this.  All new dev or bug fixes need to have tests for both correctiness and for documentation of the code.
 	a. Consider both a long term and short-term solutions. 
 21. What concerns do you had supporting legacy operating systems? (If any)
+
 22. Tell us about a project your worked on that you found to be interesting or unusual.
