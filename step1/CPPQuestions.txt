@@ -70,7 +70,7 @@ Design to an interface not an implementation.  Favor compotion over inheridence.
 Inheritance get all the interface of the parent object this is obtain not needed.  Composition is usuualy better then inheritance since it hides it's interface.
 
 13. Should you always initialize variables? 
-Yes, much easier to find errors if you set a a point to null vs it being set to some random memory location.  
+Yes, much easier to find errors if you set a a pointer to nullptr vs it being set to some random memory location.  
 
 14. Using a known programming language: query for installed windows patches. 
 	a. Bonus script: Query Linux Packages
@@ -79,18 +79,29 @@ Yes, much easier to find errors if you set a a point to null vs it being set to 
 	a. Bonus script: Query Linux system information
 	b. Bonus script: Query Mac system information
 16. What concept(s) in C++ would you use to manage resources automatically?
+	Use RAII Resource acquisition is initialization and std::make_pointer functions.
+	use stack space as much as possible.
 	a. How important are these concepts? 	
+	These prevent memory leaks and speed up the program.
 	b. What tools are you familiar with for tracking resource allocations? 
+	Visual studio has built in tools for memory leak detection.  
 17. What security concerns have you come across in the past and how have you addressed them?
-I used Keycloak to sercure endpoints.
+I used Keycloak to secure endpoints.
 
 18. Name some tools and/or techniques that you personally find to be the most helpful surrounding development. 
 TDD and writing simple code
 19. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
+TDD and writing simple code
+use multiple compilers to get the max warnings on the code.
 
 20. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
-Adding a unit test library is necessary for this.  All new dev or bug fixes need to have tests for both correctiness and for documentation of the code.
+Adding a unit test library is necessary for this.  All new dev or bug fixes need to have tests for both correctness and for documentation of the code.
 	a. Consider both a long term and short-term solutions. 
 21. What concerns do you had supporting legacy operating systems? (If any)
+Finding documentation for such OSs
 
 22. Tell us about a project your worked on that you found to be interesting or unusual.
+I worked on a legacy project that deserialized data.  This project would add new child class with small changes, the inherence was a dozen plus level deep.  The new function was
+copy and paste from the older version with small changes.  The functions would take in parents points and get static_cast based upon the version of the data.  This would lead to
+a lot of difficult to detect one off errors in the code.  My coworker and I change all the functions to templates and then using SFINAE to defect data_member names we pushed the
+one off errors from compile time to run time.  The only trade off was a long compile time since each template  had to generate a function for each version of the software.
