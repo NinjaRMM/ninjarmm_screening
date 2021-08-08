@@ -73,9 +73,11 @@ Inheritance get all the interface of the parent object this is obtain not needed
 Yes, much easier to find errors if you set a a pointer to nullptr vs it being set to some random memory location.  
 
 14. Using a known programming language: query for installed windows patches. 
+	powershell: Get-HotFix
 	a. Bonus script: Query Linux Packages
 	b. Bonus script: Query Mac Packages
 15. Using a known programming language: query windows system information. 
+	powershell: Get-ComputerInfo
 	a. Bonus script: Query Linux system information
 	b. Bonus script: Query Mac system information
 16. What concept(s) in C++ would you use to manage resources automatically?
