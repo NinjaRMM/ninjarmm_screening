@@ -10,7 +10,6 @@ Comments are encouraged.
 
 */
 
-
 struct ThirdPartyAVSoftware
 {
     std::wstring Name;
@@ -23,18 +22,10 @@ struct ThirdPartyAVSoftware
 
 bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftware>& thirdPartyAVSoftwareMap)
 {
-    HRESULT hr = S_OK;
-    IWscProduct* PtrProduct = nullptr;
+    // I don't think this is cobalt it's C++ no reason to declare all the variables at the top of the function.  Move all of them to where they are first initialized.  
+    
     IWSCProductList* PtrProductList = nullptr;
-    BSTR PtrVal = nullptr;
-    LONG ProductCount = 0;
-    WSC_SECURITY_PRODUCT_STATE ProductState;
-    WSC_SECURITY_SIGNATURE_STATUS ProductStatus;
-
-    std::wstring displayName, versionNumber, state, timestamp;
-    std::string definitionState;
-
-    hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&PtrProductList));
+    HRESULT hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&PtrProductList));
     if (FAILED(hr))
     {
         std::cout << "Failed to create WSCProductList object. ";
@@ -47,7 +38,8 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         std::cout << "Failed to query antivirus product list. ";
         return false;
     }
-
+ 
+    LONG ProductCount = 0;
     hr = PtrProductList->get_Count(&ProductCount);
     if (FAILED(hr))
     {
@@ -55,15 +47,17 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         return false;
     }
 
-    for (uint32_t i = 0; i < ProductCount; i++)
+    for (uint32_t i = 0; i < ProductCount; ++i)
     {
+        // move PtrProduct to the scope and location it's used you also don't have to call release anymore.
+        IWscProduct* PtrProduct = nullptr;
         hr = PtrProductList->get_Item(i, &PtrProduct);
         if (FAILED(hr))
         {
             std::cout << "Failed to query AV product.";
             continue;
         }
-
+        BSTR PtrVal = nullptr;     
         hr = PtrProduct->get_ProductName(&PtrVal);
         if (FAILED(hr))
         {
@@ -72,15 +66,15 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
             continue;
         }
 
-        displayName = std::wstring(PtrVal, SysStringLen(PtrVal));
-
+        std::wstring displayName = std::wstring(PtrVal, SysStringLen(PtrVal));
+        WSC_SECURITY_PRODUCT_STATE ProductState;     
         hr = PtrProduct->get_ProductState(&ProductState);
         if (FAILED(hr))
         {
             std::cout << "Failed to query AV product state.";
             continue;
         }
-
+        std::wstring state;
         if (ProductState == WSC_SECURITY_PRODUCT_STATE_ON)
         {
             state = L"On";
@@ -93,7 +87,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         {
             state = L"Expired";
         }
-
+        WSC_SECURITY_SIGNATURE_STATUS ProductStatus;        
         hr = PtrProduct->get_SignatureStatus(&ProductStatus);
         if (FAILED(hr))
         {
@@ -101,7 +95,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
             continue;
         }
 
-        definitionState = (ProductStatus == WSC_SECURITY_PRODUCT_UP_TO_DATE) ? "UpToDate" : "OutOfDate";
+        std::wstring definitionState = (ProductStatus == WSC_SECURITY_PRODUCT_UP_TO_DATE) ? "UpToDate" : "OutOfDate";
 
         hr = PtrProduct->get_ProductStateTimestamp(&PtrVal);
         if (FAILED(hr))
@@ -109,7 +103,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
             std::cout << "Failed to query AV product definition state.";
             continue;
         }
-        timestamp = std::wstring(PtrVal, SysStringLen(PtrVal));
+        std::wstring timestamp = std::wstring(PtrVal, SysStringLen(PtrVal));
         SysFreeString(PtrVal);
 
         ThirdPartyAVSoftware thirdPartyAVSoftware;
@@ -120,12 +114,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         thirdPartyAVSoftware.ProductState = state;
         thirdPartyAVSoftwareMap[thirdPartyAVSoftware.Name] = thirdPartyAVSoftware;
 
-        PtrProduct->Release();
     }
 
-    if (thirdPartyAVSoftwareMap.size() == 0)
-    {
-        return false;
-    }
-    return true;
+    return (thirdPartyAVSoftwareMap.size() > 0)
 }
