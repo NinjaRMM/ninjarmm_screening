@@ -1,0 +1,10 @@
+﻿  NinjaRMM.cpp
+C:\Users\donal\OneDrive\Documents\life\projects\job search\2021\NinjaRMM\ninjarmm_screening\step2\src\NinjaRMM\NinjaRMM\NinjaRMM.cpp(63,11): warning C4018: '>=': signed/unsigned mismatch
+C:\Users\donal\OneDrive\Documents\life\projects\job search\2021\NinjaRMM\ninjarmm_screening\step2\src\NinjaRMM\NinjaRMM\NinjaRMM.cpp(90): message : see reference to function template instantiation 'bool IsInBounds<uint32_t,int>(T,U,U)' being compiled
+          with
+          [
+              T=uint32_t,
+              U=int
+          ]
+C:\Users\donal\OneDrive\Documents\life\projects\job search\2021\NinjaRMM\ninjarmm_screening\step2\src\NinjaRMM\NinjaRMM\NinjaRMM.cpp(63,25): warning C4018: '<=': signed/unsigned mismatch
+  NinjaRMM.vcxproj -> C:\Users\donal\OneDrive\Documents\life\projects\job search\2021\NinjaRMM\ninjarmm_screening\step2\src\NinjaRMM\Debug\NinjaRMM.exe
