@@ -1,23 +1,77 @@
 1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
+std::array si std::vector is a container that holds it's objects in a sequence.  Being in sequence always the items to be on the same cache line and allows very fast look up.  The size of std::array is know at compile time it can not be resized.
+
+std::vector is a container that holds it's objects in a sequence.  Being in sequence always the items to be on the same cache line and allows very fast look up.  The size of std::vector is dynamic and items can be removed or deleted.  If the array inside std::vector becomes full a new array of larger sized is created and all item copied over to the new array.  This can be a very slow process.
+
+std::deque is a container that hold it's objects that is not in sequence.  This can be slow when accessing object that are from non-cache or heap member locations.  An advantage to this container is that item are fast to add to or delete from either end since it's just setting a pointer.
+
+std::forward_list is the lightest weight of the std link lists.  Each node only points towards the next node, it has no other information like the size of the list.
+
+std::list is a double linked list that fast at sorting, adding and removing it's elements.
+
+std::map is an ordered associative container.  Items are assocaite with a key value that then is used to look up the item.  Ordered maps when looking up items, deleting or adding have a speed of bigO(logN).
+
+std::unordered_map is an unordered associative container.  When adding, deleting or looking up item have a bigO(1)
+
+
 2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
-3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
+Insertion sort is a algoirthm where a container is split between a sorted and an unsorted part.  Items from the unsorted part are move into the right location in the sorted part.  This has a asynomic speed of BigO(n^2)
+Selection sort is an algoirthm where a container is divided between a sorted area and an unsorted area.  The algorithm find the smallest item and swaps it with the first item.  Then it increments the pointer for the item to be swapped by one and does another iteration.  This has a asynomic speed of BigO(n^2) but is done in place so it uses no extra mememory.  
+QuickSort is an algo that picks a pivot point and partition the given items aournd the picked pivot.  All item then will be moved in the correcot ordering around this pivot point.  This has an average BigO speed of NlogN.
+
+
+3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly.
+If you delete a child object using a parent pointer to a child object and the parent destructor is not virutal then you get undefined behavior.  While compilers depended without the virtual keyboard the child destructor will be skipped.
+
+
 4. Explain the keyword: static. What does it mean in each context?
-5. When are static member variables initialized? 
+static at the local level in a function means that the variable is declaire and inailizeds one time and for the lifetime of the program.
+
+Static at the function level means that the function is assocated with the class not the object.  It has no this pointer and can be accessed using the class without an object.
+static at the static data mmeber level is simiilar as it is assocated with the class not the object.
+
+Static at the file level at availbe for the lifetime of the program and only accessile from that translation unit.
+
+
+
+5. When are static member variables initialized?
+When the program starts.
+
 6. What is the difference between R-Values and L-Values?
+L-value can be assigned a value and R-Values can't
 7. Is this code safe? If so why? If not why?
 	std::string foo()
 	{
-		std::string something = ìavalueî;
+		std::string something = ‚Äúavalue‚Äù;
 		return something;
 	}
 	
+	the something string should fall out of scope and you get undefined behavior.
+	
+	
 	Bonus: What would most compilers do with this code?
-8. Why would you use new rather than malloc when allocating an object? Likewise, whatís the difference between free and delete?
+	Return value optimization or Copy elision 
+	
+8. Why would you use new rather than malloc when allocating an object? Likewise, what‚Äôs the difference between free and delete?
+new calls constructors, returns the datatype, memory size calculation is done at compile time.  Free doesn't call the destructor.
+Note: both are codes smells use std:make_pointer
+
 9. Explain the purpose of std::move, and std::forward. 
+std::move moves the object in memory so you don't have to copy and delete.  std::forward allows you to not have to worry about l or r values in templates.
+
 10. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
+I would use a mutex to lock the resource.  
+The user defined type should have fine-grained lock for each data-member it should lock down the entire object unless needed.
+
 11. What are the some of the principles of object-oriented programming?
+Design to an interface not an implementation.  Favor compotion over inheridence.
+
 12. Explain inheritance vs composition vs aggregation?
+Inheritance get all the interface of the parent object this is obtain not needed.  Composition is usuualy better then inheritance since it hides it's interface.
+
 13. Should you always initialize variables? 
+Yes, much easier to find errors if you set a a point to null vs it being set to some random memory location.  
+
 14. Using a known programming language: query for installed windows patches. 
 	a. Bonus script: Query Linux Packages
 	b. Bonus script: Query Mac Packages
