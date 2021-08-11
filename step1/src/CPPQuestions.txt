@@ -1,0 +1,176 @@
+1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
+
+There are three types of containers in the standard library, sequence, associative and unordered associative.
+
+Sequence containers are containers that can be searched sequentially, such as a list.
+A use case for this would be if you need to access the container by position.
+
+Associative containers are sorted collections that can be searched quickly, such as a map.
+A use case for this would be if you need to access elements by key and if order matters.
+
+Unordered associative containers are unsorted collections that can be searched quickly, such as unordered map.
+A use case for this would be if order does not matter and you need more than one value per key.
+
+2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
+
+Selection sort, quick sort, tree sort.
+
+Selection sort is used when the data set is small.
+
+Quick sort is an in place sort that uses a minimum amount of memory.
+
+Tree sort is a binary search tree where when adding items they are added in order without having to re do the sort, or a sort once method.
+
+3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
+
+Virtual destructors allow you to cleanup the resources in a derived class. 
+If the destructor on a base class is not virtual and it has allocated resources, when the deriving class is destroyed those resources in the base class will leak
+
+4. Explain the keyword: static. What does it mean in each context?
+
+Static can be useed with variables in a function, members of a class, class objects and class functions.
+
+Static function variables get allocated for the life of the program only once and is the same for each call to the function.
+Static members of a class are initialized once, shared between classes and cannot be initialized in constructors.
+Static class objects are initialized once and are there for the life of the program.
+Static functions are accessed using the class name and can only access static members of the class.
+
+5. When are static member variables initialized? 
+
+They are initialized before the start of main, but the order is not guaranteed unless they are in the same file.
+
+6. What is the difference between R-Values and L-Values?
+
+An L-Value is a location that can be modified such as a pointer, where an R-Value represents a location that cannot be modified. int x = 4 is valid because x is an L-Value, but 4 = x is not, because 4 is a R-Value.
+
+7. Is this code safe? If so why? If not why?
+	std::string foo()
+	{
+		std::string something = “avalue”;
+		return something;
+	}
+	
+	Bonus: What would most compilers do with this code?
+	
+Yes, this is safe, it would be handled by the copy constructor so the string would not disappear when the function is done.
+
+I believe it would get optimized, possibly down to return std::string(“avalue”);
+
+8. Why would you use new rather than malloc when allocating an object? Likewise, what’s the difference between free and delete?
+
+Both allocate memory, but new would ensure that the objects constructor is called. Delete 
+
+9. Explain the purpose of std::move, and std::forward. 
+
+std::move turns its argument into an lvalue
+std::forward allows the perfect forwarding of arguments to a function to get the correct lvalue and return an rvalue.
+
+10. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
+
+For thread safety you would need to use a mutex to guarantee the access of code that needs to be thread safe.
+For the integer value depending on the use of it, you may be able to use atomic.
+
+11. What are the some of the principles of object-oriented programming?
+
+Encapsulation. Encapsulation is where a class contains all the data and methods to provide a singular function and it's functions cannot be modified externally. The class is only accessible through the methods it provides.
+Abstraction. Abstraction is the process where only essential details and methods are provided to access an object.
+Inheritance. Inheritance is where a class can derive properties and methods from a base class.
+Polymorphism. Polymorphism is where a call to a function can cause a different function to be called depending on the object type when called.
+
+12. Explain inheritance vs composition vs aggregation?
+
+Inheritance is where a class derives from a base class to extend it's properties while retaining the functionality of the base class.
+Composition is where a class contains other classes within itself, but does not derive from them. The classes contained within are dependent on the parent object themselves.
+Aggregation is where a class contains other classes within itself, but those classes are not dependent on the lifetime of the parent class. They are managed outside of the class.
+
+13. Should you always initialize variables? 
+
+Yes, variables should always be initialized. Leaving variables unitialized may lead to indeterminate behavior and possible memory leaks in the case of objects or null ptr exceptions.
+
+14. Using a known programming language: query for installed windows patches. 
+	a. Bonus script: Query Linux Packages
+	b. Bonus script: Query Mac Packages
+
+Powershell:
+Function Get-MicrosoftUpdates
+ {
+ Param(
+ $NumberOfUpdates,
+ [switch]$all
+ )
+ $Session = New-Object -ComObject Microsoft.Update.Session
+ $Searcher = $Session.CreateUpdateSearcher()
+ if($all)
+ {
+ $HistoryCount = $Searcher.GetTotalHistoryCount()
+ $Searcher.QueryHistory(0,$HistoryCount)
+ }
+ Else { $Searcher.QueryHistory(0,$NumberOfUpdates) }
+ } #end Get-MicrosoftUpdates
+
+Linux:
+rpm -qa
+
+Mac:
+pkgutil --pkgs
+	
+15. Using a known programming language: query windows system information. 
+	a. Bonus script: Query Linux system information
+	b. Bonus script: Query Mac system information
+	
+Powershell: 
+Get-ComputerInfo
+
+Linux:
+lshw
+
+Mac:
+system_profiler | more
+	
+16. What concept(s) in C++ would you use to manage resources automatically?
+	a. How important are these concepts? 	
+	b. What tools are you familiar with for tracking resource allocations? 
+
+There is the concept of Resource acquisition is intialization where objects survive based on their scope.
+There are basic items in C++ such as constructors and destructors that allow you to manage the contents of classes.
+There is also a concept of smart pointers where the object will automatically collect when the last reference to it is gone.
+These are important as resources are finite on any given system and can be consumed to the point of system halt.
+
+Some of the tools I have used in the past are BoundsChecker and Visual Leak Detector as well as tools within Visual Studio.
+	
+17. What security concerns have you come across in the past and how have you addressed them?
+
+Some of the items I have come across are protecting configuration and user data on units.
+Some of the methods I have used to address those concerns have ranged from using third party libraries to handle specific data appropriately to
+encoding sections of configuration and password within databases.
+
+18. Name some tools and/or techniques that you personally find to be the most helpful surrounding development. 
+
+Some of the things that I find most helpful are good design sessions, well defined requirements, good understanding of the overall system.
+Some of the tools are visual studio and their code analysis tool, some code tools such as Resharper.
+Good code reviews are also helpful as they can fill in missing knowledge gaps within the system and your knowledge of coding in general.
+Some other items would be to keep it as simple as possible, TDD, unit testing and good build pipelines
+Good inline code documentation.
+
+19. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
+
+Keep the code fix as simple as possible.
+Good code reviews are also helpful as they can fill in missing knowledge gaps within the system and your knowledge of coding in general.
+Some other items would be to keep it as simple as possible, TDD, unit testing and good build pipelines
+Document the change and why it was done.
+
+20. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
+	a. Consider both a long term and short-term solutions. 
+	
+In the short term in areas that are modified, documentation should be done as well as the creation of unit tests for new code as well as a couple of extras for methods that are well understood.
+In the long term, there should be time given to do research spikes on areas and create documentation and unit tests out of those spikes.
+	
+21. What concerns do you had supporting legacy operating systems? (If any)
+
+Some of the concerns about legacy operating systems that I would have:
+1. Existing issues that may affect code and not being able to get resolutions on them.
+2. Not having the latest security patches available and possibly having security holes that can be exploited.
+3. If using code bases that are to support multiple OS types, there may be functionality that cannot be done on the older systems, or if it can be done it may require separate code paths to accomplish.
+4. Lack of support from the manufacturer may become an issue if problems arise when dealing with those units.
+
+22. Tell us about a project your worked on that you found to be interesting or unusual.
