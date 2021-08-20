@@ -23,9 +23,12 @@ struct ThirdPartyAVSoftware
 
 bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftware>& thirdPartyAVSoftwareMap)
 {
+  //add exception handling
     HRESULT hr = S_OK;
+    //Use _com_ptr_t wrappers instead of raw pointers
     IWscProduct* PtrProduct = nullptr;
     IWSCProductList* PtrProductList = nullptr;
+    //use _bstr_t instead of BSTR
     BSTR PtrVal = nullptr;
     LONG ProductCount = 0;
     WSC_SECURITY_PRODUCT_STATE ProductState;
@@ -35,8 +38,10 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
     std::string definitionState;
 
     hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&PtrProductList));
+    //use a macro or helper function to return false on failure instead of repeating these lines
     if (FAILED(hr))
     {
+        // use std::cerr instead of std::cout
         std::cout << "Failed to create WSCProductList object. ";
         return false;
     }
@@ -58,6 +63,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
     for (uint32_t i = 0; i < ProductCount; i++)
     {
         hr = PtrProductList->get_Item(i, &PtrProduct);
+        // use a macro to print the failure and continue instead of repeating these lines
         if (FAILED(hr))
         {
             std::cout << "Failed to query AV product.";
@@ -81,6 +87,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
             continue;
         }
 
+        //a switch statement might be more clear
         if (ProductState == WSC_SECURITY_PRODUCT_STATE_ON)
         {
             state = L"On";

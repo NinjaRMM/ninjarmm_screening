@@ -1,38 +1,155 @@
 1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
+   There are sequence containers and associative containers. Their differences are in how the items are stored and searched. 
+	   Sequence containers (list, vector, array, deque) require brute force scanning to find a specific item with a complexity of O(n).
+		 Associative containers (map, multimap, set, multiset) index items with a key and can locate an item with a complexity of O(log n).
+
+		 Vectors are dynamically sized arrays of contiguous memory where insertion/deletion of an item could lead to copying the entire existing contents to a new location.
+		 Vectors are the most commonly used default container for small groups of items.  Arrays are essentially fixed sized vectors. Indexing an item occurs with O(1).
+		 Lists are dynamically allocated linked lists where insertion/deletion of elements doesn't require re-allocation or copying of existing items to a new location.
+		 Lists can be prefered to vectors/arrays when copying items is costly and searches are inexpensive. Indexing an item occurs with O(n).
+		 Maps and sets are typically a red/black tree for larger data sets to perform quick searches/insertion/removal for a specific item using a key.
+		 Unordered associative containers typically use a hashing function to locate items which can improve performance with very large datasets.
+
 2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
+	quick sort - uses a divide and conquer technique by iteratively partitioning segments of the array and swapping unsorted items. This is the typical go-to default or 
+		fall-back method to use when there isn't a specialized sort for a particular dataset.
+	bubble sort - iterates over the entire set for each element in the set and 'bubbles up' the highest valued item to the top of the set. This is typically not used
+		in practice but is used for academic demonstration.
+	merge sort - similar to quick sort. It partitions the set into smaller segments and iteratively will swap single pairs of unsorted items then merge them in the final
+		result. 
+
 3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
+  They permit a concrete implementation to be deleted properly via an abstract interface. The abstract interface is typically used in code with no knowledge of
+	the underlying concrete implementation, however, concrete implementations typically have implementation specific resources that must be deleted. The resources are
+	deleted by overriding the virtual destructor so that when the abstract handle is deleted the concrete implementation can delete it's managed resources. Resources
+	can leak if not used correctly.
+
 4. Explain the keyword: static. What does it mean in each context?
+	Static refers to a storage specification or class member that isn't bound to an instance but is rather global to all instances.
+	Regarding storage, static indicates a single instance of the variable is present in the binary and it's scope persists for the duration of the program. The memory
+	is typically located in the DATA or BSS sections being physically global but semantically local so access and scope rules apply. When used as a class member it
+	essentially is just used to logical grouping of a function within class scope for expressiveness or clarity since it's not bound to a class instance and has no 'this' parameter.
+
 5. When are static member variables initialized? 
+	During the CRT initialization prior to main (typically).
+
 6. What is the difference between R-Values and L-Values?
+	L-values are processor accessable while R-values are compiler values used during compilation to initialize L-values. L-values are addressable while R-values arent.
+	The value '5' is just a number without any storage so is a r-value while int i=5; the 'i' has storage (int) and is addessable so is an L-value.
+
 7. Is this code safe? If so why? If not why?
 	std::string foo()
 	{
 		std::string something = “avalue”;
 		return something;
 	}
+	Yes, the values are created and initialized on the stack. It maybe called from multiple threads without conflict since each thread has a different stack.
 	
 	Bonus: What would most compilers do with this code?
+	Several optimizations are possible:
+	  Inlining could remove the overhead of making an external call.
+		RVO (return value optimization) could remove unecessary allocations and copying by using the caller's allocation site.
+		Post C++11 could utilize move semantics to reduce copies and temporaries.
+
+
 8. Why would you use new rather than malloc when allocating an object? Likewise, what’s the difference between free and delete?
+	New allocates and initializes objects constructor by type while malloc allocates memory by size and is type ignorant so doesn't initialize the memory. 
+	new will also throw an exception on failure while malloc doesnt.
+	delete will invoke the destructor of the object before returning the memory to the heap while free doesnt invoke destructors.
+
 9. Explain the purpose of std::move, and std::forward. 
+  They convert l-values into r-value references so the compiler can invoke move constructors or move assignment operators.
+
 10. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
+	Depending on the use case and scenarios. If multiple threads will be writing to a resource then it typically needs some syncronization primitive like a mutex.
+	Depending on the scenario, a semaphore is a thread safe integer so it's use directly would ensure thread safety. std::atomic is commonly used to ensure
+	thread safety for compiler intrinsics like integers. User-defined types typically need careful use of mutexes, critical sections or condition variables.
+
 11. What are the some of the principles of object-oriented programming?
+  State - The objects attributes can be changed and the attributes state distinguishes it from another instance of a different attributes.
+	Behavior - the object acts upon it's attributes/state to perform some action.
+	Identity - The object has some relation to another object for e.g. not only an 'account' class but rather 'Bobs account' has a specific identity rather than a nebulus 
+	  collection of behaviors.
+
+	Some fancy words such as reuse, inheritance, encapsulation and polymorphism are important.
+	
+	Reuse is fairly simple, an object should be fairly independent and reusable in multiple contexts.
+	Inheritance indicates reuse, a new object can 'inherit' the attributes and behaviors of an existing object.
+	Encapsulation specifies that the object 'hides' or 'bundles' a complex set of behaviors and data while presenting a simplified interface.
+	Polymorphism indicates that existing behaviors and interfaces can be changed and/or extended in some way. In C++ this typically means member overloading and/or overriding.
+
 12. Explain inheritance vs composition vs aggregation?
+  Inheritance is explained above.
+	Composition is a pattern of 'composing' an object from several other objects. Typically, several simple objects are 'composed' into a single object with more complex behavior.
+	A composite typically contains and maintains the constituents.
+	Aggregation is similar to a composite except theres no ownership. A composite maintains the lifetime of resources while an aggregate doesnt.
+
 13. Should you always initialize variables? 
+	Genreally speaking, yes, but some variables are volatile and fixed in certain environments and maybe initialized outside the application by hardware of another process. 
+	Intializing these variables can have detremental effects.
+
 14. Write a program (or multiple) in a known programming language to do the following:
 	a. Query for installed windows patches. 
+	  see src/win32_msi_enum.cpp
+
 	b. Query for installed Linux Packages
+	  see src/linux_apt_enum.cpp
+
 	c. Query for installed Mac Packages
+		No hardware for Mac example.
+
 15. Write a program (or multiple) in a known programming language to do the following:
+	There are hundreds of ways of getting various system info and the depth and scope could be a lengthy exercise for which there are entire product lines. As this is a technical 
+	screen I have kept the implementation to a demonstration of some possibilities.
+
 	a. Query for windows system information. 
+		see src/win32_sysinfo.cpp.
+
 	b. Query for Linux system information
+		see src/linux_sysinfo.cpp
+
 	c. Query Mac system information
+		No hardware for Mac example.
+
 16. What concept(s) in C++ would you use to manage resources automatically?
+  RAII (Resource Acquisition Is Initialization). Is a technique utilizing the compilers automatic dtor invocation to free resources. I typically extend 
+	std::shared_ptr or std::unique_ptr with custom deleters or wrap resources in a user defined structure.
+
 	a. How important are these concepts? 	
-	b. What tools are you familiar with for tracking resource allocations? 
+	  Critical to ensure resources are freed even when exceptions occur.
+
+	b. What tools are you familiar with for tracking resource allocations?
+
+	  Intel VTune, Valgrind, Dr. Memory, Rational Purify, Intel PIN tools
+
 17. What security concerns have you come across in the past and how have you addressed them?
+	There are many types of security concerns. 
+		Anti-reversing techniques and obfuscation keep hackers/reversers busy.
+		Encrypt sensitive info using strong encryption.
+		Authentication and authorization using OS mechanisms and custom user permission stores.
+		Public key challenge/response for securing communication channels.
+		Source code hardening using static analysis (cppcheck, clang, RATS, etc)
+		Binary hardening using dynamic analysis (VTune, Valgrind, Dr. Memory, Purify)
+		Fuzz testing (AFL)
+
 18. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
-19. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
+	First and foremost is the IDE, my preference is Visual Studio. The afore mentioned static and dynamic analysis tools.
+	VMWare Workstation has been critical in the past, through WSL is quickly replacing it.
+	Tests cannot be emphasized enough, unit tests, system tests, integration tests, acceptance tests, etc.
+
+19. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.
+	SonarQube has probably been the most useful maintenance tool in my experience. The community C++ plugin in combination with several open source static and dynamic analysis
+	tools can be configured to generate quality trends and track bugs, vulerabilities, code smells and code coverage.
+
 20. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
 	a. Consider both a long term and short-term solutions. 
+	I typically try to write a functional tests around existing legacy code before making changes to ensure my changes dont break required behavior.
+	GoogleTest is my go-to framework for test and mocking.
+
+
 21. What concerns do you had supporting legacy operating systems? (If any)
+  Primarily security concerns and lack of vendor support due to end of life issues.
+
 22. Tell us about a project your worked on that you found to be interesting or unusual.
+  The most interesting and rewarding project was during the development stages of Dallas Robotics for which I was a part owner. The bulk of the project was the 'AI cloud' which contained
+	a number of cloud based services for computer vision, speech, localization and mapping for mobile robots.
