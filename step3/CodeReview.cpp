@@ -10,6 +10,7 @@ Comments are encouraged.
 
 */
 
+#include <string>
 
 struct ThirdPartyAVSoftware
 {
