@@ -1,0 +1,27 @@
+Hi Philip,
+Welcome to the EAX prep interview .
+Coding assignments are used to avoid high pressure white-boarding situations in technical interviews. This process allows candidates to better show off their skills in a more natural and relaxed environment. The code produced by you enables more concrete discussions in the technical interviews that follow.
+The main challenge is to implement an algorithm which detects keywords contained as substrings within a given string.
+Given two text files (allwords.txt, commonwords.txt ) containing a single word on each line, for each word in the first file find and output all substrings matching words from a second file. These files can be found in the attached zip file (payload.zip).
+Output in the same order as the primary input file, with the matches in alphabetical order, e.g.:
+
+commonwords.txt:
+an
+and
+do
+on
+
+allwords.txt:
+access
+abandon
+banana
+
+output.txt:
+access:
+abandon: an, and, do, on
+banana: an
+
+Submissions are expected to provide C/C++ source code. Additionally, candidates applying to senior engineering positions are expected to provide a working multithreaded solution. Beyond this, you are free to use whatever supplemental libraries and techniques you feel will best help you solve the problem.
+We anticipate that a working solution should be achievable in under two hours. Beyond that a document describing how you would achieve a better solution given more time is sufficient (we’re all busy, there are many possible solutions, the expectation is to code one of those ways successfully, and it's acceptable to talk about additional improvements rather than coding them)._
+Please send your solution as a zip archive containing all the source files along with any accompanying material (i.e. a readme describing your intent), at most 24 hours after starting.
+Thank you for taking the time.
