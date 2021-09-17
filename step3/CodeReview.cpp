@@ -10,15 +10,21 @@ Comments are encouraged.
 
 */
 
+// Missing header files
+// #include <string>
+// #include <iwscapi.h>
+// #include <wscapi.h>
+// #include <map>
+// #include <iostream>
 
 struct ThirdPartyAVSoftware
 {
     std::wstring Name;
     std::wstring Description;
     std::wstring DefinitionUpdateTime;
-    std::string DefinitionStatus;
-    std::wstring Version;
-    std::wstring ProductState;
+    std::string DefinitionStatus;      // Not wstring, but doesn't need to be?
+    std::wstring Version;              // Version is never populated: See Line 129
+    std::wstring ProductState;         // From the usage, doesn't need to be wstring
 };
 
 bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftware>& thirdPartyAVSoftwareMap)
@@ -31,8 +37,10 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
     WSC_SECURITY_PRODUCT_STATE ProductState;
     WSC_SECURITY_SIGNATURE_STATUS ProductStatus;
 
-    std::wstring displayName, versionNumber, state, timestamp;
+    std::wstring displayName, versionNumber, state, timestamp; // versionNumber is never used
     std::string definitionState;
+
+    // This is assuming CoInitialize and CoUninitialized is handle elsewhere 
 
     hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&PtrProductList));
     if (FAILED(hr))
@@ -55,7 +63,9 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         return false;
     }
 
-    for (uint32_t i = 0; i < ProductCount; i++)
+ 
+    // Could use a lambda here for all "if (FAILED...)" blocks
+    for (uint32_t i = 0; i < ProductCount; i++) // Use LONG instead of uint32_t, consider using ++i, to avoid extra overhead
     {
         hr = PtrProductList->get_Item(i, &PtrProduct);
         if (FAILED(hr))
@@ -77,6 +87,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         hr = PtrProduct->get_ProductState(&ProductState);
         if (FAILED(hr))
         {
+            // Need PtrProduct->Release();
             std::cout << "Failed to query AV product state.";
             continue;
         }
@@ -97,6 +108,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         hr = PtrProduct->get_SignatureStatus(&ProductStatus);
         if (FAILED(hr))
         {
+            // Need PtrProduct->Release();
             std::cout << "Failed to query AV product definition state.";
             continue;
         }
@@ -106,6 +118,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         hr = PtrProduct->get_ProductStateTimestamp(&PtrVal);
         if (FAILED(hr))
         {
+            // Need PtrProduct->Release();
             std::cout << "Failed to query AV product definition state.";
             continue;
         }
@@ -116,7 +129,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         thirdPartyAVSoftware.Name = displayName;
         thirdPartyAVSoftware.DefinitionStatus = definitionState;
         thirdPartyAVSoftware.DefinitionUpdateTime = timestamp;
-        thirdPartyAVSoftware.Description = state;
+        thirdPartyAVSoftware.Description = state;  // Shouldn't be assigned 'state'
         thirdPartyAVSoftware.ProductState = state;
         thirdPartyAVSoftwareMap[thirdPartyAVSoftware.Name] = thirdPartyAVSoftware;
 

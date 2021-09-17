@@ -1,9 +1,45 @@
 1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
+   Types are sequence, adapters, associative, and unordered.
+  Differences:
+    Storage and access
+    The time it takes to insert, delete, and retrieve.
+    Space efficiency
+  Use cases:
+    Sequence: When needing dynamic size and quick access to data sequentially, such as storing elapsed time of user interactions
+    Adapter: Limit what operations can be performed on the supplied container, such as using a deque for undo actions.
+    Associative: When needing in key/value pairing (fast search) with sorted data, such as storing favorite restraunts (sorted keys) and their menu items (string list).
+    Unordered associative: Needing quick searched without the need to sort, such as storing restraunts in your area and their menu.
+
 2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
-3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
+  Quick, counting, heap
+  Quick chooses pivot point, is recursive, usually done in place.  O(n log(n))
+  Counting works when sorting based on keys between a specific range. Creates a new sorted list. O(n + k), k is range  Use case: character sorting
+  Heap typically not stable, non-recursive, uses binary heap in array representation, O(n * log(n))
+    Useful when:
+      stable sort is required
+      partially sorted
+
+3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly
+  Deallocate memory for derived object when called on a base or parent class.  Memory leaks can occur.
+   
 4. Explain the keyword: static. What does it mean in each context?
-5. When are static member variables initialized? 
+  Static can be used in a many different situations with different meanings:
+    Headers, source, in classes, for classes, for functions, in variables, for variables
+  A static function defined in a class can only access static member variables.
+  A static variable/object defined in a class must be initialized in the class or in the cpp file. 
+    Instances of the class can make modifications to the variable/object.
+  A static variable in a function must be initialized and retains assigned and/or modifed value after going out of scope.
+  A function defined in a header and outside of a class needs to static to be accessed outside of header and associated cpp file.
+  A global static variable defined in a cpp file must be initialized and is accessible to the entire cpp file. 
+  
+5. When are static member 
+variables initialized?
+  At compile time.
+
 6. What is the difference between R-Values and L-Values?
+  lvalue is anything whose address is accessible
+  rvalue is anything that's not an lvalue
+
 7. Is this code safe? If so why? If not why?
 	std::string foo()
 	{
@@ -12,27 +48,118 @@
 	}
 	
 	Bonus: What would most compilers do with this code?
+  Yes, it's safe.  Copy constructors are called so that when "something" goes out of scope and memory is deleted the return value has valid memory.
+  Compiler will remove the temporary variable "something".
+
 8. Why would you use new rather than malloc when allocating an object? Likewise, what’s the difference between free and delete?
-9. Explain the purpose of std::move, and std::forward. 
-10. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
+  new calls constructors, malloc does not
+  new is an operator,  malloc is a function
+  new return the exact data type, malloc returns a void pointer
+  new throws the bad_alloc exception (unless std::nothrow or the nothrow compiler flag is provided), malloc return NULL
+  new size is calcualated by compiler, malloc size is calculated manually
+
+  delete will throw exceptions, free does not
+  delete is an operator, malloc is a function
+  delete calls the destructor, free does not
+  Should always match the use of new with delete and malloc with free.
+  
+9. Explain the purpose of std::move, and std::forward.
+  Ultimately they are used to avoid copies, which can be time consuming when using containers with large data.
+  std:move returns an rvalue reference.
+  std::forward returns an rvalue reference, if the argument is not an lvalue reference.
+  
+10. How do you share resources safely between threads? How would you share an integer value vs user defined type?
+  Read only can be shared fairly safe, writes must be managed with a mutex or semephore.  A mutex limits one thread access at a time while semephore can limit the number of threads access to the resource.
+  C++11 has std::atomic that supports integral types. 
+
 11. What are the some of the principles of object-oriented programming?
+  Encapsulation, inheritance, polymorphism, abstraction 
+
 12. Explain inheritance vs composition vs aggregation?
+  Inheritance is how OOP creates a object based on an existing class and represents a is-a relationship. e.g. Dog is a pet or BMW is a car
+  Aggregation is where an an object has one or more objects, but isn't necessarily defined by them.  It implies ownership and the main object's lifetime can exceed that of the aggregated objects.  e.g. Person has/owns a car. 
+  Composition is a specialized form of aggregation. The object contains one or more objects and it's lifetime cannot exceed that of the aggregated object. e.g. Car has an engine or person has a heart.
+
 13. Should you always initialize variables? 
+  In general, yes.  It avoids the chance of using uninitialized values and bugs.
+
 14. Write a program (or multiple) in a known programming language to do the following:
-	a. Query for installed windows patches. 
+	a. Query for installed windows patches.
 	b. Query for installed Linux Packages
 	c. Query for installed Mac Packages
+
+import os
+import platform
+
+mysys = platform.system()
+
+if mysys == "Windows":
+  os.system('systeminfo')
+elif mysys == "Linux":
+  dist = platform.linux_distribution()[0]
+  if dist == "debian":
+    os.system('apt list --installed')
+  elif dist == "RedHat":
+    os.system('rpm -qa');
+  else:
+    print("Unsupported linux distribution")
+elif mysys == "Darwin":
+  os.system('pkgutil --pkgs')
+    
+
 15. Write a program (or multiple) in a known programming language to do the following:
 	a. Query for windows system information. 
 	b. Query for Linux system information
 	c. Query Mac system information
+
+import os
+import platform
+
+mysys = platform.system()
+
+if mysys == "Windows":
+  os.system('systeminfo')
+elif mysys == "Linux":
+  platform.uname()
+elif mysys == "Darwin":
+  platform.uname()
+  os.system('system_profiler')
+
+
 16. What concept(s) in C++ would you use to manage resources automatically?
-	a. How important are these concepts? 	
+  Smart pointers, std::shared_ptr, std::unique_ptr, std::weak_ptr, which use reference counting to determine when an object is no longer needed and can be deallocated.  
+  CComPtr, CComQIPtr, CComHeapPtr, CComGITPtr, _com_ptr_t.
+
+	a. How important are these concepts?
+          I think that depends on the application and how familar this team/developer is with using them.
+          
 	b. What tools are you familiar with for tracking resource allocations? 
+          It's been a while, but Valgrind.  I'm aware of perf.
+
 17. What security concerns have you come across in the past and how have you addressed them?
+  Data at rest is a concern for many, this is usually addressed with encryption.
+  Encrypting sensitive (passwords) in memory in case of data leaks by memory overflows and such.
+
 18. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
-19. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
-20. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
+  Tools: Vim, Visual Studio, Static code analyzers (cpp check), the Internet
+  Techniques: Design patterns, code reviews, rubber duck debugging, DRY, everything listed in "The Pragragmatic Programmer" book
+
+19. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance. 
+  Tools: SonarQube, Git, gdb
+  Techniques: Everything listed in "The Pragragmatic Programmer" book
+  
+20. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution.
 	a. Consider both a long term and short-term solutions. 
+  If available and willing, consult co-workers on possible places to start with understanding the code.  
+  Document my findings as I go about this process to share with others.
+  Step through difficult code.
+  Reformat difficult to read code and do it carefully, possibly even temporarily.
+  Write tests.
+
 21. What concerns do you had supporting legacy operating systems? (If any)
+  Added overhead for project maintanance.  Porting new features.
+
 22. Tell us about a project your worked on that you found to be interesting or unusual.
+  For my thesis and as a research assistant, I created an MFC application that displayed the 3 cross sectional views (axial, coronal, & saggital planes) of the male from the NLM Visible Human Project (https://www.nlm.nih.gov/research/visible/visible_human.html)
+  From these 3 views the user could select the region of the anatomy to be displayed in a new interactive 3D volumetric view and be promted to display which parts of the anatomy to be visible and adjust their transparency.
+  From the volumetric view, the user could click and add labels.  The labels would then exist in 3D along side the anatomy.
