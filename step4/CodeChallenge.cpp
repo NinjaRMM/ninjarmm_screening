@@ -37,7 +37,7 @@ OBJ_STR objStr;
 //The third integer param is optional so it's declared as a default param
 //Inside the function is some existing code that needs to exist, but not relevant to this exercise. 
 template <typename T, typename U>
-T checkIfPositive(const U& u, const int& param1, const int& param2, int& param3 = 0)
+T checkIfPositive(const U& u, const int& param1, const int& param2, int param3 = 0)
 {
     // Assume there's already some existing code in here, some business logic that we are not interested in this exercise. 
     /*
