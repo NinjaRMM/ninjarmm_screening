@@ -184,17 +184,36 @@ thread. Ideally, the scope of the mutex should be as minimal as possible.
 
 To be safe, I would use a mutex no matter if it's an integer value or user defined type.
 
-11. What are the some of the principles of object-oriented programming?
+11. What are some of the principles of object-oriented programming?
 
-Encapsulation
-Inheritance
-Abstraction
-Polymorphism
+Encapsulation - A way to prevent direct access to properties and methods. Properties are hidden behind public accessor methods to
+	perform some validation steps or transformations. For example, if a property should always be between a min/max range, a setter
+	accessor could clamp values outside the range. Another example would be for a temperature class. Internally, there could only
+	be one property such as temperature in Kelvin but it could have 3 getter accessors such as getCelsius(), getFahrenheit(), and
+	getKelvin().
+
+Inheritance - A mechanism for one class to obtain properties and methods of another class. This allows a developer to create a common
+	class, referred to as base or parent, which are inherited by more specific classes. The inheritors are called derived or children.
+
+Abstraction - A mechanism to define the minimum behavior without specifying the implementation. For example, a vehicle is an object
+	that you can drive, can be refueled, and has size. The specifics on whether it's manual or automatic transmission, diesel or
+	gasoline or electric, compact or full-size or 18-wheeler is irrelevant for the vehicle class.
+
+Polymorphism - A mechanism that allows for different functionality even with the same name. This is tightly coupled with inheritance.
+	A base class could have some of its methods be replaced by a derived class using the virtual keyword. A pointer to the base class
+	that's pointing to a derived class could call these replacement methods.
+
+Source: https://www.sumologic.com/glossary/encapsulation/
 
 12. Explain inheritance vs composition vs aggregation?
+
+Inheritance is when you have a base class that can be inherited by derived classes. It is possible for the derived class to access
+protected members of the base class. Composition is when a class contains an instance of another class in its list of properties.
+Aggregation is similar to Composition but the other classes are not owned by the composing class.
+
 13. Should you always initialize variables? 
 
-Hard YES
+Definitely yes! Initializing variables reduces unexpected behaviors caused by garbage values.
 
 14. Write a program (or multiple) in a known programming language to do the following:
 	a. Query for installed windows patches. 
@@ -212,24 +231,55 @@ I've never done this before.
 
 16. What concept(s) in C++ would you use to manage resources automatically?
 
-	Smart Pointers
+	Smart Pointers - Unique Pointers and Shared Pointers
 
-	a. How important are these concepts? 	
-	b. What tools are you familiar with for tracking resource allocations? 
+	a. How important are these concepts?
+
+	They are very important since they clearly define ownership of a resource.
+
+	b. What tools are you familiar with for tracking resource allocations?
+
+	I have not used tools other than the debugger that comes with the IDE.
+
 17. What security concerns have you come across in the past and how have you addressed them?
 
-Buffer overrun
+Buffer overrun. When receiving dynamic length input from outside (user, external data, etc), only copy data up to the maximum expected length.
+Then flush the rest of the input. With the copy of the data, sanitize it by escaping special characters.
 
 18. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
-19. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
 
-auto for forward compatibility
+For Windows development, I prefer using Microsoft Visual Studio as my IDE.
+Occasionally, I use VSCode for generic text editing, python scripts, web development.
+For MySQL, I used Toad for MySQL.
+For git, I use SourceTree.
+
+19. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.
+
+Self-documenting code is the best code. In Autodesk, we use the mantra "comments are excuses". We rarely use comments and prefer clean code.
+Almost Always Auto for forward compatibility, reduction of cognitive load on the developer, ...
+Pass non-plain variables as const reference.
+Const everything until you don't need it to be const.
 
 20. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
-	a. Consider both a long term and short-term solutions. 
-21. What concerns do you had supporting legacy operating systems? (If any)
+	a. Consider both a long term and short-term solutions.
 
-char vs wchar vs utf
+	These would be my immediate steps:
+	1) Compile and run the code to check that it is working code.
+	2) Look for reproduction steps in the change requirements. Determine input and output changes.
+	3) Look for any prompts that lead to the change requirements. I'd be looking for labels, dialog boxes, console prompts, etc.
+	4) Search the whole code base for the prompts found in step (3).
+	5) Trace through the UI and add breakpoints right after the prompts.
+	6) Implement and test any changes.
+
+	The following steps require coordination with other team members:
+	1) If I spent more than 2 hours finding the location of the change requirement, I'd start asking around.
+	2) If there's continuous integration (CI), then I'd ask how to add smoke tests or test cases. This would be the long-term solution.
+	
+21. What concerns do you have supporting legacy operating systems? (If any)
+
+Character encoding - char vs wchar vs utf
 sizeof int or address
+File Versioning - 
 
 22. Tell us about a project your worked on that you found to be interesting or unusual.
+
