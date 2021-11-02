@@ -1,38 +1,235 @@
 1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
+
+<array>
+	This is the modern c++ way of creating arrays instead of the c-style arrays. Similar to c-style arrays, this container only
+	contains the array members. The elements are stored contiguously in memory. Unlike c-style arrays, the size is a template
+	parameter determined at compile time. Arrays have a fixed size at run time. There are no insertions or deletions at run
+	time. Element access is constant running time, O(1). The reason for this addition in the C++11 standard is to make it
+	compatible with C++ algorithms by adding iterators. This is the simplest of all containers and this could be the underlying
+	structure in other containers.
+
+<vector>
+	Similar to arrays, vectors store their elements contiguously. Element access has constant running time using pointer arithmetic.
+	Unlike arrays, vectors can be resized but this requires reallocation. For this reason, there are 2 properties called size and
+	capacity. Size is the number of elements in the vector while the capacity is the highest size possible without resizing.
+	Deleting elements at the end is O(1). Inserting elements at the end is O(1) unless it incurs reallocation, which makes this O(n).
+	Inserting/Deleting elements in the middle or beginning requires moving of elements after the point of insertion/deletion
+	which incurs O(n). Any iterators to the elements become invalidated when reallocation occurs or if the iterator points to an
+	element after the location of an insertion or deletion operation.
+
+<forward_list>
+	Some academic references call this the Singly Linked List. The goal is to have O(1) when inserting or deleting elements anywhere
+	in the list. Elements are not stored contiguously. Instead, they are stored in Nodes where each node points to the next Node.
+	This means that fetching an element by index requires traversing through the whole list. This also means that you can only
+	traverse in one direction, forward. Accessing incurs a linear running time, O(n). Unlike other containers, the forward_list
+	does not contain a size member. To get the size, one has to traverse the whole list. Iterators are only invalidated when
+	the element they're pointing to is removed.
+	
+<list>
+	Some academic references call this the Doubly Linked List. It's very similar to the forward_list with only a few differences.
+	Each Node can point to the next and previous Node. This allows traversal in both forward and reverse directions. Insertion and
+	deletion anywhere is still O(1). Accessing an element incurs O(n). The container also keeps track of its size.
+
+<deque>
+	A double ended queue is container that can insert and delete elements at the front and back at O(1). The specifications does
+	not indicate if the elements are stored contiguously, making pointer arithmetic unreliable. However, the specification does
+	indicate that accessing by index should be O(1). This could mean that the container may keep the locations of each element
+	in additional storage. Insertions and deletions in between the front and back are O(n) at worst.
+
+<queue>
+	A queue is a First In First Out container. Meaning, you can push new elements, pop the oldest element, and get the size - all
+	having O(1) running time. The exact implementation is compiler-dependent, meaning, the underlying container used could be
+	any container that can perform all the operations in the specification. Additionally, you can peek at the oldest or newest
+	element. All other elements in between are not accessible.
+
+<stack>
+	A stack is a Last In First Out container. It's similar to the <queue> except that you pop the youngest instead of the oldest
+	element. Similarly, the underlying container is not specified.
+
+<set>
+	A set is a container where each element is guaranteed to be unique. You can push new elements into a set and you can pop them
+	out. Elements pushed become const. Elements cannot be accessed by position, rather, they are accessed by a key. Though, the
+	key is the value itself for a set. Insertion, Deletion, and Access incur O(log N) running time. Sets are normally implemented
+	using binary search trees.
+
+<map>
+	A map stores elements using a Key-Value pair. Instead of a numeric index, elements are accessed through their keys. The key
+	is guaranteed to be unique within the map. The key is also used for sorting them internally. Maps are normally implemented
+	using binary search trees.
+
+<unordered_set>
+<unordered_map>
+	The unordered_set and unordered_map are similar to the set and map but instead of being sorted in a binary search tree, the
+	keys undergo a hashing function which determines their location (bucket) in the container. This makes insertion, deletion,
+	and access have a constant average running time but requires more space.
+
+Source: https://www.cplusplus.com/reference/unordered_map/unordered_map/, https://www.geeksforgeeks.org/iterator-invalidation-cpp/
+
 2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
-3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
+
+Bubble Sort
+	This is the simplest to implement and to understand but it's also the least efficient. Hence, it's never used in the industry.
+	It goes through every consecutive pair, swapping them if the earlier is larger then the latter. The idea is that the largest
+	element 'floats' up to the end. The algorithm ends when no swapping occurs anymore. This has a running time of O(n^2).
+
+Merge Sort
+	This is a recursive divide-and-conquer sorting algorithm where the data is halved and each half is halved again and so on. The
+	recursion terminates when the half only contains a single element. At this point, the algorithm starts merging the halves while
+	sorting them. This has a consistent running time of O(log N). This algorithm is best for limited primary memory and lots of secondary
+	memory. This algorithm rarely accesses an element by index and works well with linked lists.
+
+Quick Sort
+	This is also a recursive divide-and-conquer sorting algorithm where a pivot is selected. All elements less than (or equal to)
+	the pivot are moved to one side while those greater are on the other side. These sides are not necessary of equal size,
+	nonetheless, the process is repeated on both sides. The recursion ends when a side only has 1 element left. The algorithm
+	requires a lot of element access by index and works well with contiguous structures. This has an average running time of
+	O(log N) and a worst case running time of O(n^2). Worst case happens when the pivot is always either the smallest or the
+	largest making one side contain 0 elements.
+
+Source: https://www.geeksforgeeks.org/merge-sort/, https://www.geeksforgeeks.org/quick-sort/
+
+3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly.
+
+This guarantees that the destructor of derived classes are called. Otherwise, only the destructor of the base class is called. Not
+calling the destructor of the derived classes could prevent proper clean up of resources.
+
+Source: https://www.geeksforgeeks.org/virtual-destructor/
+
 4. Explain the keyword: static. What does it mean in each context?
-5. When are static member variables initialized? 
+
+Context #1 - static variables and functions in a namespace (global/named/unnamed). These variables and functions will only be visibile
+	within the translation unit (file it was declared or included in).
+Context #2 - static variables inside functions. These variables will retain their values inbetween function calls. They are only visibile
+	inside the function but they retain their values. Initialization only happens once - on the first call to the function. To be honest,
+	this should be avoided since reusing the function now becomes inconsistent.
+Context #3 - static properties and methods in a class. These members can be called without an instance of the class. They are shared
+	amongst all the instances of the class. For static properties, these should be initialized in cpp file, not the header file. Ideally,
+	in the same source where the methods are defined. Otherwise, you get a linker error for having duplicate initializations for the same
+	static property.
+
+Source: https://www.learncpp.com/cpp-tutorial/static-local-variables/, https://www.learncpp.com/cpp-tutorial/static-member-variables/
+
+5. When are static member variables initialized?
+
+It is best to initialize static member variables in the implementation file and not the header file. Putting it in the header file
+would cause a linker error for having duplicate definitions.
+
 6. What is the difference between R-Values and L-Values?
+
+L-values have locations and can be stored into, ex: non-const variables. The L-values are named which refer to a specific location in
+memory or address. These can appear on the left-hand side of the assignment operator. R-values are values that can be placed in the
+registers, ex: variables, literals, temporary values. This basically any value. R-values cannot be on the left hand signed of an
+assignment operator. All L-values can be R-values but not all R-values can be L-values.
+
+Source: https://docs.microsoft.com/en-us/cpp/c-language/l-value-and-r-value-expressions?view=msvc-160
+
 7. Is this code safe? If so why? If not why?
 	std::string foo()
 	{
-		std::string something = “avalue”;
+		std::string something = "avalue";
 		return something;
 	}
-	
+
 	Bonus: What would most compilers do with this code?
+
+	This is not safe for old compilers. At least 2 std::strings are created. The first one is for the variable something, which contains
+	"avalue". The first serves as the local variable inside the function. The second one is a copy to be returned when the function
+	terminates and this is implied. The second serves as an unnamed temporary variable. Possible third one is when the caller performs a copy
+	constructor. It is possible in old compilers for the second one to fail copying the first one because the first one has already expired.
+	The second one could potentially contain garbage values. Another disadvantage here is the number of constructors called. If the class
+	has a large constructor, this could potentially call that constructor 3 times.
+
+	Modern compilers perform Return Value Optimizations. Seeing that foo() is very straight forward, the compiler could potentially
+	reduce the number of constructed objects to 1. However, this is not a standard. Developers could assist the compiler by returning unnamed
+	values such as the following:
+
+	return std::string("avalue");
+
+Source: https://www.fluentcpp.com/2016/11/28/return-value-optimizations/
+	
 8. Why would you use new rather than malloc when allocating an object? Likewise, what’s the difference between free and delete?
-9. Explain the purpose of std::move, and std::forward. 
+
+The new keyword performs both a malloc followed by a call to the constructor to initialize the variable. The delete keyword calls the
+destructor of the object followed by a call to free. The constructor is meant for initializing the state of the variable while delete
+is meant to release or clean up any resources before being destroyed.
+
+9. Explain the purpose of std::move, and std::forward.
+
+std::move transfer internal properties from one object to another. For example; given 2 vectors of integers called a and b and the 2
+statements below:
+
+a = b;
+a = std::move(b);
+
+In the first statement, a = b, a copies the state of b. For the second statement, a gets the state of b while b gets reset, as if newly
+constructed. If a and b were linked lists, std::move would simply transfer the head pointer. This is much more efficient compared to
+copying each node.
+
+I'm not familiar with std::forward. I've never used this before.
+
+Source: https://en.cppreference.com/w/cpp/utility/move
+
 10. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
+
+Theoretically, multiple threads reading the same location is relatively safe. If a thread is trying to read a resource while another is
+writing unto it, the reading thread may partially copy the previous value and continue copying the final value. If multiple threads are
+writing to the same resource simultaneously, overwriting would occur. In fact, partial overwriting could also occur. Either overwritting
+is a scenario one would avoid.
+
+The safest way to share resources between threads is to use a mutex. A mutex is locking mechanism that is visible to all threads. It is
+meant to protect a resource from being accessed by multiple threads simultaneously. Ideally, a thread would first check if a mutex is
+locked. If it is locked, then that thread is blocked until the mutex is unlocked. If it is unlocked, the thread could then lock it to
+prevent other threads from touching the same resource. The thread then uses the resource and eventually unlocks the mutex for the next
+thread. Ideally, the scope of the mutex should be as minimal as possible.
+
+To be safe, I would use a mutex no matter if it's an integer value or user defined type.
+
 11. What are the some of the principles of object-oriented programming?
+
+Encapsulation
+Inheritance
+Abstraction
+Polymorphism
+
 12. Explain inheritance vs composition vs aggregation?
 13. Should you always initialize variables? 
+
+Hard YES
+
 14. Write a program (or multiple) in a known programming language to do the following:
 	a. Query for installed windows patches. 
 	b. Query for installed Linux Packages
 	c. Query for installed Mac Packages
+
+I've never done this before.
+
 15. Write a program (or multiple) in a known programming language to do the following:
 	a. Query for windows system information. 
 	b. Query for Linux system information
 	c. Query Mac system information
+
+I've never done this before.
+
 16. What concept(s) in C++ would you use to manage resources automatically?
+
+	Smart Pointers
+
 	a. How important are these concepts? 	
 	b. What tools are you familiar with for tracking resource allocations? 
 17. What security concerns have you come across in the past and how have you addressed them?
+
+Buffer overrun
+
 18. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
 19. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
+
+auto for forward compatibility
+
 20. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
 	a. Consider both a long term and short-term solutions. 
 21. What concerns do you had supporting legacy operating systems? (If any)
+
+char vs wchar vs utf
+sizeof int or address
+
 22. Tell us about a project your worked on that you found to be interesting or unusual.
