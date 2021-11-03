@@ -1,20 +1,40 @@
 // step2.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
+#include <algorithm>
 #include <iostream>
+#include <vector>
+
+#include "Programmer.h"
+#include "Pilot.h"
+
+std::vector<std::unique_ptr<Job>> CreateJobs();
+void printJob(const std::unique_ptr<Job>& job);
 
 int main()
 {
-    std::cout << "Hello World!\n";
+    auto jobCollection = CreateJobs();
+
+    std::for_each(jobCollection.begin(), jobCollection.end(), printJob);
+
+    return 0;
 }
 
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
+std::vector<std::unique_ptr<Job>> CreateJobs()
+{
+    auto jobs = std::vector<std::unique_ptr<Job>>();
 
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
+    jobs.push_back(std::make_unique<Programmer>());
+    jobs.push_back(std::make_unique<Pilot>());
+
+    return jobs;
+}
+
+void printJob(const std::unique_ptr<Job>& job)
+{
+    std::cout << "Job Name: " << job->GetName() << std::endl;
+    std::cout << "Description" << job->GetDescription() << std::endl;
+    std::cout << "Required Number of Hours" << job->GetRequiredHours() << std::endl;
+    std::cout << job->DoWork() << std::endl;
+    std::cout << "----" << std::endl;
+}
