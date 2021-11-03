@@ -1,6 +1,12 @@
 # Prerequisites
 *.d
 
+# Cache/options directory
+.vs/
+
+# User-specific
+*.user
+
 # Compiled Object files
 *.slo
 *.lo
@@ -10,6 +16,7 @@
 # Precompiled Headers
 *.gch
 *.pch
+*.ipch
 
 # Compiled Dynamic libraries
 *.so
