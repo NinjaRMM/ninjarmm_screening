@@ -28,10 +28,11 @@
 <list>
 	Some academic references call this the Doubly Linked List. It's very similar to the forward_list with only a few differences.
 	Each Node can point to the next and previous Node. This allows traversal in both forward and reverse directions. Insertion and
-	deletion anywhere is still O(1). Accessing an element incurs O(n). The container also keeps track of its size.
+	deletion anywhere is still O(1). Accessing an element at a specified index incurs O(n). Iterators are only invalidated when
+	the element they're pointing to is removed. The container keeps track of its size, no need to traverse through the list.
 
 <deque>
-	A double ended queue is container that can insert and delete elements at the front and back at O(1). The specifications does
+	A double ended queue is a container that can insert and delete elements at the front and back at O(1). The specifications does
 	not indicate if the elements are stored contiguously, making pointer arithmetic unreliable. However, the specification does
 	indicate that accessing by index should be O(1). This could mean that the container may keep the locations of each element
 	in additional storage. Insertions and deletions in between the front and back are O(n) at worst.
@@ -40,51 +41,52 @@
 	A queue is a First In First Out container. Meaning, you can push new elements, pop the oldest element, and get the size - all
 	having O(1) running time. The exact implementation is compiler-dependent, meaning, the underlying container used could be
 	any container that can perform all the operations in the specification. Additionally, you can peek at the oldest or newest
-	element. All other elements in between are not accessible.
+	element. All other elements in between are not accessible. This container does not have iterators.
 
 <stack>
 	A stack is a Last In First Out container. It's similar to the <queue> except that you pop the youngest instead of the oldest
-	element. Similarly, the underlying container is not specified.
+	element. Similarly, the underlying container is not specified. This container does not have iterators.
 
 <set>
 	A set is a container where each element is guaranteed to be unique. You can push new elements into a set and you can pop them
 	out. Elements pushed become const. Elements cannot be accessed by position, rather, they are accessed by a key. Though, the
-	key is the value itself for a set. Insertion, Deletion, and Access incur O(log N) running time. Sets are normally implemented
-	using binary search trees.
+	key is the value itself. Insertion, Deletion, and Access incur O(log N) running time. Sets are normally implemented using
+	binary search trees. Sets can be traversed by iterators. Iterators are only invalidated when the element pointed to is deleted.
 
 <map>
 	A map stores elements using a Key-Value pair. Instead of a numeric index, elements are accessed through their keys. The key
 	is guaranteed to be unique within the map. The key is also used for sorting them internally. Maps are normally implemented
-	using binary search trees.
+	using binary search trees. Maps can be traversed by iterators. Iterators are only invalidated when the element point to is
+	deleted.
 
 <unordered_set>
 <unordered_map>
-	The unordered_set and unordered_map are similar to the set and map but instead of being sorted in a binary search tree, the
-	keys undergo a hashing function which determines their location (bucket) in the container. This makes insertion, deletion,
-	and access have a constant average running time but requires more space.
+	The unordered_set and unordered_map are similar to the set and map respectively but instead of being sorted in a binary search
+	tree, the keys undergo a hashing function which determines their location (bucket) in the container. This makes insertion,
+	deletion, and access have a constant average running time but requires more space.
 
 Source: https://www.cplusplus.com/reference/unordered_map/unordered_map/, https://www.geeksforgeeks.org/iterator-invalidation-cpp/
 
 2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
 
 Bubble Sort
-	This is the simplest to implement and to understand but it's also the least efficient. Hence, it's never used in the industry.
+	This is the simplest to implement and understand but it's also the least efficient. Hence, it's never used in the industry.
 	It goes through every consecutive pair, swapping them if the earlier is larger then the latter. The idea is that the largest
 	element 'floats' up to the end. The algorithm ends when no swapping occurs anymore. This has a running time of O(n^2).
 
 Merge Sort
 	This is a recursive divide-and-conquer sorting algorithm where the data is halved and each half is halved again and so on. The
 	recursion terminates when the half only contains a single element. At this point, the algorithm starts merging the halves while
-	sorting them. This has a consistent running time of O(log N). This algorithm is best for limited primary memory and lots of secondary
-	memory. This algorithm rarely accesses an element by index and works well with linked lists.
+	sorting them. This has a consistent running time of O(log N). This algorithm is best for limited primary memory and lots of
+	secondary memory. This algorithm rarely accesses an element by index and works well with linked lists.
 
 Quick Sort
 	This is also a recursive divide-and-conquer sorting algorithm where a pivot is selected. All elements less than (or equal to)
-	the pivot are moved to one side while those greater are on the other side. These sides are not necessary of equal size,
-	nonetheless, the process is repeated on both sides. The recursion ends when a side only has 1 element left. The algorithm
-	requires a lot of element access by index and works well with contiguous structures. This has an average running time of
-	O(log N) and a worst case running time of O(n^2). Worst case happens when the pivot is always either the smallest or the
-	largest making one side contain 0 elements.
+	the pivot are moved to one side while the rest are on the other side. These sides are not necessary of equal size, nonetheless,
+	the process is repeated on both sides. The recursion ends when a side only has 1 element left. The algorithm requires a lot
+	of element access by index and works well with contiguous structures. This has an average running time of O(log N) and a
+	worst case running time of O(n^2). Worst case happens when the pivot is always either the smallest or the largest making one
+	side contain 0 elements.
 
 Source: https://www.geeksforgeeks.org/merge-sort/, https://www.geeksforgeeks.org/quick-sort/
 
@@ -117,8 +119,8 @@ would cause a linker error for having duplicate definitions.
 6. What is the difference between R-Values and L-Values?
 
 L-values have locations and can be stored into, ex: non-const variables. The L-values are named which refer to a specific location in
-memory or address. These can appear on the left-hand side of the assignment operator. R-values are values that can be placed in the
-registers, ex: variables, literals, temporary values. This basically any value. R-values cannot be on the left hand signed of an
+memory. These can appear on the left-hand side of the assignment operator. R-values are values that can be placed in the
+registers, ex: variables, literals, temporary values. This is basically any value. R-values cannot be on the left hand signed of an
 assignment operator. All L-values can be R-values but not all R-values can be L-values.
 
 Source: https://docs.microsoft.com/en-us/cpp/c-language/l-value-and-r-value-expressions?view=msvc-160
@@ -149,8 +151,8 @@ Source: https://www.fluentcpp.com/2016/11/28/return-value-optimizations/
 	
 8. Why would you use new rather than malloc when allocating an object? Likewise, what’s the difference between free and delete?
 
-The new keyword performs both a malloc followed by a call to the constructor to initialize the variable. The delete keyword calls the
-destructor of the object followed by a call to free. The constructor is meant for initializing the state of the variable while delete
+The new keyword performs both a malloc followed by a call to the constructor to initialize the object. The delete keyword calls the
+destructor of the object followed by a call to free. The constructor is meant for initializing the state of the object while delete
 is meant to release or clean up any resources before being destroyed.
 
 9. Explain the purpose of std::move, and std::forward.
@@ -184,6 +186,8 @@ thread. Ideally, the scope of the mutex should be as minimal as possible.
 
 To be safe, I would use a mutex no matter if it's an integer value or user defined type.
 
+I made case studies when I was studying multi-threading in C++. My code is at https://github.com/xeratol/ConcurrencyAndAlgorithms
+
 11. What are some of the principles of object-oriented programming?
 
 Encapsulation - A way to prevent direct access to properties and methods. Properties are hidden behind public accessor methods to
@@ -197,23 +201,26 @@ Inheritance - A mechanism for one class to obtain properties and methods of anot
 
 Abstraction - A mechanism to define the minimum behavior without specifying the implementation. For example, a vehicle is an object
 	that you can drive, can be refueled, and has size. The specifics on whether it's manual or automatic transmission, diesel or
-	gasoline or electric, compact or full-size or 18-wheeler is irrelevant for the vehicle class.
+	gasoline or electric, compact or full-size or 18-wheeler is irrelevant for the vehicle class. It is up to the derived classes of
+	vehicle to specify the implementation.
 
 Polymorphism - A mechanism that allows for different functionality even with the same name. This is tightly coupled with inheritance.
-	A base class could have some of its methods be replaced by a derived class using the virtual keyword. A pointer to the base class
-	that's pointing to a derived class could call these replacement methods.
+	A base class could have some of its methods be replaced by a derived class using the virtual keyword. A base class pointer,
+	that's actually pointing to a derived class, could call these replacement methods.
 
 Source: https://www.sumologic.com/glossary/encapsulation/
 
 12. Explain inheritance vs composition vs aggregation?
 
 Inheritance is when you have a base class that can be inherited by derived classes. It is possible for the derived class to access
-protected members of the base class. Composition is when a class contains an instance of another class in its list of properties.
-Aggregation is similar to Composition but the other classes are not owned by the composing class.
+protected members of the base class. Composition is when a class contains an instance of another class in its list of properties. The
+composing class fully owns the other classes. Aggregation is similar to Composition but the other classes are not owned by the
+aggregating class.
 
 13. Should you always initialize variables? 
 
-Definitely yes! Initializing variables reduces unexpected behaviors caused by garbage values.
+Definitely yes! Initializing variables reduces unexpected behaviors caused by garbage values. This is more critical for pointers. A
+null pointer indicates that the pointer should not be dereferenced.
 
 14. Write a program (or multiple) in a known programming language to do the following:
 	a. Query for installed windows patches. 
@@ -235,7 +242,9 @@ I've never done this before.
 
 	a. How important are these concepts?
 
-	They are very important since they clearly define ownership of a resource.
+	They are very important since they clearly define ownership of a resource. Unique Pointer implies that it is the owner of the
+	resource. A raw pointer implies that it's merely being used but not managed. Shared Pointer implies that there are multiple
+	owners. Though I would avoid Shared Pointers if possible. Having multiple owners can ambiguate responsibilities.
 
 	b. What tools are you familiar with for tracking resource allocations?
 
@@ -244,21 +253,25 @@ I've never done this before.
 17. What security concerns have you come across in the past and how have you addressed them?
 
 Buffer overrun. When receiving dynamic length input from outside (user, external data, etc), only copy data up to the maximum expected length.
-Then flush the rest of the input. With the copy of the data, sanitize it by escaping special characters.
+Then flush the rest of the input. With the copy of the data, sanitize it by escaping special characters. Only then should the cleaned input
+be used.
 
 18. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
 
 For Windows development, I prefer using Microsoft Visual Studio as my IDE.
-Occasionally, I use VSCode for generic text editing, python scripts, web development.
+Occasionally, I use VSCode for generic text editing, python scripts, and web development.
 For MySQL, I used Toad for MySQL.
 For git, I use SourceTree.
+In code, I print to console or to a log file. In some casses, I use ASSERT when debugging to ensure that my variables are in a valid state.
 
 19. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.
 
 Self-documenting code is the best code. In Autodesk, we use the mantra "comments are excuses". We rarely use comments and prefer clean code.
-Almost Always Auto for forward compatibility, reduction of cognitive load on the developer, ...
+Almost Always Auto for forward compatibility, require initialization, focus on interface instead of implementation.
 Pass non-plain variables as const reference.
 Const everything until you don't need it to be const.
+
+Source: https://herbsutter.com/2013/08/12/gotw-94-solution-aaa-style-almost-always-auto/
 
 20. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
 	a. Consider both a long term and short-term solutions.
@@ -274,12 +287,30 @@ Const everything until you don't need it to be const.
 	The following steps require coordination with other team members:
 	1) If I spent more than 2 hours finding the location of the change requirement, I'd start asking around.
 	2) If there's continuous integration (CI), then I'd ask how to add smoke tests or test cases. This would be the long-term solution.
+		In the absence of a pipeline, I would create a test project that would include the same source. This needs to be manually run to
+		test functionality.
 	
 21. What concerns do you have supporting legacy operating systems? (If any)
 
-Character encoding - char vs wchar vs utf
-sizeof int or address
-File Versioning - 
+First of all, what is the word size (32-bit, 64-bit) of the operating system. With this, we can determine the maximum addressable memory.
+We could then get the sizeof of numeric data types - this will give insight to the tolerated error when performing real number arithmetic.
+Second, check the version of drivers available. Older OS's might not have the latest drivers which could contain critical security patches.
+I'm also concerned with the graphics drivers supported by the operating system. Older OS's might not have the updated drivers which will
+allow usage of more complex shaders. I'll also need to double check what's the maximum screen resolution it can handle.
 
 22. Tell us about a project your worked on that you found to be interesting or unusual.
 
+At my Master's, we were expected to build custom Game Engines for our projects. We'd put together several libraries such as a windowing
+(SDL, SFML, etc), graphics (OpenGL or DirectX, GLM, ASSIMP), serializer (JSON, XML, custom), and a few more depending on your game.
+If the team had an audio engineer, they also need to integrate FMOD. If the game had networking, either use an existing or build a networking
+library from TCP/IP. The physics engine has to be built by the team and we're not allowed to use third party libraries for that. The UI
+library can be custom made or use an third party library like Chrome. For scripting, the default is C++ "scripting" but we had the option
+to integrate python or lua.
+
+Please see the attached README.pdf. This is the documentation I had submitted on my game engine architecture class. This is a solo developed
+game engine using C++03 and OpenGL 2.1. I wasn't using C++11 then (despite the year being 2014) and there was not a single use of smart
+pointers anywhere. I am proudest of my game object-component relationship. A game object aggregates components which in turn provides the
+logic. The game object itself has no logic other than managing components and messages. This leads me to my 2nd proudest part of my game
+engine - the communication system. Unknowingly, it was similar to Qt's signals-and-slots. A component needs to register its event handler
+on another component's event or signal. This connection is automatically managed by both the listener and the trigger (in case one gets
+destroyed before the other).
