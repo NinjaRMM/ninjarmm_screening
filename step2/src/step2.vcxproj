@@ -142,7 +142,7 @@
     <ClCompile Include="Job.cpp" />
     <ClCompile Include="Pilot.cpp" />
     <ClCompile Include="Programmer.cpp" />
-    <ClCompile Include="step2.cpp" />
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Job.h" />

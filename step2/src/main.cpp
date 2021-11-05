@@ -1,6 +1,3 @@
-// step2.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
-
 #define _CRTDBG_MAP_ALLOC
 #include <cstdlib>
 #include <crtdbg.h>
@@ -61,7 +58,7 @@ void BoundsTest()
 {
     const auto boundsTester = [](uint32_t code, uint32_t min, uint32_t max)
         {
-            if (IsInBounds<uint32_t>(code, 500, 599))
+            if (IsInBounds(code, min, max))
             {
                 std::cout << code << " is within bounds." << std::endl;
             }
@@ -87,13 +84,23 @@ void BoundsTest()
 
 void StringMatchTest()
 {
-    auto theStrings = std::vector<std::string>{"one", "two", "test", "four", "test", "six", "test"};
-    auto count = ContainsTheString([](const std::string& tested)
-        {
-            return tested == "test";
-        }, theStrings);
+    auto testerFn = [](const std::string& tested)
+    {
+        return tested == "test";
+    };
 
-    std::cout << "\"test\" appeared " << count << " times" << std::endl;
+    auto theStrings = std::vector<std::string>{"one", "two", "test", "four", "test", "six", "test"};
+    auto count = ContainsTheString(testerFn, theStrings);
+    std::cout << "\"test\" appeared " << count << " times" << std::endl; // 3
+
+    theStrings = std::vector<std::string>{ "one", "two", "three", "four", "five", "six", "seven" };
+    count = ContainsTheString(testerFn, theStrings);
+    std::cout << "\"test\" appeared " << count << " times" << std::endl; // 0
+
+    theStrings = std::vector<std::string>{};
+    count = ContainsTheString(testerFn, theStrings);
+    std::cout << "\"test\" appeared " << count << " times" << std::endl; // 0
+
     std::cout << "----" << std::endl;
 }
 
@@ -102,13 +109,13 @@ int ContainsTheString(std::function<bool(const std::string&)> tester,
 {
     auto sum = 0;
 
-    for (auto i = strings.begin(); i != strings.end(); ++i)
+    std::for_each(strings.begin(), strings.end(), [&](const std::string& s)
     {
-        if (tester(*i))
+        if (tester(s))
         {
             ++sum;
         }
-    }
+    });
 
     return sum;
 }
