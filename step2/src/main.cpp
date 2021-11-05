@@ -10,9 +10,12 @@
 #include "Programmer.h"
 #include "Pilot.h"
 
+#include "TemplateSpecialization.h"
+
 void JobTest();
 void BoundsTest();
 void StringMatchTest();
+void TemplateSpecializationTest();
 
 int ContainsTheString(std::function<bool(const std::string&)> tester,
     const std::vector<std::string>& strings);
@@ -28,6 +31,7 @@ int main()
     JobTest();
     BoundsTest();
     StringMatchTest();
+    TemplateSpecializationTest();
 
     _CrtDumpMemoryLeaks();
     return 0;
@@ -118,4 +122,26 @@ int ContainsTheString(std::function<bool(const std::string&)> tester,
     });
 
     return sum;
+}
+
+void TemplateSpecializationTest()
+{
+    auto a = 10;
+    auto b = 1.0;
+    auto c = "hello";
+
+    foo("hello");   // 4 - T is char*. C-style array is a pointer to a character
+    foo(10);        // 7 - non-template version has higher priority over template version.
+    foo(1.0);       // 3 - T is double. Specialized template has higher precedence over unspecified T.
+    foo(a);         // 7 - non-template version. same as foo(10)
+    foo(b);         // 3 - T is double. same with foo(1.0)
+    foo(&c);        // 4 - T is char*. so a must be char**
+    foo(&a);        // 5 - T is int*. Specialized template has higher precedence over unspecified T.
+    foo(&b);        // 6 - T is double*. Specialized template has higher precedence over unspecified T.
+    foo<int>(2);    // 2 - T is int. Explicit call to template specialization.
+
+    // Order of prioritization:
+    //  non-template
+    //  template specialization
+    //  template with no specialization
 }
