@@ -25,10 +25,15 @@ struct ThirdPartyAVSoftware // move this to a header?
     std::wstring Description;
     std::wstring DefinitionUpdateTime;
     std::string DefinitionStatus;
-    std::wstring Version;
+    std::wstring Version; // unused
     std::wstring ProductState;
 };
 
+bool GetProductList(IWSCProductList** productList);
+bool InitializeProductList(IWSCProductList* productList);
+bool GetProductListCount(IWSCProductList* productList, long& count);
+bool GetProduct(IWSCProductList* productList, long i, IWscProduct** product);
+bool GetProductInfo(IWscProduct* product, ThirdPartyAVSoftware& software);
 bool GetProductName(IWscProduct* product, std::wstring& outName);
 bool GetProductState(IWscProduct* product, std::wstring& outState);
 bool GetDefinitionStatus(IWscProduct* product, std::string& outStatus);
@@ -36,79 +41,124 @@ bool GetDefinitionUpdateTime(IWscProduct* product, std::wstring& outTime);
 
 bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftware>& thirdPartyAVSoftwareMap)
 {
-    auto hr = S_OK;
     auto PtrProductList = (IWSCProductList *)nullptr;
 
-    hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&PtrProductList));
-    if (FAILED(hr))
+    if (!GetProductList(&PtrProductList))
     {
-        std::cout << "Failed to create WSCProductList object. ";
         return false;
     }
 
-    hr = PtrProductList->Initialize(WSC_SECURITY_PROVIDER_ANTIVIRUS);
-    if (FAILED(hr))
+    if (!InitializeProductList(PtrProductList))
     {
-        std::cout << "Failed to query antivirus product list. ";
         return false;
     }
 
-    LONG ProductCount = 0;
-    hr = PtrProductList->get_Count(&ProductCount);
-    if (FAILED(hr))
+    auto ProductCount = 0L;
+    if (!GetProductListCount(PtrProductList, ProductCount))
     {
-        std::cout << "Failed to query product count.";
         return false;
     }
 
-    for (auto i = 0L; i < ProductCount; i++)
+    for (auto i = 0L; i < ProductCount; ++i)
     {
         ThirdPartyAVSoftware thirdPartyAVSoftware;
-
         auto PtrProduct = (IWscProduct *)nullptr;
-        hr = PtrProductList->get_Item(i, &PtrProduct);
-        if (FAILED(hr))
-        {
-            std::cout << "Failed to query AV product.";
-            continue;
-        }
 
-        if (!GetProductName(PtrProduct, thirdPartyAVSoftware.Name))
+        if (GetProduct(PtrProductList, i, &PtrProduct) &&
+            GetProductInfo(PtrProduct, thirdPartyAVSoftware))
         {
-            PtrProduct->Release();
-            PtrProduct = nullptr;
-            continue;
+            thirdPartyAVSoftwareMap[thirdPartyAVSoftware.Name] = thirdPartyAVSoftware;
         }
-
-        if (!GetProductState(PtrProduct, thirdPartyAVSoftware.ProductState))
-        {
-            PtrProduct->Release();
-            PtrProduct = nullptr;
-            continue;
-        }
-        thirdPartyAVSoftware.Description = thirdPartyAVSoftware.ProductState;
-
-        if (!GetDefinitionStatus(PtrProduct, thirdPartyAVSoftware.DefinitionStatus))
-        {
-            PtrProduct->Release();
-            PtrProduct = nullptr;
-            continue;
-        }
-
-        if (!GetDefinitionUpdateTime(PtrProduct, thirdPartyAVSoftware.DefinitionUpdateTime))
-        {
-            PtrProduct->Release();
-            PtrProduct = nullptr;
-            continue;
-        }
-
-        thirdPartyAVSoftwareMap[thirdPartyAVSoftware.Name] = thirdPartyAVSoftware;
 
         PtrProduct->Release();
         PtrProduct = nullptr;
     }
 
     return (thirdPartyAVSoftwareMap.size() > 0);
+}
+
+bool GetProductList(IWSCProductList** productList)
+{
+    auto hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(productList));
+    if (FAILED(hr))
+    {
+        std::cout << "Failed to create WSCProductList object. ";
+        return false;
+    }
+
+    return true;
+}
+
+bool InitializeProductList(IWSCProductList* productList)
+{
+    assert(productList != nullptr);
+
+    auto hr = productList->Initialize(WSC_SECURITY_PROVIDER_ANTIVIRUS);
+    if (FAILED(hr))
+    {
+        std::cout << "Failed to query antivirus product list. ";
+        return false;
+    }
+
+    return true;
+}
+
+bool GetProductListCount(IWSCProductList* productList, long& count)
+{
+    assert(productList != nullptr);
+
+    auto hr = productList->get_Count(&count);
+    if (FAILED(hr))
+    {
+        std::cout << "Failed to query product count.";
+        return false;
+    }
+
+    return true;
+}
+
+bool GetProduct(IWSCProductList* productList, long i, IWscProduct** product)
+{
+    assert(productList != nullptr);
+
+    *product = nullptr;
+    auto hr = productList->get_Item(i, product);
+    if (FAILED(hr))
+    {
+        std::cout << "Failed to query AV product.";
+        return false;
+    }
+
+    assert(product != nullptr);
+    return true;
+}
+
+bool GetProductInfo(IWscProduct* product, ThirdPartyAVSoftware& software)
+{
+    assert(product != nullptr);
+
+    if (!GetProductName(product, software.Name))
+    {
+        return false;
+    }
+
+    if (!GetProductState(product, software.ProductState))
+    {
+        return false;
+    }
+    software.Description = software.ProductState;
+
+    if (!GetDefinitionStatus(product, software.DefinitionStatus))
+    {
+        return false;
+    }
+
+    if (!GetDefinitionUpdateTime(product, software.DefinitionUpdateTime))
+    {
+        return false;
+    }
+
+    return true;
 }
 
 bool GetProductName(IWscProduct* product, std::wstring& outName)
