@@ -1,5 +1,3 @@
-// Job.h
-
 #include <string>
 #ifndef JOB_H
 #define JOB_H
