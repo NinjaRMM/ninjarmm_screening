@@ -19,16 +19,21 @@ Comments are encouraged.
 #include <iwscapi.h>
 #include <wscapi.h>
 
-struct ThirdPartyAVSoftware // move this to a header?
+//#include "src/CodeReview.h" // uncomment to use header instead
+
+#ifndef CODEREVIEW_H
+struct ThirdPartyAVSoftware // move to a header, See src/CodeReview.h
 {
     std::wstring Name;
     std::wstring Description;
     std::wstring DefinitionUpdateTime;
     std::string DefinitionStatus;
-    std::wstring Version; // unused
+    std::wstring Version; /* unused */
     std::wstring ProductState;
 };
+#endif
 
+// Helper Functions
 bool GetProductList(IWSCProductList** productList);
 bool InitializeProductList(IWSCProductList* productList);
 bool GetProductListCount(IWSCProductList* productList, long& count);
@@ -86,6 +91,7 @@ bool GetProductList(IWSCProductList** productList)
         return false;
     }
 
+    assert(*productList != nullptr);
     return true;
 }
 
@@ -129,7 +135,7 @@ bool GetProduct(IWSCProductList* productList, long i, IWscProduct** product)
         return false;
     }
 
-    assert(product != nullptr);
+    assert(*product != nullptr);
     return true;
 }
 
