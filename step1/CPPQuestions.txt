@@ -149,11 +149,11 @@ Source: https://docs.microsoft.com/en-us/cpp/c-language/l-value-and-r-value-expr
 
 Source: https://www.fluentcpp.com/2016/11/28/return-value-optimizations/
 	
-8. Why would you use new rather than malloc when allocating an object? Likewise, what’s the difference between free and delete?
+8. Why would you use new rather than malloc when allocating an object? Likewise, whatï¿½s the difference between free and delete?
 
-The new keyword performs both a malloc followed by a call to the constructor to initialize the object. The delete keyword calls the
+The new keyword performs a malloc followed by a call to the constructor to initialize the object. The delete keyword calls the
 destructor of the object followed by a call to free. The constructor is meant for initializing the state of the object while delete
-is meant to release or clean up any resources before being destroyed.
+is meant to release or clean up any resources before being released.
 
 9. Explain the purpose of std::move, and std::forward.
 
@@ -163,7 +163,7 @@ statements below:
 a = b;
 a = std::move(b);
 
-In the first statement, a = b, a copies the state of b. For the second statement, a gets the state of b while b gets reset, as if newly
+In the first statement, a = b, a copies the state of b. For the second statement, a gets the state of b while b gets reset, as if default-ly
 constructed. If a and b were linked lists, std::move would simply transfer the head pointer. This is much more efficient compared to
 copying each node.
 
@@ -175,10 +175,10 @@ Source: https://en.cppreference.com/w/cpp/utility/move
 
 Theoretically, multiple threads reading the same location is relatively safe. If a thread is trying to read a resource while another is
 writing unto it, the reading thread may partially copy the previous value and continue copying the final value. If multiple threads are
-writing to the same resource simultaneously, overwriting would occur. In fact, partial overwriting could also occur. Either overwritting
+writing to the same resource simultaneously, overwriting would occur. In fact, partial overwriting could also occur. Either overwriting
 is a scenario one would avoid.
 
-The safest way to share resources between threads is to use a mutex. A mutex is locking mechanism that is visible to all threads. It is
+The safest way to share resources between threads is to use a mutex. A mutex is a locking mechanism that is visible to all threads. It is
 meant to protect a resource from being accessed by multiple threads simultaneously. Ideally, a thread would first check if a mutex is
 locked. If it is locked, then that thread is blocked until the mutex is unlocked. If it is unlocked, the thread could then lock it to
 prevent other threads from touching the same resource. The thread then uses the resource and eventually unlocks the mutex for the next
@@ -224,17 +224,19 @@ null pointer indicates that the pointer should not be dereferenced.
 
 14. Write a program (or multiple) in a known programming language to do the following:
 	a. Query for installed windows patches. 
+		I've never done this before.
 	b. Query for installed Linux Packages
+		I've never done this before.
 	c. Query for installed Mac Packages
-
-I've never done this before.
+		I've never done this before.
 
 15. Write a program (or multiple) in a known programming language to do the following:
-	a. Query for windows system information. 
+	a. Query for windows system information.
+		Please see src/step1.cpp.
 	b. Query for Linux system information
+		I've never done this before.
 	c. Query Mac system information
-
-I've never done this before.
+		I've never done this before.
 
 16. What concept(s) in C++ would you use to manage resources automatically?
 
@@ -243,12 +245,12 @@ I've never done this before.
 	a. How important are these concepts?
 
 	They are very important since they clearly define ownership of a resource. Unique Pointer implies that it is the owner of the
-	resource. A raw pointer implies that it's merely being used but not managed. Shared Pointer implies that there are multiple
+	resource. A raw pointer implies that it's merely being used but owned elsewhere. Shared Pointer implies that there are multiple
 	owners. Though I would avoid Shared Pointers if possible. Having multiple owners can ambiguate responsibilities.
 
 	b. What tools are you familiar with for tracking resource allocations?
 
-	I have not used tools other than the debugger that comes with the IDE.
+	I have not used tools other than the memory debugger that comes with Visual Studio.
 
 17. What security concerns have you come across in the past and how have you addressed them?
 
@@ -266,7 +268,7 @@ In code, I print to console or to a log file. In some casses, I use ASSERT when 
 
 19. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.
 
-Self-documenting code is the best code. In Autodesk, we use the mantra "comments are excuses". We rarely use comments and prefer clean code.
+Self-documenting code is the best code. In Autodesk, we used the mantra "comments are excuses". We rarely use comments and prefer clean code.
 Almost Always Auto for forward compatibility, require initialization, focus on interface instead of implementation.
 Pass non-plain variables as const reference.
 Const everything until you don't need it to be const.
@@ -304,7 +306,7 @@ At my Master's, we were expected to build custom Game Engines for our projects. 
 (SDL, SFML, etc), graphics (OpenGL or DirectX, GLM, ASSIMP), serializer (JSON, XML, custom), and a few more depending on your game.
 If the team had an audio engineer, they also need to integrate FMOD. If the game had networking, either use an existing or build a networking
 library from TCP/IP. The physics engine has to be built by the team and we're not allowed to use third party libraries for that. The UI
-library can be custom made or use an third party library like Chrome. For scripting, the default is C++ "scripting" but we had the option
+library can be custom made or use an third party library like Chromium. For scripting, the default is C++ "scripting" but we had the option
 to integrate python or lua.
 
 Please see the attached README.pdf. This is the documentation I had submitted on my game engine architecture class. This is a solo developed
