@@ -1,0 +1,328 @@
+﻿1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
+        - vector, is an array of items. Size is not fixed. you can keep add items to the list.
+           Good for sequence of items with mostly random access operations. 
+        - array, fixed size list of item.
+           Size is known at compile time and avoiding the need for dynamic memory allocation, which saves computational cycles and reduces memory fragmentation
+           
+        - deque, double-ended queue, fast add and delete at the beginning and end of the list. 
+                It's used for something like FIFO (First in First out ) queue operations.
+                
+        - list, double linked list, each element has a link to previous element and to next element. 
+            It's fast to insert element anywhere in the list.
+                Good to be used implementing binary tree. 
+                
+        - foward_list,  single linked list, each element only keeps a link to the next element, only can insert after a specified position.
+            Good for implementing chaining in hashing.
+                
+2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
+        - Bubble Sort, simplest sorting algorithm repeatedly swapping the adjacent element if they are in wrong order.
+          It takes O(n^2) time in the worst case.
+          It's good for small size set of elements.
+        - Heapsort, present an array of elements as nearly complete binary tree. Build a max-heap from the array,
+          collect the root (max value ) of the tree of each iteration of building the heap.
+          Worst sorting time: O(nlgn)
+          Used for guaranteed sorting time.
+        - Quicksort, pick one pivot element, like last element in the array,
+                partition the array of element into 2 sub arrays, less than the pivot to the left, greater than the pivot to the right,
+                recursive run these procedure with the 2 sub arrays.
+          Worst sorting time O(n^2). Average sorting time : O(nlgn)
+          One of the fastest sort. Memory usage is more efficient comparing to Heapsort.
+          
+          
+3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
+   When a pointer to base class is used pointing to a derived class object, 
+   by using virtual destructor, deleting this base class pointer will delete derived class object.
+   If there is no virtual function in a class, virtual destructor does not help but increase overhead cost.
+   Cannot be used for class not be inherited.
+   
+4. Explain the keyword: static. What does it mean in each context?
+   - static class member function belongs to the class, not instance. It can be called by class without an instance.
+   - static class member variables: has separate storage from object instance, initialized only once and shared by all objects of this class.
+   - static variables in a function: it's storage is allocated for the lifetime of the program instead of the scope of the function.
+     It saves the value when first function is called and carried through to the next function call.
+   - static variable: exist for the lifetime. value is stored and can be access for next time access.
+   
+5. When are static member variables initialized? 
+       They are initialized before first constructer of the class object.
+       Primitive static variable is initialized at compile-time. 
+       Non-primitive static variable is initialized during the first pass through its definition.
+   
+6. What is the difference between R-Values and L-Values?
+        L-Value has a actual physical memory location
+        R-Value is used for the data value only, location or address of R-Value cannot be used.
+        
+7. Is this code safe? If so why? If not why?
+        std::string foo()
+        {
+                std::string something = “avalue”;
+                return something;
+        }
+        
+        Bonus: What would most compilers do with this code?
+        It’s save. Because it’s return by value.
+        Most compiler does not copy the string object to return, instead it moves the string “something” to return. Return object is exactly the same object “something” created in the function foo().
+
+
+8. Why would you use new rather than malloc when allocating an object? Likewise, what’s the difference between free and delete?
+
+
+ “new” calls constructor, “malloc” does not constructor.
+“new” is an operator, faster than “malloc”, which is a function.
+“new “ returns exact data type, “malloc” returns a general pointer void *
+“new” throws exception when it fails, “malloc” returns NULL when fails, need to manually check Not NULL.
+“New” size of object is calculated by compiler, “malloc” size is calculated manually. 
+
+
+9. Explain the purpose of std::move, and std::forward. 
+std::move is simply a cast to an rvalue. It took the representation of an object. Only safe use of an x after move(x) is destruction or as a target for an new assignment.
+Std::forward produces an rvalue from an rvalue or an lvalue, it’s safe to forward an augment from one function to another.
+ 
+10. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
+        Using std::lockguard<std::mutex> guard(mutexObject) to allow only one thread to access the shared resource at one time to prevent racing condition.
+    std::atomic<> can be applied to an integer value. std::atomic<> cannot be applied blindly to any user defined type.
+
+
+11. What are the some of the principles of object-oriented programming?
+     Encapsulation
+     Abstraction
+     Inheritance
+     Polymorphism
+
+
+
+
+12. Explain inheritance vs composition vs aggregation?
+      Inheritance: derived class “is a” base class. Like class Apple inherited from class Fruit.
+      Composition: child class is part of parent class. Like class AppleTree includes Class Apple, Root, Trunk
+     Aggregation:   child class can exist independently of the parent class. Like Aggregate class Fruit Plate has child class: Apple, Pear, ...etc.
+
+
+13. Should you always initialize variables? 
+        Yes.
+
+
+ 14. Write a program (or multiple) in a known programming language to do the following:
+        a. Query for installed windows patches. 
+        IUpdateSearcher* updateSearcher = NULL;
+        IUpdateSession* updateSession = NULL;
+        IUpdateCollection* updateList = NULL;
+        ISearchResult* results = NULL;
+        IUpdate* updateItem = NULL;
+        BSTR criteria = NULL;
+        LONG updateSize = 0;
+
+
+
+
+        HRESULT hr = CoInitialize(NULL);
+        int count = 0;
+        if(SUCCEEDED(hr))
+        {
+
+
+
+
+                if ((hr = CoCreateInstance(CLSID_UpdateSession, NULL, CLSCTX_INPROC_SERVER, IID_IUpdateSession, (LPVOID*)&updateSession)) != S_OK)
+                {
+                        return -1;
+                }
+                if ( (updateSession!= NULL) 
+                        && ((hr = updateSession->CreateUpdateSearcher(&updateSearcher)) != S_OK) )
+                {
+                        return -1;
+                }
+                if (( updateSearcher != NULL)
+                        && ((hr = updateSearcher->put_ServerSelection(ssWindowsUpdate)) != S_OK) )
+                {
+                        return -1;
+                }
+
+
+
+
+                criteria = SysAllocString(L"IsInstalled=1 or IsInstalled=0 or IsHidden=1 or IsPresent=1");
+                if ((hr = updateSearcher->Search(criteria, &results)) == S_OK)
+                {
+                        std::wcout << L"[*]Successfully completed search for updates on this host" << std::endl;
+                }
+                else
+                {
+                        std::wcout << L"[-]Failed to search for updates" << std::endl;
+                        return -1;
+                }
+
+
+                int i  = 0;
+                if ( results != NULL)
+                {
+                        results->get_Updates(&updateList);
+                }
+                if ( updateList != NULL)
+                {
+                        updateList->get_Count(&updateSize);
+                }
+                if (updateSize == 0)
+                {
+                        std::wcout << L"[-]No updates available for this host" << std::endl;
+                        CoUninitialize();
+                        return 0;
+                }
+
+
+                for (LONG i = 0; i < updateSize; i++)
+                {
+                        IStringCollection *KBCollection = NULL;
+                        LONG KBsSize = 0;
+                        updateList->get_Item(i, &updateItem);
+                        if ( updateItem != NULL)
+                        {
+                                updateItem->get_KBArticleIDs(&KBCollection);
+                        }
+                        if ( KBCollection != NULL)
+                        {
+                                KBCollection->get_Count(&KBsSize);
+                        }
+                        for (LONG i = 0; i < KBsSize; i++)
+                        {
+                                BSTR KBValue;
+                                if ( KBCollection != NULL)
+                                {
+                                        KBCollection->get_Item(i, &KBValue);
+                                }
+                                std::wcout << L"  KB" << KBValue << std::endl;
+                        }
+                }
+Output:
+[*]Successfully completed search for updates on this host
+  KB4577586
+  KB890830
+  KB5008876
+  KB4023057
+  KB5009543
+
+
+
+
+        b. Query for installed Linux Packages
+N/A
+        c. Query for installed Mac Packages
+N/A
+15. Write a program (or multiple) in a known programming language to do the following:
+        a. Query for windows system information. 
+
+
+        // System
+        // Hardware Information
+        SYSTEM_INFO siSysInfo;
+        GetSystemInfo(&siSysInfo); 
+        std::cout << "OEM ID: " << siSysInfo.dwOemId << std::endl;
+        std::cout << "Number of Processors: " << siSysInfo.dwNumberOfProcessors << std::endl;
+        std::cout << "Page Size: "<< siSysInfo.dwPageSize << std::endl;
+        std::cout << "Processor type: "<< siSysInfo.dwProcessorType << std::endl;
+        std::cout << "Minimum Application Addresss: "<< siSysInfo.lpMinimumApplicationAddress << std::endl;
+        std::cout << "Maximum applicaiton address: "<< siSysInfo.lpMaximumApplicationAddress << std::endl;
+        std::cout << "Active processor mask: "<< siSysInfo.dwActiveProcessorMask << std::endl;
+
+
+
+
+        // Version
+            DWORD dwVersion = 0; 
+    DWORD dwMajorVersion = 0;
+    DWORD dwMinorVersion = 0; 
+    DWORD dwBuild = 0;
+
+
+        dwVersion = GetVersion();
+ 
+    // Get the Windows version.
+
+
+    dwMajorVersion = (DWORD)(LOBYTE(LOWORD(dwVersion)));
+    dwMinorVersion = (DWORD)(HIBYTE(LOWORD(dwVersion)));
+
+
+    // Get the build number.
+
+
+    if (dwVersion < 0x80000000)              
+        dwBuild = (DWORD)(HIWORD(dwVersion));
+
+
+        std::cout << "Windows Version: "<< dwMajorVersion << "." << dwMinorVersion << "Build:  " << dwBuild << std::endl;
+
+
+        // Computer Name
+        
+    wchar_t buffer[256];
+    DWORD size = sizeof(buffer);
+    if (GetComputerName(buffer, &size))
+    {
+        std::wcout << "Computer Name: " << buffer << std::endl;
+    }
+
+
+
+
+Output:
+OEM ID: 0
+Number of Processors: 8
+Page Size: 4096
+Processor type: 586
+Minimum Application Addresss: 00010000
+Maximum applicaiton address: 7FFEFFFF
+Active processor mask: 255
+Windows Version: 6.2Build:  9200
+Computer Name: HUANGWE1
+________________
+
+
+
+
+        b. Query for Linux system information
+N/A
+        c. Query Mac system information
+N/A
+
+
+16. What concept(s) in C++ would you use to manage resources automatically?
+RAII (Resource Acquisition Is Initialization)
+        a. How important are these concepts?
+         When a resource-owning stack object goes out of scope , its destructor is automatically invoked. A resource is always released at a known point in the program to prevent a leak (failure to release an unused resource).
+
+
+        b. What tools are you familiar with for tracking resource allocations? 
+        Resource Monitor on WIndow Server
+
+
+17. What security concerns have you come across in the past and how have you addressed them?
+Database access. Serval Windows application services read database server, database name, username and password from a configuration .ini file. There was no protection on username and password.
+We used an encryption tool to hash the username and password and save to the configuration .ini file.
+Application services read the encrypted username and password, decrypt them,  and are able to use  the decrypted username and password to access the database.
+
+
+18. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
+Procmon, Postman, Fiddler, Wireshark, 
+
+
+19. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance. 
+  PC-Lint, DiffMerge
+
+
+20. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
+        a. Consider both a long term and short-term solutions.
+1. Fully understand functional logic (build sequence diagram, or similar)
+2. Able to run debug mode to go through the code and watch output.
+3. Find the location to make as minimum change as possible
+4. Put comments at the change point
+ 
+21. What concerns do you had supporting legacy operating systems? (If any)
+No.
+
+
+22. Tell us about a project your worked on that you found to be interesting or unusual.
+We upgraded an old C++ project from VC++ 6.0 to Visual Studio 2010 and to Visual Studio 2017.
+During the run time we noticed a SQL query failed. Checking the code found a char array with size of 250 is defined. Actual query with size 300 is printfed to the char array.
+There is no error with binary from old IDE builder VC++ 6.0.
+With new IDE Visual Studio 2017, we found in the result char array of printf, a ‘0’ is set at location [255]. 
+Looks like memory assignment is aligned to 8 bytes and end of array ‘0’ is added in new build to prevent memory leak.
