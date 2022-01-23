@@ -43,6 +43,7 @@ OBJ_STR objStr;
 template <typename T, typename U>
 T checkIfPositive(const U& u, const int& param1, const int& param2, int param3 = 0, int* pTotal = 0)
 {
+	// check null point
 	if (pTotal != 0)
 	{	
 		*pTotal = param1 + param2 + param3;
