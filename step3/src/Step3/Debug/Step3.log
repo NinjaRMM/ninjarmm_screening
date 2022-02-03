@@ -1,0 +1,80 @@
+﻿  Step3.cpp
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(29,5): error C2065: 'HRESULT': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(29,13): error C2146: syntax error: missing ';' before identifier 'hr'
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(29,13): error C2065: 'hr': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(29,18): error C2065: 'S_OK': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(30,5): error C2065: 'IWscProduct': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(30,18): error C2065: 'PtrProduct': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(31,5): error C2065: 'IWSCProductList': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(31,22): error C2065: 'PtrProductList': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(32,5): error C2065: 'BSTR': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(32,10): error C2146: syntax error: missing ';' before identifier 'PtrVal'
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(32,10): error C2065: 'PtrVal': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(33,5): error C2065: 'LONG': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(33,10): error C2146: syntax error: missing ';' before identifier 'ProductCount'
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(33,10): error C2065: 'ProductCount': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(34,5): error C2065: 'WSC_SECURITY_PRODUCT_STATE': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(34,32): error C2146: syntax error: missing ';' before identifier 'ProductState'
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(34,32): error C2065: 'ProductState': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(35,5): error C2065: 'WSC_SECURITY_SIGNATURE_STATUS': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(35,35): error C2146: syntax error: missing ';' before identifier 'ProductStatus'
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(35,35): error C2065: 'ProductStatus': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(40,5): error C2065: 'hr': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(40,36): error C2065: 'WSCProductList': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(40,59): error C2065: 'CLSCTX_INPROC_SERVER': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(40,90): error C2065: 'IWSCProductList': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(40,125): error C2061: syntax error: identifier 'LPVOID'
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(41,16): error C2065: 'hr': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(41,9): error C3861: 'FAILED': identifier not found
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(47,5): error C2065: 'hr': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(47,10): error C2065: 'PtrProductList': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(47,37): error C2065: 'WSC_SECURITY_PROVIDER_ANTIVIRUS': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(48,16): error C2065: 'hr': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(48,9): error C3861: 'FAILED': identifier not found
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(54,5): error C2065: 'hr': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(54,10): error C2065: 'PtrProductList': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(54,37): error C2065: 'ProductCount': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(55,16): error C2065: 'hr': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(55,9): error C3861: 'FAILED': identifier not found
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(61,30): error C2065: 'ProductCount': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(63,9): error C2065: 'hr': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(63,14): error C2065: 'PtrProductList': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(63,43): error C2065: 'PtrProduct': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(64,20): error C2065: 'hr': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(64,13): error C3861: 'FAILED': identifier not found
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(70,9): error C2065: 'hr': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(70,14): error C2065: 'PtrProduct': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(70,43): error C2065: 'PtrVal': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(71,20): error C2065: 'hr': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(71,13): error C3861: 'FAILED': identifier not found
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(73,13): error C2065: 'PtrProduct': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(78,36): error C2065: 'PtrVal': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(78,57): error C2065: 'PtrVal': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(78,44): error C3861: 'SysStringLen': identifier not found
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(80,9): error C2065: 'hr': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(80,14): error C2065: 'PtrProduct': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(80,44): error C2065: 'ProductState': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(81,20): error C2065: 'hr': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(81,13): error C3861: 'FAILED': identifier not found
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(87,13): error C2065: 'ProductState': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(87,29): error C2065: 'WSC_SECURITY_PRODUCT_STATE_ON': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(91,18): error C2065: 'ProductState': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(91,34): error C2065: 'WSC_SECURITY_PRODUCT_STATE_OFF': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(100,9): error C2065: 'hr': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(100,14): error C2065: 'PtrProduct': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(100,47): error C2065: 'ProductStatus': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(101,20): error C2065: 'hr': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(101,13): error C3861: 'FAILED': identifier not found
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(107,28): error C2065: 'ProductStatus': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(107,45): error C2065: 'WSC_SECURITY_PRODUCT_UP_TO_DATE': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(109,9): error C2065: 'hr': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(109,14): error C2065: 'PtrProduct': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(109,53): error C2065: 'PtrVal': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(110,20): error C2065: 'hr': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(110,13): error C3861: 'FAILED': identifier not found
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(115,34): error C2065: 'PtrVal': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(115,55): error C2065: 'PtrVal': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(115,42): error C3861: 'SysStringLen': identifier not found
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(116,23): error C2065: 'PtrVal': undeclared identifier
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(116,9): error C3861: 'SysFreeString': identifier not found
+C:\Users\Joseph Urso\Documents\Important documents\Ninja Code\ninjarmm_screening-develop\step3\src\Step3\Step3.cpp(126,9): error C2065: 'PtrProduct': undeclared identifier

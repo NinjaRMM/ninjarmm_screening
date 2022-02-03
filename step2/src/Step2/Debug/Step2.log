@@ -1,0 +1,4 @@
+﻿  Step2.cpp
+C:\Users\Joseph Urso\Documents\GitHub\ninjarmm_screening\step2\src\Step2\Step2.cpp(36,23): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Joseph Urso\Documents\GitHub\ninjarmm_screening\step2\src\Step2\Step2.cpp(151,23): warning C4018: '<': signed/unsigned mismatch
+  Step2.vcxproj -> C:\Users\Joseph Urso\Documents\GitHub\ninjarmm_screening\step2\src\Step2\Debug\Step2.exe

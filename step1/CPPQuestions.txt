@@ -1,9 +1,35 @@
 1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
+	- Array - A list that contains a set number of elements. Proper use case would be a static list of options to choose from that don't often change.
+	- Vector - A list that can be dynamically resized. Proper use case would be a dynamic list of values that undergo frequent insertion or deletion of elements. 
+	- Deque - A queue list that allows for inserting and deleting from both ends. Proper use case would be the simulation of a real-world 'line,' where individuals can re-enter the queue from the front after purchase or leave the queue early from the rear.
+	- Forward_List - A list that only keeps track of the first element and cannot be iterated backwards as well as directly access individual elements. Proper use case would be when it can be used in place of other containers to save memory space (such as list). 
+	- List - A doubly-linked list that allows for quick inserting, deleting and moving of elements, primary drawbacks being memory usage and requirement to iterate from a known index. Proper use case would be for sorting algorithms and frequent extracting of data.
+	- Set - A list of unique values that is parsed by the value itself. Proper use case would be storing keys that are not seperate to the value within the set.
+	- Map - A container that stores elements associated with key and mapped values, in which no two mapped values can have the same key. A proper use case would be building an index wherein the unique key can be quickly parsed.
+	- Multiset - Similar to a 'set', yet can have several elements with the same value. A proper use case would be the need to contain duplicate values and not have the need to parse unique key values. 
+	- Multimap - Similar to a 'map', yet can have multiple elements with the same key values. Proper use case would be a program that stores people who live in a particular zip code. 
+	- Unordered_set - A container that performs randmozied insertion of keys via hash table. Proper use case would be for a container that requires either no traversal in elements or if ordering is not required for the data being stored.
+	- Unordered_map - A container that stores elements using key and mapped values via hash table. Proper use case would be a lookup retrieval tool that doesn't require the values to be ordered.
+	- Unordered_multiset - Similar to unordered_set, but can contain duplicates of the same value. Proper use case would be for a container that requires duplicate values but needs no traversal in elements or if ordering is not needed.
+	- Unordered_multimap - Similar to unordered_map, but can contain multiple elements with the same key values. Proper use case would be a program that requires duplicate entries yet stores keys seperate to the entered values.
+	- Stack - An adapter container that utilizes 'last in first out' functionality, generally utilizes push and pop. Proper use case would be a program that stores virtual coins on top of eachother. The first coin to be used and 'removed' from the stack was the last one added.
+	- Queue - An adapter container that utlizes 'first in first out' functionality. Proper use case would be a machine that monitors items passing through a conveyor belt. The first value to pass through the belt is also the first to leave. 
+	- Priority_queue - A container adapter that designates the first element of the queue as the 'greatest' of every existing element. Proper use case would be storing and comparing ages, with the oldest being the 'top priority' of the container.
 2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
+	- Selection Sort - A sorting method that finds either the maximum or minimum element repeatedly and puts it at the beginning of the set. Proper use case would be a list of ages that need to be sorted from youngest to oldest.
+	- Bubble Sort - A sorting method that consistently swaps the position of two adjacent elements until the entire set is sorted properly. Proper use case would be for a list of unordered numbers that need to be sorted in a particular order. Selection sort is known to perform better.
+	- Insertion Sort - A sorting method that creates a 'sorted' and 'unsorted' list as it individually goes through the each element and places it in the correct position according to sorting requirements. Proper use case would be a puzzle that sorts pieces by inserting them into the correct location.
+	- Gnome Sort - A sorting method that compares values from 'left' and 'right', moving one step backwards when a swap is made and ending when no element exists to the right. Ideally used on smaller arrays due to the time it can take to sort larger sets.
 3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
+	- The purpose of virtual destructors is to mitigate undefined behaivor when working with instances of a derived class. 
 4. Explain the keyword: static. What does it mean in each context?
+	- Static Variables - Variables declared as static gets allocated space for the entire run time of the program. 
+	- Static Class Objects - Class objects declared as static similarly retain their allocated space for the duration of the program. 
+	- Static Functions - Functions declared as static can only access other static variables of its class. 
 5. When are static member variables initialized? 
+	- Static member variables are initialized prior to program or function execution.
 6. What is the difference between R-Values and L-Values?
+	- L-Value is a memory location that idenfities an object and can appear on both the left or right hand side of the operator. R-Values refer to data values currently stored with a memory address. Additionally, R-Value can only appear on the right hand side of operator.
 7. Is this code safe? If so why? If not why?
 	std::string foo()
 	{
@@ -12,27 +38,65 @@
 	}
 	
 	Bonus: What would most compilers do with this code?
+	- The code is safe in that it works and runs, 'something' will successfully return "avalue". The compiler will assign the string value to address of 'something,' and that data will be returned on the next call. 
 8. Why would you use new rather than malloc when allocating an object? Likewise, what’s the difference between free and delete?
+	- Malloc vs. New - Using new to allocate an object ensures that a constructor is set, making it a safer method.
+	- Free and Delete - Delete should be used alongside new and free should be used alongside malloc. 
 9. Explain the purpose of std::move, and std::forward. 
+	- std::move - The purpose is to allow an object to be moved from, freeing up resources for another object.
+	- std::forward - Purpose is to allow for forwarding of the argument as an rvalue or lvalue.
 10. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
+	- One could use the std::mutex syntax to prevent multiple threads from accessing the data. Additionally, the resource could be shared using pointers that take the integer 'by reference.'
 11. What are the some of the principles of object-oriented programming?
+	- Abstraction, inhertiance, encapsulation, polymorphism.
 12. Explain inheritance vs composition vs aggregation?
+	- Inhertiance - An object or class based on another object or class.
+	- Composition - A class that references one or more objects of other classes. 
+	- Aggregation - Object that contains other objects, usually based on data involved to create a more complex object.
 13. Should you always initialize variables? 
+	- I believe they should be initialized, as unintialized can cause some unwanted behaviors by the compiler. 
 14. Write a program (or multiple) in a known programming language to do the following:
 	a. Query for installed windows patches. 
+	- The following reference should be used: https://docs.microsoft.com/en-us/previous-versions/windows/desktop/ms744624(v=vs.85)
+	- Visual Basic:
+		Set updateSession = CreateObject("Microsoft.Update.Session")
+		updateSession.ClientApplicationID = "MSDN Sample Script"
+		Set updateSearcher = updateSession.CreateUpdateSearcher()
+		WScript.Echo "Searching for updates..." & vbCRLF
+
+		Set searchResult = _
+		updateSearcher.Search("IsInstalled=0 and Type='Software' and IsHidden=0")
 	b. Query for installed Linux Packages
 	c. Query for installed Mac Packages
 15. Write a program (or multiple) in a known programming language to do the following:
 	a. Query for windows system information. 
+	- Using https://docs.microsoft.com/en-us/windows/win32/cimwin32prov/computer-system-hardware-classes as a reference for classes, the following can be queried:
+	- C++ :
+		systemInformation("Win32_Processor", "Name");
+		systemInformation("Win32_VideoController", "Name");
+		systemInformation("Win32_BaseBoard", "Name");
+
+		Console::Read();
 	b. Query for Linux system information
 	c. Query Mac system information
 16. What concept(s) in C++ would you use to manage resources automatically?
-	a. How important are these concepts? 	
+	a. How important are these concepts? 
+		- Concepts such as proper deallocation, initialization, and declaration are incredibly important, especially as the product continues to grow. Leaks or otherwise overlooked issues can lead to much larger ones down the line.
 	b. What tools are you familiar with for tracking resource allocations? 
+		- Resource Govenor (SQL Server), beyond that I am not aware of any specific tools outside of what is generally provided alongside IDEs during testing. 
 17. What security concerns have you come across in the past and how have you addressed them?
+	- I have largely addressed attacks such as SQL injections during projects and resorted to coding standard resources to address any existing or potential vulnerabilities. Documenting priority and severity levels, as well as implementing fixes.
 18. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
+	- I like to follow the general plan of the SDLC, generally starting with a brief planning and diagramming session to make initial development that much smoother. 
+	- For actual tools, I've utilized the following the most: Postman, Robo 3T, and Docker. 
 19. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
+	- I like to ensure comments are well descriptive and well placed, use relevant descriptors for code, and look at the standards of others to ensure I'm well within best practices.
 20. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
 	a. Consider both a long term and short-term solutions. 
+	- I would first analyze the code and references being made, doing my best to understand how the pieces function and speak to one another. In the long term I would document the changes made as well as my general understanding
+	of the code, so that maintenance could be further built upon that by others. 
 21. What concerns do you had supporting legacy operating systems? (If any)
+	- Largest concerns surrounding legacy software would be security risks, inefficient code, and performance. 
 22. Tell us about a project your worked on that you found to be interesting or unusual.
+	- I would say one of the most interesting projects was getting user input to trigger LED lights on a microchip board using Embedded C. By typing in 'ON,' or 'OFF,' the board would dynamically switch its lights on or off. 
+	This project additionally featured buttons on the board that altered light patterns, and timer callback functions that orchestrated resets for user input. 
