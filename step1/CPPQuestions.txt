@@ -60,7 +60,7 @@
 
     std::move is used to provide an rvalue (xvalue, specifically) reference from an lvalue or an rvalue reference. This is so that the reference can be used for move semantics as opposed to copy semantics.
 
-	std::forward is used to return the original value category (rvalue or lvalue reference) of a passed argument. This allows for forwarding an lvalue argument as an lvalue and an rvalue argument as an rvalue (within a function the paramater is named, and is treated as an lvalue normally). This can help automatically separate which constructor is called for an object.
+	std::forward is used to return the original value category (rvalue or lvalue reference) of a passed argument. This allows for forwarding a lvalue argument as a lvalue and a rvalue argument as a rvalue (within a function the parameter is named, and is treated as a lvalue normally). This can help automatically separate which constructor is called for an object.
 
 10. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
 
@@ -68,7 +68,7 @@
 
 11. What are the some of the principles of object-oriented programming?
     
-	Abstraction: Hide the details and specifics of implementation. Only expose the high level interactions of objects for interaction.
+	Abstraction: Hide the details and specifics of implementation. Only expose the high-level interactions of objects for interaction.
 
     Encapsulation: Maintain the privacy of the state of an object to itself within the class. Control the internal state of an object inside of the class by making certain data and functions private and controlling how the data or functions can be accessed and used by public class methods. This means having the object maintain its own state.
 
@@ -82,11 +82,11 @@
 
 	Composition occurs where a class controls another class within itself. The part class is solely managed by the containing class, meaning its lifespan is controlled by the containing class. It also does not, itself, know about the containing class.
 
-	Aggregation is just like composition, except with some slight differences. The part class is not required to solely belong to the containing class (it could belong to many). The part class also is not dependent on the parent objet to exist (its existence is not managed by the containing class).
+	Aggregation is just like composition, except with some slight differences. The part class is not required to solely belong to the containing class (it could belong to many). The part class also is not dependent on the parent object to exist (its existence is not managed by the containing class).
 
 13. Should you always initialize variables?
 
-    Absolutely. This is always a good idea. It is more useful and efficent than assigning data to it later. Also, it is possible that someone forgets to initialize a variable before using it. That could cause undefined behavior which could be problematic to troubleshoot later.
+    Absolutely. This is always a good idea. It is more useful and efficient than assigning data to it later. Also, it is possible that someone forgets to initialize a variable before using it. That could cause undefined behavior which could be problematic to troubleshoot later.
 
 14. Write a program (or multiple) in a known programming language to do the following:
 	a. Query for installed windows patches. 
@@ -150,13 +150,13 @@ int main()
 
 19. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
 
-    Inserting comments into the code to explain processes is extremely helpful. The use of recognizeable and meaningful variables and constants are also helpful. Without any context, hardcoded numbers are tedious to manage if things ever change, so I find it helpful to use common defined enumerations or constants instead. Automated unit testing is also a huge boon to maintaining code.
+    Inserting comments into the code to explain processes is extremely helpful. The use of recognizable and meaningful variables and constants are also helpful. Without any context, hardcoded numbers are tedious to manage if things ever change, so I find it helpful to use common defined enumerations or constants instead. Automated unit testing is also a huge boon to maintaining code.
 
 20. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
 	a. Consider both a long term and short-term solutions. 
 
     I would first try to determine the original purpose of the code, making notes in a document so someone else does not have to go through as much of a process, hopefully.
-	I would consider if there was any steps that could be taken to bring the code to a more modern desing in line with the rest of the system. This could be done incrementally over time, so I would just lay out some steps that could lead that direction. I come up with and document every impact to the current system that the change would effect. I would try to design the change to fit within existing design and patterns that are being used while possibly making it easier to shift the code to a less legacy design. I believe designing a test suite for the change at the least and as much of the legacy code as I could. Then I would code the test suite in conjunction with the change.
+	I would consider if there were any steps that could be taken to bring the code to a more modern design in line with the rest of the system. This could be done incrementally over time, so I would just lay out some steps that could lead that direction. I come up with and document every impact to the current system that the change would affect. I would try to design the change to fit within existing design and patterns that are being used while possibly making it easier to shift the code to a less legacy design. I believe designing a test suite for the change at the least and as much of the legacy code as I could. Then I would code the test suite in conjunction with the change.
 
 21. What concerns do you had supporting legacy operating systems? (If any)
 
@@ -166,7 +166,7 @@ int main()
 
     One project that I was working on involved redesigning one portion of the system. The process that ran to simulate a particular entity within our simulation was requested to be changed due to numerous problems. The original design had a process for the entity running on every platform. In the simulation, while platforms were networked together, each platform would publish a separate representation of the entity to the network at the same location. The problem here was that the data between all of them was not synched well. While the simulation was running the multiple overlapping entities at the location would shift around in different ways, making any interactions with the entity very difficult. The customer ended up not using it most of the time. The change was to fix this issue to make the entity more useable as well as to add the capability to have the entity moving and performing other functions. I had to work with our host system engineer to come up with a good design to tackle this issue.
 
-	The platform host and IOS were both heavily tied to the operation of this entity. So I began by trying to separate the functionality from the host as much as possible. I had to insert new capability into the IOS dialogs and control pages as well. In the end, I was able to change the design to a single process that runs on one platform alone and shares the entity data with the other platforms at a consistent rate, so that every platform had the same representation of the entity. I added in functions for the entity to track its own state rather than the host platform performing that.
+	The platform host and IOS were both heavily tied to the operation of this entity. So, I began by trying to separate the functionality from the host as much as possible. I had to insert new capability into the IOS dialogs and control pages as well. In the end, I was able to change the design to a single process that runs on one platform alone and shares the entity data with the other platforms at a consistent rate, so that every platform had the same representation of the entity. I added in functions for the entity to track its own state rather than the host platform performing that.
 
 	I was able to learn about and incorporate the use of shared pointers to manage parts of the logic. Both during, and afterwards, I talked over possible issues and worked out complicated portions with the host engineer.
 	
