@@ -1,40 +1,44 @@
 /*
 
 NINJARMM Code Review
- 
-Please review the below code. 
-We do not expect you to execute this code, but you are welcome to try. 
 
-Make any code updates that you see fit (If any). 
+Please review the below code.
+We do not expect you to execute this code, but you are welcome to try.
+
+Make any code updates that you see fit (If any).
 Comments are encouraged.
 
 */
-
+#include <iostream>
+#include <string>
+#include <map>
+#include <oleauto.h>
+#include <iwscapi.h>
 
 struct ThirdPartyAVSoftware
 {
-    std::wstring Name;
-    std::wstring Description;
-    std::wstring DefinitionUpdateTime;
+    std::string Name;
+    std::string Description;
+    std::string DefinitionUpdateTime;
     std::string DefinitionStatus;
-    std::wstring Version;
-    std::wstring ProductState;
+    std::string Version;
+    std::string ProductState;
 };
 
-bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftware>& thirdPartyAVSoftwareMap)
+bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftware> &thirdPartyAVSoftwareMap)
 {
     HRESULT hr = S_OK;
-    IWscProduct* PtrProduct = nullptr;
-    IWSCProductList* PtrProductList = nullptr;
+    IWscProduct *PtrProduct = nullptr;
+    IWSCProductList *PtrProductList = nullptr;
     BSTR PtrVal = nullptr;
     LONG ProductCount = 0;
     WSC_SECURITY_PRODUCT_STATE ProductState;
     WSC_SECURITY_SIGNATURE_STATUS ProductStatus;
 
-    std::wstring displayName, versionNumber, state, timestamp;
+    std::string displayName, versionNumber, state, timestamp;
     std::string definitionState;
 
-    hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&PtrProductList));
+    hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID *>(&PtrProductList));
     if (FAILED(hr))
     {
         std::cout << "Failed to create WSCProductList object. ";
@@ -55,6 +59,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         return false;
     }
 
+    // process through the received product list
     for (uint32_t i = 0; i < ProductCount; i++)
     {
         hr = PtrProductList->get_Item(i, &PtrProduct);
@@ -72,11 +77,12 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
             continue;
         }
 
-        displayName = std::wstring(PtrVal, SysStringLen(PtrVal));
+        displayName = std::string(PtrVal, SysStringLen(PtrVal));
 
         hr = PtrProduct->get_ProductState(&ProductState);
         if (FAILED(hr))
         {
+            PtrProduct->Release();
             std::cout << "Failed to query AV product state.";
             continue;
         }
@@ -97,7 +103,8 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         hr = PtrProduct->get_SignatureStatus(&ProductStatus);
         if (FAILED(hr))
         {
-            std::cout << "Failed to query AV product definition state.";
+            PtrProduct->Release();
+            std::cout << "Failed to query AV product signature status.";
             continue;
         }
 
@@ -106,20 +113,24 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         hr = PtrProduct->get_ProductStateTimestamp(&PtrVal);
         if (FAILED(hr))
         {
-            std::cout << "Failed to query AV product definition state.";
+            PtrProduct->Release();
+            std::cout << "Failed to query AV product state timestamp.";
             continue;
         }
-        timestamp = std::wstring(PtrVal, SysStringLen(PtrVal));
+        timestamp = std::string(PtrVal, SysStringLen(PtrVal));
         SysFreeString(PtrVal);
 
+        // Software data successfully gathered. Structure it for storage.
         ThirdPartyAVSoftware thirdPartyAVSoftware;
         thirdPartyAVSoftware.Name = displayName;
         thirdPartyAVSoftware.DefinitionStatus = definitionState;
         thirdPartyAVSoftware.DefinitionUpdateTime = timestamp;
         thirdPartyAVSoftware.Description = state;
         thirdPartyAVSoftware.ProductState = state;
+        // Insert into the results map
         thirdPartyAVSoftwareMap[thirdPartyAVSoftware.Name] = thirdPartyAVSoftware;
 
+        // Memory cleanup
         PtrProduct->Release();
     }
 
