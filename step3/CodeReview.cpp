@@ -157,12 +157,3 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
 
     return !thirdPartyAVSoftwareMap.empty(); // FEEDBACK it's much more concise to return the inverted empty() state of the map. It gets rid of an uncessesary branch too.
 }
-
-//temp just added so I could compile this as part of a VS project.
-
-int main()
-{
-  std::map<std::wstring, ThirdPartyAVSoftware> myMap;
-  queryWindowsForAVSoftwareDataWSC(myMap);
-  return 0;
-}
