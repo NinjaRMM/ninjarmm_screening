@@ -1,38 +1,328 @@
 1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
+
+	- Sequence Containers
+
+		- Sequence containers are containers that hold elements in a sequence. These containers make up the 'standard' set of containers. Sequence containers are useful whenever a general collection of elements is needed.
+
+	- Sequence Container Adapters
+
+		- Sequence container adapters are not full containers on their own but wrap a sequence container. They exist to limit access to the underlying container in order to provide guarantees to serve the purposes of the adapter. Sequence container adapters are great when prioritizing elements in order to process items in a particular order.
+
+	- Associative Containers
+
+		- Associative Containers are aimed at providing fast lookup times using keys. They are useful for keeping performance good when dealing with larger data sets that will be searched often. Associative containers can have a defined order defined using a predicate.
+
+	- Unordered Associative Containers
+		- Unordered Associative Containers are aimed at providing fast lookup times, just like associative containers. They differ in that they are unordered, and searching, inserting, and removing operations should have roughly constant runtime. Usually utilizes hashing.
+
 2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
+
+Insertion Sort
+	- Sorts elements as they are inserted into a container.
+	- Ideal for data that is nearly sorted, as it becomes inefficient quickly the less sorted the data is
+	- Works in place as the container is populated. There's no need for auxiliary storage
+	- Inefficient for large sets of data
+	
+	Insertion sort is ideal when your data is already sorted and you don't have massive data sets.
+	
+Merge Sort
+	- Sorts elements using a 'divide and conquer' strategy, partitioning the resulting halfs of the dataset recursively until there are only two elements, comparing and merging partitions until the set is fully reunited.
+	- Quicker for large data sets as it doesn't directly traverse the set multiple times like an insertion sort would
+	- Slower for smaller data sets
+	- Wasteful if a data set it already sorted because it will perform the same number of operations regardless
+	- Requires additional auxiliary storage to hold the partitions of the original data set
+	
+	Merge sort could be ideal when working with large data sets that aren't relatively sorted already.
+	
+Quick Sort
+	- Sorts elements using a 'divide and conquer' strategy, selecting a pivot point and then swapping values to the left and right of the pivot point based on how they compare to the pivot point. After arranging the values so values less than the pivot point are before the pivot, and elements larger are after, each side of the pivot point is given the same treatment until there are no more elements to subdivide.
+	- Faster than insertion sort and still in-place, so it doesn't need auxiliary storage for its partitioning steps.
+	- Operates faster the closer the pivot point is to the median value
+	
+	Quick sort could be idea when working with large data sets where memory could be a constraint.
+	
 3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
+
+	Virtual destructors exist to ensure the proper cleanup of derived classes when an object is deleted using a pointer of the superclasses type. An example:
+	
+	```
+	class A
+	{
+		int* aMember;
+		
+		A()
+		: aMember(new int(4));
+		{
+		}
+		
+		virtual ~A()
+		{
+			delete aMember;
+		}
+		
+	}
+	
+	class B : public A
+	{
+		B()
+		: bMember(new int(5));
+		{
+		}
+		
+		~A()
+		{
+			delete bMember;
+		}
+	}
+	
+	int main()
+	{
+		// reserve space in memory for a B object including the memory for members for both A and B. Capture resulting ptr as superclass ptr.
+		A* a = new B();
+		
+		// if destructor of A is marked virtual, B's destructor will be invoked as well as A's despite our handle being a handle to an 'A' object. 
+		// if not, the memory reserved by the member of B will be leaked.
+		delete a;
+		
+		return 0;
+	}
+	```
+
 4. Explain the keyword: static. What does it mean in each context?
+
+	In general, the static keyword defines a variable, object, or function as residing in the same place in memory for the lifetime of the program. Static elements are initialized before the program starts -- before main() is entered, aside from cases where additional translation units may be loaded post-program-start. Static elements in other units will have their initialization deferred to when the unit is loaded.
+
+	static objects - The object declared static will be initialized once before the application is started, and will persist in memory in the same location for the lifetime of the program.
+
+	static member variables - The member variable declared static will be instantiated once for that type -- all instances of that type will share the same static variable instance. The static member will persist for the lifetime of the program.
+	
+	static local variables - The local variable declared static will be shared between all instances of the function it is defined in. It will be instantiated once before the program starts and will persist for the lifetime of the program.
+	
+	static functions - Static functions are independent of any particular object instance and are instead shared by all objects that possess that static function. Static functions can be invoked without having to instantiate an instance of the class they are defined on. Static functions cannot access variables defined as members of the class they are defined on, except for static members. 
+	
+
 5. When are static member variables initialized? 
+
+	Static elements are initialized before the program starts -- before main() is entered, aside from cases where additional translation units may be loaded post-program-start. Static elements in other units will have their initialization deferred to when the unit is loaded. Static members within a translation unit are guaranteed to be initialized in order of definition (not declaration).
+
 6. What is the difference between R-Values and L-Values?
+
+	L-Values can be thought of as 'containers' that can hold R-Values. R-Values can be thought of as the 'actual' value that would be held in an L-Value container.
+	L-Values exist in memory and typically have a longer lifetime than R-Values. R-Values exist for a brief instant and are either used or stored in an L-Value 
+	before the machine moves on to the next instruction.
+
 7. Is this code safe? If so why? If not why?
+
 	std::string foo()
 	{
 		std::string something = “avalue”;
 		return something;
 	}
-	
 	Bonus: What would most compilers do with this code?
+	
+	This code will execute safely. At the surface, it makes a copy of the local variable to be returned to the calling function.
+	In practice, most compilers will optimise a basic assignment statement like `std::string something = "avalue";` to be something more similar to `std::string something("avalue")
+	to avoid the extra assignment operation after the objects constructor is called the first time. 
+	
+	A further optimization that most compilers will often take is to restructure the body of this function to be a single statement: `return std::string("avalue");`.
+	This change means that we don't need to instantiate a string object only to immediately follow the instantiation with copying the object for our return operation.
+	
+	Even further optimization is often performed in simple cases like this, however. Assuming we have a basic call to our function that simply captures the result in a variable:
+	
+	```
+	int main()
+	{
+		std::string fooResult = foo();
+	}
+	```
+
+	most compilers will restructure our entire function definition for foo() and it's invocation to have it pass-by-pointer and 
+	placement-new the object into the memory location of the calling functions variable:
+	
+	```
+	void foo(void* pWrite)
+	{
+		new(pWrite) std::string("avalue");
+	}
+	```
+	
+	and:
+	
+	```
+	int main()
+	{
+		std::string fooResult;
+		foo(&fooResult);
+	}
+	```
+	
 8. Why would you use new rather than malloc when allocating an object? Likewise, what’s the difference between free and delete?
+
+	malloc is a dynamic request for memory. It attempts to reserve the requested amount of memory and returns a pointer to the first byte in the reserved memory.
+	new invokes the constructor of an object after internally using malloc to dynamically reserve memory for the object it wishes to construct.
+	
+	free dynamically frees the memory reserved by malloc directly without taking any other action.
+	delete invokes the deconstructor of the object to be deleted before delegating to free to actually free the memory.
+	
+	You would use new and delete when working with objects whos constructors and destructors you wished to use. 
+	You would use malloc and free for raw memory management without invoking constructors and destructors.
+	Use cases for new and delete are common in C++ -- working with objects on the heap is common.
+	One example of using malloc over new could be using malloc to reserve memory to move an existing object into, rather than fully constructing an object there only to overwrite it.
+
 9. Explain the purpose of std::move, and std::forward. 
+
+	std::move is used to indicate that an object may be moved from, allowing for efficient relocation of resources from one element to another. A move constructor commonly utilizes std::move to 'take over' the resources of the element it is being moved from. std::move produces an xvalue, which is a subset of an rvalue that represents a temporary object.
+	
+	std::forward is used to perform 'true' forwarding of r-values when the intention would be for the recieving element to take ownership of an element, without the need to perform an unecessary copy operation. This is especially relevant when forwarding larger objects.
+
 10. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
+
+	For trivially copyable types, declaring them atomic will ensure that read and write operations fully isolate the object so it cannot be read from and written to simultaneously.
+	
+	For more complicated uses, the use of mutexes and locks can be implemented to provide exclusive access to critical portions of code that would otherwise not be thread safe. 
+
 11. What are the some of the principles of object-oriented programming?
+	
+	Encapsulation
+	
+	Abstraction
+	
+	Inheritance
+	
+	Polymorphism
+	
+	Single Responsibility Principle
+	
+	Open-Closed Principle
+	
+	Liskov Substitution Principle
+	
+	Interface Segragation Principle
+	
+	Dependency Inversion Principle
+	
 12. Explain inheritance vs composition vs aggregation?
+
+	Inheritance, Composition, and Aggregation are all patterns that relate two or more classes to each other. The difference between each of them lies in how the classes relate to one another.
+
+	Inheritance:
+		With inheritance, an object extends or modifies the capabilities of another object by 'inheriting' the parent objects characteristics, and then modifying existing characteristics (by overriding functions, for instance) or adding new ones via new members and functions. An instance of the derived class can be substituted anywhere the subclass would be accepted as well as anywhere the superclass would be accepted. Inheritence exemplifies "B is an A" in the situation where A and B are classes and B inherits A.
+	
+	Composition
+		With composition, an object is 'composed of' another object, allowing the composed object to effectively deliver the functionality of itself and it's held class by proxy. In the event that the composed object needs some functionality of the composing object, it has it readily available to use. Composition exemplifies "B has an A" in the situation where A and B are classes, and B is composed of an instance of class A.
+	
+	Aggregation
+		With aggregation, a collection of objects that have provide different utilities can be brought together under the same object. Similarly to composition, with aggregation, the calss that results from the aggregation of it's component classes can effectively deliver the functionality defined in any of it's aggregated components. Aggregation can be exemplified by a scenario where A, B, and C are classes, and C is defined to contain an instance of A and an instance of B as members. A and B are the aggregated classes, and C is the result of the aggregation.
+
 13. Should you always initialize variables? 
+
+	No, you should not always initialize variables. Sometimes it is more efficient to leave them uninitialized while still being safe. Inializing variables is not free, especially in the case of objects that are expensive to construct. For instance, in the event that you must declare a variable in order to capture a result of some operation, it is better to leave it uninitialized and save the performance cost of constructing a throw-away object just to overwrite it later. 
+
+
 14. Write a program (or multiple) in a known programming language to do the following:
+
+
 	a. Query for installed windows patches. 
+
 	b. Query for installed Linux Packages
+
 	c. Query for installed Mac Packages
+	
+	```
+	int main()
+	{
+	#ifdef _WIN32
+		system("wmic qfe list full"); //a
+	#endif
+	
+	#if __linux__
+		system("rpm -qa"); //b
+	#endif
+	
+	#if __APPLE__
+		system("system_profiler SPInstallHistoryDataType"); //c
+	#endif
+	}
+	```
+
 15. Write a program (or multiple) in a known programming language to do the following:
+
 	a. Query for windows system information. 
+
 	b. Query for Linux system information
+
 	c. Query Mac system information
+	
+	```
+	int main()
+	{
+	#ifdef _WIN32
+		system("systeminfo /fo list"); //a
+	#endif
+	
+	#if __linux__
+		system("uname -a"); //b
+	#endif
+	
+	#if __APPLE__
+		system("system_profiler -detailLevel full"); //c
+	#endif
+	}
+	```
+
 16. What concept(s) in C++ would you use to manage resources automatically?
-	a. How important are these concepts? 	
+
+	Encapsulation and proper practices when using polymorphism are the most important pillars to follow with respect to managing resources. When implemented correctly, encapsulation ensures that the chain of initiialization that starts when a high-level object is initialized only initializes relevent objects, and that when that object is destroyed it can properly clean up after itself from the top-level class all the way down the hierarchy.
+
+	a. How important are these concepts? 
+	
+	These concepts are incredibly important. They are what will deliver the separation of concerns when architecting classes to accomplish a goal, and are what ensures the job is accomplished cleanly and efficiently in a way that can be maintained in the future.
+
 	b. What tools are you familiar with for tracking resource allocations? 
+	
+	I've used Visual Studios built-in profiling tools, but I don't have much experience using tools to map resource allocation more specifically than those tools are capable of.
+
 17. What security concerns have you come across in the past and how have you addressed them?
+
+	A company had an application that would launch a separate process for a particular module, but for certain reasons the process was not able to be launched as a child process. In order to ensure that this fake child process would terminate in the event that the main application was terminated, the company created a third process that it would also be launched by the main application (again, not as a true child process) that would monitor the processes for the main application and the module that it launched. In the event that the main application's process was terminated, it was responsible for terminating the fake child process as well, followed by itself.
+ 
+	The vulnerability was that the behavior of the process monitor was determined via a payload registration system that allowed a C-style function to be registered by it's symbol, with the possibility to register parameters that the function should be invoked with. This payload would be blindly executed in the event that the main application was closed, regardless of cause. It was feasible that if the knowledge that this registration method exists, any bad actor could register whatever C-style they wished to be exectuted when the application closed.
+ 
+	In order to close the vulnerability, in this case it was best to remove the ability to dynamically register these payloads as the synchronized termination feature was the only desired behavior the system provided. Rather than allowing a C-Style function to be registered dynamically that described the actions to be taken when the main application died, the behavior was integrated into the process monitor module directly.
+
 18. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
-19. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
+
+	Visual Studios, Notepad++, Git
+
+19. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.
+
+	Any source of internal documentation if available. Historically I've used Confluence for this.
+
 20. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
+
 	a. Consider both a long term and short-term solutions. 
+
+	Short Term:
+		- Make the changes I think are necessary, while aiming to make changes as non-invasive as possible while still serving the purposes they need to. Test the software as thouroughly as possible. Document changes that were made, and why they were made. Note any potential concerns that I can think of that could arise.
+		
+	Long Term:
+		- Ask around to see if anyone has worked on the project previously. If someone can be found, talk with them about the proposed needs that the software doesn't already provide, or the issues being encountered, as well as the proposed solutions if any are apparent. Actions following would be based on the outcome of the discussion(s).
+		
+		- If no one is available that knows something about the project, deep dive the project and begin constructing documentation. Review code as it exists, and try to identify potential shortcomings. Note places where possible improvements may be made. Overall, acquire a deeper understanding of the legacy application and document the process in order to make the process less daunting for the next developer. Make changes as needed with copious testing. Further actions would be more specific to the application itself, and the environment it is in.
+
 21. What concerns do you had supporting legacy operating systems? (If any)
+
+	- Security will be a concern for any operating systems that are no longer being supported. Vulnerabilities that are discovered will no longer be provided patches by maintainers.
+	- Newer packages may or may not behave in expected manners when running on legacy systems. In the event that some package doesn't work properly, getting them to work or finding alternatives may prove difficult.
+
 22. Tell us about a project your worked on that you found to be interesting or unusual.
+
+We were tasked with constructing a C# framework that would allow target applications that implemented it to configure and bootstrap UI overlays quickly in the field using a drag and drop interface. The UI that was configured using our tool would be bootstrapped to the target application at the target applications runtime. 
+
+The reason this project was interesting was due to the very limited yet open-ended use cases we were required to support. At the time we developed the framework, we were informed that several unrelated mission-planning softwares would need to be able to define their own customizable components for their own UIs, but they may also need to share UI components defined for shared libraries (for instance, if both products used the same library for driving a sensor and wanted to display the same sensor overlay). The UI elements that we would need to configure were not defined in a bounded sense, and we were told they would need to be near-infinitely defineable and configurable per-use once they were defined. Even more interesting, most of the use cases for our framework were to be written well after our contract period was over.
+
+I architected a solution using C#'s reflection API that defined a system of 'components', 'actions', and 'triggers', where a component was an item that could be positioned on the screen, an action was something that could be performed, and a trigger was an event that could occur that could signal the need for other actions to occur. The system was fully extensible in that it gave whatever applications the customer built on this framework the capability to define all of their own 'building blocks' that they could then use our software to build UIs with. 
+
+The requirements for how configurable these components needed to be was very vague and stressed as much flexibility as possible. We allowed components, actions, and triggers to not only define their own internal behavior, but also to define their own configurability options including not only simple data fields / enumberable values, but additionally the ability to nest dependencies between objects that were also configurable. In the end, we supplied all of the flexibility the customer wanted and more.
+
+The project was very fun to work on and I personally enjoyed how much it explored the power that reflection provides. Under the hood, we used the reflection API to map out all of the user-defined configurable types and their dependencies from a myriad of libraries that could be added and removed from projects as easily as just dropping the library you wanted to use into your project, and then building a UI that uses it. It was a lot of fun.
