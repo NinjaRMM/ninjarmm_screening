@@ -1,38 +1,144 @@
 1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
+	Answer : 
+		Sequence Containers are ordered by sequence or is access sequencially, associative containers are contains that utilitizes
+		searchability and structured indicators, unordered associative containters implements not sorted approach or simply hashed
+		data structures, that can be quickly searched, container adaptors are containers that follows LIFO, FIFO similar to MSMQ
+		that process data in specific fashion.
 2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
+	Answer :
+		1. Bubble sort, this performs a round that checks for the heaviest element and arrange them from lightest value to heaviest value.
+		   This is done via adjacent elements.
+		2. Selection sort is the technique that selects the smallest element in the list and put it in its proper place.
+		3. Insertion sort utilizes the second element on the list and compareit to the previous index element and insert it to its correct
+		   index position.			
 3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
+	Answer : 
+		Virtual destructors are used to destroy, derived virtual elements. If its in correctly used or not utilized, the class or 
+		program an result into undefined behavior.
 4. Explain the keyword: static. What does it mean in each context?
+	Answer :
+		1. Static keyword is used to identify a piece of code that is not class dependent and can be freely access anywhere within the assembly.
+		Static keyword or element possessing static keywords are allocated storage only ince in a program lifetime in static storage area.
 5. When are static member variables initialized? 
+	Answer :
+		Static members are initialized during runtime. 
 6. What is the difference between R-Values and L-Values?
+	Answer :
+		L Value is the left handside of the code and R Values goes to right hand value.
+		i.e.
+		C = A + B
+		C is the left hand value.
+		A + B is thee right hand value.
+
 7. Is this code safe? If so why? If not why?
 	std::string foo()
 	{
 		std::string something = “avalue”;
 		return something;
 	}
-	
+	Answer :
+		Yes. Even if std::string is only returning pointers the std::string is still the same pointer.
+		Based on my answer what the compiler would do is use the same pointer of the "avalue" while using another pointer.
 	Bonus: What would most compilers do with this code?
 8. Why would you use new rather than malloc when allocating an object? Likewise, what’s the difference between free and delete?
+	Answer :
+		If possible no. Free is to free up memory buee doesn't call the destructor of a class whereas delete frees the memory
+		and also calls the destructor. 
 9. Explain the purpose of std::move, and std::forward. 
+	Answer :
+		std::move implmements its values as an r value reference while std::forwards is used to cast templated function
+		parameter.
 10. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
+	Answer :
+		Using std::mutex, that calls the member function lock() and unlock(). If its userdefined type its best to implement
+		std::lock_guard.
 11. What are the some of the principles of object-oriented programming?
+	Answer :
+		Polymorphism - This allows you to change the type or to cast the variable as another type.
+		Inheritance - This allows your class to inherit or members, variables, functions.
+		Encapsulation - From the root word encapsulate, this principle prevents access to information / variables. This 						prevents exposure to the end-user or the world without prroviding any information behind the
+					implementation process. i.e. class properties / fields
+		Abstraction - To hide information or inner working details without providing the complex construction information	
 12. Explain inheritance vs composition vs aggregation?
+	Answer :
+		Inheritance inhertis properties, function, and members to a parent class. Composition simply refers to the logic of
+		a class being a part of another class. In example, think of an antenna class that has the properties of number of 
+		coil turns and if its full size of half size. That antenna class is part of a card class which has other details
+		such as Bank Identification Number. Aggregation is simply a class defined within a class.
 13. Should you always initialize variables? 
+	Answer :
+		Its best practicee to initialize variables but there are variables that are non-nullables.
+		Classes are considered as nullables.
 14. Write a program (or multiple) in a known programming language to do the following:
 	a. Query for installed windows patches. 
-	b. Query for installed Linux Packages
+	Answer :
+		var Sessions = new UpdateSessions();
+		var Searcher = Session.CreateUpdateSearcher();
+		var Cnt = Searcher.GetTotalHistoryCount();
+		var History = Searcher.QueryHistory(0, Cnt);
+
+		foreach(var h in History)
+		{
+			Console.WriteLine(h.Title);
+		}
+	b. Query for installed Linux Packages		
 	c. Query for installed Mac Packages
 15. Write a program (or multiple) in a known programming language to do the following:
 	a. Query for windows system information. 
+		using System.Reflection;
+		using System;
+		using System.Text;
+
+		StringBuilder sb = new StringBuilder();
+		Type t = typeof(System.Windows.Forms.SystemIUnformation);
+		PropertyInfo[] pinf = t.GetProperties();
+		foreach(var item in pinf)
+		{
+			Console.WriteLine(item.Name);
+		}
 	b. Query for Linux system information
 	c. Query Mac system information
 16. What concept(s) in C++ would you use to manage resources automatically?
-	a. How important are these concepts? 	
+	Answer :
+		Resource Acquisition Is Initialization (RAII).
+		Interfaces to denote individual objects.
+		Non-owning raw pointer.
+		Scope objects that does not heap allocate.
+	a. How important are these concepts?
+		Answer :
+			Following RAII, automatic locking and release of resource follows. This helps
+			prevents resource hogging and proper release of allocated resources.
 	b. What tools are you familiar with for tracking resource allocations? 
+		Answer :
+			.NET Object Allocation tool
 17. What security concerns have you come across in the past and how have you addressed them?
+		Answer :
+			It was several years back when I was still considered as a fresh developer. There is an
+			instance of me first using a threading approach with async and await operation. I was
+			supposed to call a form's control value and update it during callback. It ended up being 
+			a memory leak, the immediate resolution is chan ge the logic and make use of a delegate functyion.
 18. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
+		Answer :
+			A proper IDE with formatting and highlighting. These IDEs helps me a lot when I want to write
+			long codes, as this helps me identifies the necessary keywords or positions. Also a tool similar
+			to linters the can format all necessary code.
+			A good practiced code writing that is a lot lot readable also helps.
 19. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
-20. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
+		Answer :
+			Git or any other source control helps prevent unnecessary modifications of programs.
+			Proper commenting or placing notes and making it readable and with proper descriptions helps a ton
+			specially for complex and large scope programs.
+20. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 		
 	a. Consider both a long term and short-term solutions. 
+		Answer :
+			It first learn how the system worked as existing or current. Then based from what I know and understood, I will run through the idea of what needed to change.
+			Firstly I shall determine the required change and how the current system possibly handle it.
+			Second I will create a branch to implement or write my changes, once completed I will run through the changes if it meets the necessary acceptance criteria.
+			After completion I will create a pull request to request a peer too review my changes.
 21. What concerns do you had supporting legacy operating systems? (If any)
+		Answer :
+			I was with a company before that supports OS/2 IBM SAA system. I dont see any concern, its just a matter of learning the said system.
 22. Tell us about a project your worked on that you found to be interesting or unusual.
+		Answer :
+			IBM SAA's GN205 that's written in cobol, while using the GN205 the front-end is too manage screen scraping and 			managing the front end. This is the first two years of my
+			career. Its to maintain a front-end banking system. The OS is outdate and is no longer supported but because of 			this I am able to learn CAL and file locking.

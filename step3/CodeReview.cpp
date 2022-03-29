@@ -10,6 +10,10 @@ Comments are encouraged.
 
 */
 
+// Missing includes
+// Missing Library References
+// Missing reference to wscapi.h
+// would be better if the usage of the std namespace is utilized.
 
 struct ThirdPartyAVSoftware
 {

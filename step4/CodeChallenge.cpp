@@ -1,9 +1,9 @@
 /*
 
 NINJARMM Code Challenge
- 
-Please review the below code. 
-We do expect you to execute this code. 
+
+Please review the below code.
+We do expect you to execute this code.
 
 This file contains the 'main' function. Program execution begins and ends there.
 */
@@ -32,12 +32,12 @@ OBJ_STR objStr;
 
 
 //<<<<<<<< START OF EDITABLE SECTION OF CODE <<<<<<<<<<<
-
 //Here's a template function that can accept a sample object and 3 integer parameters. It checks if the sum of the integer params is positive or not.
 //The third integer param is optional so it's declared as a default param
 //Inside the function is some existing code that needs to exist, but not relevant to this exercise. 
+#define OUT
 template <typename T, typename U>
-T checkIfPositive(const U& u, const int& param1, const int& param2, int param3 = 0)
+T checkIfPositive(const U& u, const int& param1, const int& param2, int param3 = 0, int* total = 0)
 {
 
     // Assume there's already some existing code in here, some business logic that we are not interested in this exercise. 
@@ -46,7 +46,7 @@ T checkIfPositive(const U& u, const int& param1, const int& param2, int param3 =
     SOME EXISTING CODE
 
     */
-
+    *total = param1 + param2 + param3;
     return u.getResult(param1, param2, param3);
 }
 
@@ -103,4 +103,3 @@ int main()
     return 0;
 
 }
-
