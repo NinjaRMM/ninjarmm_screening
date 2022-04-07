@@ -1,38 +1,106 @@
 1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
+- Sequential containers - store and access elements in sequential order
+- Assosiative containers - store elements in sorted order - based on tree structure 
+- Unordered assosiative containers - store elemets in unsorted order - base on hash table
+
 2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
+- Selection sort - select the smallest value among the unsorted elements of the array and swap the value of the selected element and the first element of the unsorted part
+- Bubble sort - repeatedly swapping the element and element next to it if the value of the element is higher than the value of the element next to it
+- Insertion sort - compare the element to elements before until the element is greater than the element then insert the element on that position
+
 3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
+- To properly delete the instance of a derived class using a base class pointer. 
+- W/o using virtual destructor when base class pointer is deleted, only the destructor of the base class will be invoked hence the derived class would still remain in memory resulting to memory leak.
+
 4. Explain the keyword: static. What does it mean in each context?
+- Static is special characteristics to an element on which static elements are allocated only on static storage once and have the scope until the programs end.
+- Context:
+  - static variable in functions - variable will only be allocated once even though the function is called multiple times
+  - static member variables in a class - shared by all objects of the class since it is only allocated in 1 static starage
+  - static method in a class - can only access static data members of the class
+
 5. When are static member variables initialized? 
+- It will be initialized at the first instance of a class.
+
 6. What is the difference between R-Values and L-Values?
+- R-Values does not have specific memory address while L-Values does. In a way, R-values is constant values and L-Values are variables. 
+
 7. Is this code safe? If so why? If not why?
+	- Yes it is safe but instead of declaring a variable with constant value, immediately returning the constant value is better.
 	std::string foo()
 	{
-		std::string something = “avalue”;
+		std::string something = ï¿½avalueï¿½;
 		return something;
 	}
 	
 	Bonus: What would most compilers do with this code?
-8. Why would you use new rather than malloc when allocating an object? Likewise, what’s the difference between free and delete?
+	- Most compiler will raise a warning that informs to return the constant value instead of assigning it to a variable
+
+8. Why would you use new rather than malloc when allocating an object? Likewise, whatï¿½s the difference between free and delete?
+- I will use new rather than malloc to insure that allocating memory will the constructor since the malloc will not.
+- Same withe new and malloc, I will use delete to insure the calling of destructor since the free does not. 
+
 9. Explain the purpose of std::move, and std::forward. 
+- std::move - transfer of resources from object to another
+- std::forward - 
+
 10. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
+- via mutex
+
 11. What are the some of the principles of object-oriented programming?
+- Abstraction
+- Polymorphism
+- Inheritance
+- Encapsulation
+
 12. Explain inheritance vs composition vs aggregation?
+- Inheritance is basing a new class to an existing one. In terms of relationship, it's a "is-a" relationship.
+- Aggregation is type of association that uses "has-a" relationship. Child class can exist without the Parent class.
+- Composition is also a type of association that uses "part-of" relationship. Child class cannot exist without the Parent class.
+
 13. Should you always initialize variables? 
+- I would, to insure the initial value of the variable
+
 14. Write a program (or multiple) in a known programming language to do the following:
+- I don't have any knowledge yet on how to write the solution for this one.
 	a. Query for installed windows patches. 
 	b. Query for installed Linux Packages
 	c. Query for installed Mac Packages
+
 15. Write a program (or multiple) in a known programming language to do the following:
+- I don't have any knowledge yet on how to write the solution for this one.
 	a. Query for windows system information. 
 	b. Query for Linux system information
 	c. Query Mac system information
+
 16. What concept(s) in C++ would you use to manage resources automatically?
+- RAII (Resource Acquisition Is Initialization)
+- Scope
 	a. How important are these concepts? 	
+	- RAII - acquire resources using constructor and release the resources using destructors
+	- Scope - to avoid unnecessary heap allocation
 	b. What tools are you familiar with for tracking resource allocations? 
+	- None
+
 17. What security concerns have you come across in the past and how have you addressed them?
+- During my 1st year as software engineer at Nokia, my laptop which was provided by Nokia was stolen at my apartment. Brought it home for some works I needed to finish. I immediately reported it to the company and submitted the papers needed as a proof that it was stolen. 
+
 18. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
+- Visual Studio
+- Scrum
+- CICD
+
 19. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
+- SonarQube
+- Unit Tests
+- Having coding guidelines 
+
 20. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
 	a. Consider both a long term and short-term solutions. 
+- 
+
 21. What concerns do you had supporting legacy operating systems? (If any)
+- Difficulty to run new applications and functionallity of new applications may be differrent. 
+
 22. Tell us about a project your worked on that you found to be interesting or unusual.
+- I recently develop a application, using REST services with Spring, which monitors all incomming and outgoing shipments in CDMP(Cargo Data Management Portal).It was very interesting for me since I started the project without any knowledge of the technology and I started it from scratch. Learning new technology is very interesting too. 

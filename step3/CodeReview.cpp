@@ -44,6 +44,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
     hr = PtrProductList->Initialize(WSC_SECURITY_PROVIDER_ANTIVIRUS);
     if (FAILED(hr))
     {
+        PtrProductList->Release();
         std::cout << "Failed to query antivirus product list. ";
         return false;
     }
@@ -51,6 +52,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
     hr = PtrProductList->get_Count(&ProductCount);
     if (FAILED(hr))
     {
+        PtrProductList->Release();
         std::cout << "Failed to query product count.";
         return false;
     }
@@ -77,26 +79,26 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         hr = PtrProduct->get_ProductState(&ProductState);
         if (FAILED(hr))
         {
+            PtrProduct->Release();
             std::cout << "Failed to query AV product state.";
             continue;
         }
 
-        if (ProductState == WSC_SECURITY_PRODUCT_STATE_ON)
+        // Use switch case to avoid multiple if-else
+        switch (ProductState)
         {
-            state = L"On";
-        }
-        else if (ProductState == WSC_SECURITY_PRODUCT_STATE_OFF)
-        {
-            state = L"Off";
-        }
-        else
-        {
-            state = L"Expired";
+        case WSC_SECURITY_PRODUCT_STATE_ON: state = L"On";
+            break;
+        case WSC_SECURITY_PRODUCT_STATE_OFF: state = L"Off";
+            break;
+        default:  state = L"Expired";
+            break;
         }
 
         hr = PtrProduct->get_SignatureStatus(&ProductStatus);
         if (FAILED(hr))
         {
+            PtrProduct->Release();   
             std::cout << "Failed to query AV product definition state.";
             continue;
         }
@@ -106,6 +108,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         hr = PtrProduct->get_ProductStateTimestamp(&PtrVal);
         if (FAILED(hr))
         {
+            PtrProduct->Release();
             std::cout << "Failed to query AV product definition state.";
             continue;
         }
@@ -122,6 +125,9 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
 
         PtrProduct->Release();
     }
+
+    // Delete the pointer assuming PtrProductList have Release() same as PtrProduct
+    PtrProductList->Release();
 
     if (thirdPartyAVSoftwareMap.size() == 0)
     {
