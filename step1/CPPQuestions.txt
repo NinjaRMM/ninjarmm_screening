@@ -1,38 +1,154 @@
 1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
+we have:
+* - Sequence containers( implement data structures that can be accessed sequentially)
+* - Associative containers( implement sorted data structures that can be quickly searched (O(log n) complexity))
+* - Unordered associative containers( implement unsorted (hashed) data structures that can be quickly searched (O(1) amortized, O(n) worst-case complexity))
+* - Container adaptors ( provide a different interface for sequential containers lke FIFO and LIFO)
+
 2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
+* - Bubble Sort ( simplest technique in which we compare every element with its adjacent element and swap the elements if they are not in order)
+* - Selection Sort ( is simple yet easy to implement technique in which we find the smallest element in the list and put it in its proper place. At each pass, the next smallest element is selected and placed in its proper position)
+* - Insertion Sort ( is a technique in which we start from the second element of the list. We compare the second element to its previous (1st) element and place it in its proper place)
+
 3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
+* - A destructor is a special member function that is called when the lifetime of an object ends. The purpose of the destructor is to free the resources that the object may have acquired during its lifetime.
+* - if you do not implement or forget it, this may let you with some memory leak with some resource used and not entirely freed.
+
 4. Explain the keyword: static. What does it mean in each context?
+* - Static is a keyword in C++ used to give special characteristics to an element. Static elements are allocated storage only once in a program lifetime in static storage area. And they have a scope till the program lifetime.
+* - this means that a satic variable will be present in each context of the aplication.
+
 5. When are static member variables initialized? 
+The standard guarantees two things:
+* - that objects defined in the same translation unit (usually it means .cpp file) are initialized in order of their definitions (not declarations)
+* - that initialization of static objects from a translation unit will be done before use of any object or function from this translation unit
+
 6. What is the difference between R-Values and L-Values?
+* - An L-value refers to an object that persists beyond a single expression. An R-value is a temporary value that does not persist beyond the expression that uses it.
+
 7. Is this code safe? If so why? If not why?
 	std::string foo()
 	{
-		std::string something = ìavalueî;
+		std::string something = ‚Äúavalue‚Äù;
 		return something;
 	}
 	
 	Bonus: What would most compilers do with this code?
-8. Why would you use new rather than malloc when allocating an object? Likewise, whatís the difference between free and delete?
+
+* - no, identifyer not declared.
+* - error C3872
+* - error C2065
+
+8. Why would you use new rather than malloc when allocating an object? Likewise, what‚Äôs the difference between free and delete?
+* - because malloc and free is from C library, you can use in C++ but if you use it will be C way and not C++.
+
+ex:
+class A {
+    int a;
+ 
+public:
+    int* ptr;
+ 
+    // Constructor of class A
+    A()
+    {
+        cout << "Constructor was Called!"
+             << endl;
+    }
+ 
+    // Destructor of class A
+    ~A()
+    {
+        cout << "Destructor was Called!"
+             << endl;
+    }
+};
+
+int main()
+{
+ 
+    // Create an object of class A
+    // using new operator
+    A* a = new A;
+    cout << "Object of class A was "
+         << "created using new operator!"
+         << endl;
+ 
+    delete (a);
+    cout << "Object of class A was "
+         << "deleted using delete keyword!"
+         << endl;
+ 
+    cout << endl;
+ 
+    A* b = (A*)malloc(sizeof(A));
+    cout << "Object of class A was "
+         << "created using malloc()!"
+         << endl;
+ 
+    free(b);
+    cout << "Object of class A was "
+         << "deleted using free()!"
+         << endl;
+ 
+    return 0;
+}
+
 9. Explain the purpose of std::move, and std::forward. 
-10. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
+* - std::move is used to indicate that an object t may be "moved from", i.e. allowing the efficient transfer of resources from t to another object. In particular, std::move produces an xvalue expression that identifies its argument t. It is exactly equivalent to a static_cast to an rvalue reference type.
+* - The std::forward function as the std::move function aims at implementing move semantics in C++.
+* - According to the T template parameter, std::forward identifies whether an lvalue or an rvalue reference has been passed to it and returns a corresponding kind of reference. std::forward helps to implement perfect forwarding
+
+10. How do you share resources safely between threads? How would you share an integer value vs user defined type?
+* - you can share data between threads, but we must implement mecanisms to prevent, deadlocks and raceconditions, and this can be done with mutexes and critical sections protecting the resources that will be shared.
+
 11. What are the some of the principles of object-oriented programming?
+* - There are 4 major principles that make an language Object Oriented. These are Encapsulation, Data Abstraction, Polymorphism and Inheritance. These are also called as four pillars of Object Oriented Programming.
+
 12. Explain inheritance vs composition vs aggregation?
+In Short, a relationship between two objects is referred to as an association, and an association is known as composition when one object owns another while an association is known as aggregation when one object uses another object.
+
 13. Should you always initialize variables? 
+* - because, when you release a c++ aplication the variables not initialized can let the app have unexpected behaviors.
+
 14. Write a program (or multiple) in a known programming language to do the following:
 	a. Query for installed windows patches. 
 	b. Query for installed Linux Packages
 	c. Query for installed Mac Packages
+
 15. Write a program (or multiple) in a known programming language to do the following:
 	a. Query for windows system information. 
 	b. Query for Linux system information
 	c. Query Mac system information
+
+* - int main (int argc, char *argv[])
+* - {
+* -     qDebug() << "currentCpuArchitecture():" << QSysInfo::currentCpuArchitecture();
+* -     qDebug() << "productType():"            << QSysInfo::productType();
+* -     qDebug() << "productVersion():"         << QSysInfo::productVersion();
+* -     qDebug() << "prettyProductName():"      << QSysInfo::prettyProductName();
+* - }
+
 16. What concept(s) in C++ would you use to manage resources automatically?
 	a. How important are these concepts? 	
 	b. What tools are you familiar with for tracking resource allocations? 
+
+* - Manage resources automatically using resource handles and RAII (Resource Acquisition Is Initialization) The idea is quite simple. You create a kind of proxy object for your resource. The constructor of the proxy will acquire the resource and the destructor will release the resource. The key idea of RAII is that the C++ runtime is the owner of the local object and therefore of the resource.
+
 17. What security concerns have you come across in the past and how have you addressed them?
+* - if you use a lot of strings inside the code with "mystring" as a passwors for a zip file for example, they can easely see in the strings output from a running process in windows environment.
 18. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
-19. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
+* - CPPCheck, Valgrind, Boundschecker, dbg, VS debuger, 
+
+19. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.
+* - GIT, TeamCity. 
+
 20. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
 	a. Consider both a long term and short-term solutions. 
+* - ok, we can do a small change in the legacy code for the short-term, but we need to already set a ticket or something that tell us to-do a long-term solution for this including Unit Tests for the behaviors.
 21. What concerns do you had supporting legacy operating systems? (If any)
+the concers is P.O or a Manager want that we do magic with the code.
+
 22. Tell us about a project your worked on that you found to be interesting or unusual.
+working with a Telecom snifer using NTOP tecnology, reading network packets without kernel intervention.
+
