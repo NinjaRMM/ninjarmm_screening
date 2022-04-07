@@ -24,6 +24,12 @@ struct ThirdPartyAVSoftware
 bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftware>& thirdPartyAVSoftwareMap)
 {
     HRESULT hr = S_OK;
+ // please use a CComPtr for this Interface pointers, to ensure better memory manager ex : CComPtr<IWscProduct> PtrProduct = nullptr.
+ // the best way to use DCOM is having a Wrapper template from CComPtr with:
+ // 1 - inicialization like CoCreateInstance;
+ // 2 - and also a retry generic function to avoid network issues.
+ // 3 - a try cach implementation to better arrange the issues removing this if(FAILED()) in all functions calls.
+ // this should be consider as short-term solution also.
     IWscProduct* PtrProduct = nullptr;
     IWSCProductList* PtrProductList = nullptr;
     BSTR PtrVal = nullptr;
@@ -47,7 +53,9 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         std::cout << "Failed to query antivirus product list. ";
         return false;
     }
-
+// for this particular block of code, we can create another interface in IWscProduct to return all the products data with a given filter ex: from a given date or class of products
+// this will be a better solution because if you see here we are calling a lot of DCOM Communications on every product and this can let the network issues like delay and overhead the network
+// and this logic will be done by the server who has more power to do quickly
     hr = PtrProductList->get_Count(&ProductCount);
     if (FAILED(hr))
     {
