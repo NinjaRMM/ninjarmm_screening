@@ -6,15 +6,169 @@
 		i. Get the name of the job
 		ii. Get the description of the job. 
 		iii. Get the number of hours required by the job
-		iv. A DoWork function that prints out ìMy work involves î + the description.  
+		iv. A DoWork function that prints out ‚ÄúMy work involves ‚Äù + the description.  
 	e. Dynamically allocate each type of job.
 	f. Store each instance in a collection.
 	g. Iterate the collection and call each of the available interface functions.
 	h. Create a template function that will test if the provided values are within a range. Call the function and print out the inputs and result. The following should execute assuming httpResonse is a uint32_t value:
 		i. IsInBounds<uint32_t>(httpResonseCode, 500, 599)
 	i. Create a function that will take a vector of strings and a test function, It should return how many items in the collection matched the test. Then print out the result.
-		i. auto theStrings = vector<std::string> { ìoneî, ìtwoî,  ìtestî};
-		ii. auto count = ContainsTheString([](const std::string& tested) { return tested == ìtestî }, theStrings);
+		i. auto theStrings = vector<std::string> { ‚Äúone‚Äù, ‚Äútwo‚Äù,  ‚Äútest‚Äù};
+		ii. auto count = ContainsTheString([](const std::string& tested) { return tested == ‚Äútest‚Äù }, theStrings);
 	j. Write any other code you feel would show off your understanding of C/C++ and programming in general. Bonus: Variadic Template /w usage. 
 	k. All The source can be in 1 file, it should compile and there should be no runtime errors, and no memory leaks. Use built in types freely to help you manage resources. 
+
+#include <iostream>
+#include <vector>
+#include <functional>
+using namespace std;
+
+const short Workinghours = 8;
+
+class Job
+{
+protected:
+    string sName;
+    string sDescriptionTitle;
+    string sDescription;
+    short  iWorkingHours;
+public:    
+    Job() { sDescriptionTitle = "My work involves "; iWorkingHours = 0; };
+    virtual string getName() = 0;
+    virtual string getDescription() = 0;    
+    virtual int getNumberofHoursRequired() = 0;    
+    virtual string DoWork() = 0;
+};
+
+class Programmer : public Job
+{
+public:
+    Programmer()
+    {
+        sName = __func__;
+        sDescription = "implement and mintance the code of a company.";
+        iWorkingHours = Workinghours;
+    }
+    
+    virtual string getName()
+    {
+        return sName;
+    }
+    virtual string getDescription()
+    {
+        return sDescription;
+    }
+    virtual int getNumberofHoursRequired()
+    {
+        return iWorkingHours;
+    }
+    virtual string DoWork()
+    {
+        return sDescriptionTitle + sDescription;
+    }
+};
+
+class Pilot : public Job
+{
+public:
+    Pilot()
+    {
+        sName = __func__;
+        sDescription = "drive a plane.";
+        iWorkingHours = Workinghours + 2;
+    }
+    virtual string getName()
+    {
+        return sName;
+    }
+    virtual string getDescription()
+    {
+        return sDescription;
+    }
+    virtual int getNumberofHoursRequired()
+    {
+        return iWorkingHours;
+    }
+    virtual string DoWork()
+    {
+        return sDescriptionTitle + sDescription;
+    }
+};
+
+template <typename T>
+bool IsInBounds(const T num1, const unsigned short iFirts, const unsigned short iSecond )
+{
+    if (iFirts < num1 && num1 < iSecond) return true;
+    else return false;
+}
+
+short ContainsTheString(std::function<bool(string sContain)> func, vector<string>& vStrings)
+{
+    short icount = 0;
+    for (auto strings : vStrings)
+    {
+        if (func(strings))
+            ++icount;
+    }    
+
+    return icount;
+}
+
+
+void printVaridic()
+{
+    cout << "I am empty function and "
+        "I am called at last.\n";
+}
+
+template <typename T, typename... Types>
+void printVaridic(T var1, Types... var2)
+{
+    cout << var1 << endl;
+
+    printVaridic(var2...);
+}
+
+int main()
+{
+    unique_ptr<Job> cProg = make_unique<Programmer>();
+    unique_ptr<Job> cPilot = make_unique<Pilot>();
+
+    vector<Job*> vJobs;
+
+    vJobs.push_back(cProg.get());
+    vJobs.push_back(cPilot.get());
+
+    for (auto job : vJobs)
+    {
+        cout << "Job name: " << job->getName() << endl;
+        cout << "Job description: " << job->getDescription() << endl;
+        cout << "Job hours per day: " << job->getNumberofHoursRequired() << endl;
+        cout << "Job detail description: " << job->DoWork() << endl;
+    }
+
+    vJobs.clear();
+    
+    uint32_t httpResonseCode = 510;
+    
+    if (IsInBounds(httpResonseCode, 500, 599))
+    {
+        cout << "IsInBounds -> yes, it is." << endl;
+    }
+    else
+    {
+        cout << "IsInBounds -> no, it is not." << endl;
+    }
+
+    auto theStrings = vector<string>{ "one", "two", "test"};
+
+    auto count = ContainsTheString([](const std::string& tested) { return tested == "test"; }, theStrings);
+
+    cout << "the ContainsTheString result: " << count << endl;
+
+    printVaridic(1, 2, 3.14,
+        "Pass me any "
+        "number of arguments",
+        "I will print\n");
+}
 
