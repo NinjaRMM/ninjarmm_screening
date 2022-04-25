@@ -1,38 +1,228 @@
 1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
+
+Sequence containers allow sequential access: vector, deque, list, array.
+vector
+Dynamic array. It is an ordered collection and provides random access.
+It is very fast to add/delete elements at the end.
+Use case:
+Pass a collection of items selected by user to the printing function.
+
+Ordered associative containers are sorted and allow quick search: set/multiset, map/multimap.
+map
+Sorted associative container. Contains key/value pairs with unique keys. The search by key is quick.
+Use case:
+Have a dictionary of messages where each message is associated with a short code and the search by code must be fast.
+
+set
+Sorted collection of unique keys.
+Use case:
+Have a sorted collection of several states abbreviations and it should be possible to quickly find out if the given state is present in the collection.
+
+Unordered associative containers are unsorted and allow quick search/insert/delete (keys are hashed): unordered_set/unordered_multiset unordered_map/unordered_multimap.
+unordered_map
+Unsorted associative container. Contains key-value pairs with unique keys. Search/insert/delete is very quick.
+Use case:
+Analyze traces and find number of occurrences of each exception.
+
+Container adapters adapt standard STL containers to fit special needs: stack, queue, priority_queue.
+stack
+Implements a stack (aka LIFO). It allows to push/pop elements fromt the top of the stack.
+Use case:
+Check for balanced brackets in expression.
+
 2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
+
+std::sort
+Sorts all elements of a range.
+Use case:
+Sort all patients by name.
+
+std::stable_sort
+Sorts all elements of a range and guarantees the order of equal elements remains stable.
+Use case:
+Sort all lines by the first word but keep the relative order (corresponding to the original unsorted order of lines) so all the lines with the same first word would keep the original order.
+
+std::partial_sort
+Allows to sort only first several elements.
+Use case:
+Find 10 largest purchases among all purchases for the year.
+
 3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
+
+An abstract class should have a virtual destructor.
+This would ensure that the destructor for the most derived class is called even if the destructor was called via a pointer to a base class.
+If the destructor is not virtual but the subclass opens files, or allocates memory on heap then only the destructor of the base class might be called and there would be a memory leak and potentially system might run out of available file handles.
+
 4. Explain the keyword: static. What does it mean in each context?
+
+Static variable inside a function.
+Initialized only once and it keeps its value through function calls. Available only inside the function.
+
+Static member (data, function) inside the class makes it class member. It is not associated with any specific object but is available in all objects of this class. There is only one instance of the static data member.
+
+Static class members are constructed at the start of the program and destroyed at the end of the program.
+Local static variables are constructed only when execution passes them.
+
 5. When are static member variables initialized? 
+
+They are initialized in .cpp file.
+During runtime the static member variable from a translation unit is initialized before use of any object/function from this translation unit.
+
 6. What is the difference between R-Values and L-Values?
+
+lvalue: an expression that identifies an object that could be modified and have its address taken.
+rvalue: an expression that identifies something that could not be modified or have its address taken.
+
 7. Is this code safe? If so why? If not why?
 	std::string foo()
 	{
-		std::string something = “avalue”;
+		std::string something = "avalue";
 		return something;
 	}
 	
+Yes, it is safe because the std::string is returned by value.
+
 	Bonus: What would most compilers do with this code?
+
+A compiler might perform RVO (return value optimization) and omit a copy operation resulting from a return statement.
+
 8. Why would you use new rather than malloc when allocating an object? Likewise, what’s the difference between free and delete?
+
+In C++ the new should be used instead of malloc in most cases:
+new would ensure the constructor is called.
+new is more type-safe.
+
+In C++ the delete should be used.
+Why? free does not call destructor.
+
 9. Explain the purpose of std::move, and std::forward. 
-10. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
+
+std::move
+Unconditional cast to rvalue.
+It sets up a move.
+Rvalues are candidates for moving.
+This is useful to allow the efficient transfer of resources.
+
+std::forward
+Conditional cast to rvalue only if argument is rvalue.
+Forwards an object to another function retaining its original lvalueness or rvalueness.
+
+10. How do you share resources safely between threads?
+
+There is no problem if all shared data is read-only.
+If any thread starts to modify data then steps should be taken to safeguard the data access:
+wrap the data with a protection mechanism so data might be modified by one thread safely without affecting other threads (use mutexes).
+
+How would you share an integer value vs user defined type? 
+
+Integer value:
+std::atomic<int>
+
+User defined type:
+std::mutex the_mutex;
+And then in all functions where the user defined type is used:
+std::lock_guard<std::mutex> guard(the_mutex);
+
 11. What are the some of the principles of object-oriented programming?
+
+Encapsulation, inheritance, polymorphism, abstraction.
+
 12. Explain inheritance vs composition vs aggregation?
+
+Inheritance: "is-a" relationship: reusing and extending existing classes without modifying them.
+Composition: "part-of" relationship: the dependent object will always live as a part of owner.
+Aggregation: "has-a" relationship: the dependent object is standalone and can exist even if owner is dead.
+
 13. Should you always initialize variables? 
+
+Yes. It can prevent bugs.
+
 14. Write a program (or multiple) in a known programming language to do the following:
 	a. Query for installed windows patches. 
+
+PowerShell
+Get-AppxPackage -AllUsers | Select Name, PackageFullName
+
 	b. Query for installed Linux Packages
+
+apt list --installed
+
 	c. Query for installed Mac Packages
+
+pkgutil --pkgs
+
 15. Write a program (or multiple) in a known programming language to do the following:
 	a. Query for windows system information. 
+
+msinfo32 /report c:\temp\system-info.txt
+
 	b. Query for Linux system information
+
+uname -a
+sudo lshw -short
+lscpu
+lsblk -a
+lsusb
+lspci -t
+sudo fdisk -l
+sudo dmidecode -t memory
+
 	c. Query Mac system information
 16. What concept(s) in C++ would you use to manage resources automatically?
+
+RAII: resource acquisition is initialization. Acquire resources during object creation and release resources during object destruction.
+It binds the life cycle of an acquired resource to the lifetime of an object. 
+
 	a. How important are these concepts? 	
+
+It helps to prevent leaks of resources.
+
 	b. What tools are you familiar with for tracking resource allocations? 
+
+Visual Studio profiler
+
 17. What security concerns have you come across in the past and how have you addressed them?
+
+Framework libraries (and our dependent source code) that had to be regularly updated because of security vulnerabilites.
+Our web services had to be updated to allow access via https.
+
 18. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
+
+IDE with good source code editor, syntax highlighting, code completion, refactoring, code generation, advanced search including search by regex.
+Good versioning system. Commits should include descriptive message and a link (or issue #) in the issue tracking system. It should be easy to find corresponding requirements.
+
 19. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
+
+grep, vim, sed, awk, perl.
+Have unit tests covering at least the basic functionality and run them after making changes.
+Keep notes.
+Good issue tracking system.
+Good requirements tracking system (if separate from the above).
+All these would help with the development as well.
+
 20. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
 	a. Consider both a long term and short-term solutions. 
+
+Short-term solution:
+If time permits, add unit tests for the specific functionality to be changed.
+Make the change.
+Run unit tests and adjust the change or unit tests as needed.
+
+Long-term solution:
+Plan to add unit tests for all basic use cases.
+Add more specific ones with every new change.
+
 21. What concerns do you had supporting legacy operating systems? (If any)
+
+Some new applications might not run on legacy OS.
+Some tools/utilities are missing on older systems. Or they are not up-to-date and do not provide the same functionality as the newer versions.
+Security issues might not be patched as fast (if ever) as on newer OS.
+
 22. Tell us about a project your worked on that you found to be interesting or unusual.
+
+The most unusual project:
+Creating an iOS app from scratch and adjusting existing web services to new requirements.
+
+The most interesting project I had:
+I worked on suite of three applications on Windows (c#), Android (Java) with back-end (web services) on c++ and Java.
+I had to learn or reinforce my knowledge on different languages and concepts.
