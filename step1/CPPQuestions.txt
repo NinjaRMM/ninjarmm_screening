@@ -1,38 +1,124 @@
 1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
+
+Sequence containers: structures that store data in a sequential manner. They are used when contiguous data allocation is need (std::vector, std::array) or flexibility for insertion/deletion (std::list, std::dequeue, std::forward_list).
+Container adapters: wrappers for other container types to provide specific functionality. Use cases include when there is a need for a behaviour like LIFO (std::stack), FIFO (std::queue) or priority based (std::priority_queue).
+Associative containers: structures where the data is stored in a sorted manner and can be searched in O(logn) complexity. They are used when a sorted set of elements with quick search/insertion/removal capabilities is needed with a key-value pair (std::map, std::multimap) or with just keys (std::set, std::multiset).
+Unordered associative containers: structures where the stored data is unsorted but can be quickly searched due to it being hashed (O(1) amortized and O(n) complexity in worst-case scenario). They are used when a set of elements with quick search/insertion/removal capabilities is needed with a key-value pair (std::unordered_map, std::unordered_multimap) or with just keys (std::unordered_set, std::unordered_multiset).
+
 2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
+
+Quicksort: in-place, comparison-based, non-stable sorting algorithm that recursively divides the data based on a pivot element as a delimiter until no more division can occur and the data is sorted. It has a worst-case performance of O(nÂ²), average of O(nlogn) and space complexity of O(logn). Its usage is very widespread but cannot be used when the order of repeated elements is important.
+Merge Sort: comparison-based, stable sorting algorithm that divides the data and then compares each element with the adjacent list, sorting and merging them until everything is merged in a sorted manner. It has O(nlogn) complexity and a space complexity of O(n). As its complexity doesn't change, it can be used when there is the need to guarantee a O(nlogn) running time.
+Bucket Sort: distribution-based, stable sorting algorithm that divides the data set into a finite number of buckets that are independently sorted and then merged. It has a worst case performance of O(nÂ²), average of O(n + k) and space complexity of O(n + k). It is useful when the input data is uniformly distributed over a range.
+
+
 3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
+
+Virtual destructors are used so that derived class instances destructors get called when deleting them via a base class pointer. If not specified, allocated data in the derived class wonâ€™t be freed, causing memory leaks.
+
 4. Explain the keyword: static. What does it mean in each context?
+
+Static variable in a function: the variable will be allocated for the lifetime of the program and all calls to that function will share the same variable. Any value stored in a previous computation will still be there.
+Static variable in a class: the variable will be allocated for the lifetime of the program in a separate static storage and all objects of this class will share the same variable. Any value stored in a previous computation will still be there.
+Static method: the method won't depend on an object of the class, being able to be called using the class name and the scope resolution operator. The method will only be able to access static variables and functions.
+ 
 5. When are static member variables initialized? 
+
+Its implementation defined but guaranteed to occur before the first use of any function or object defined in the same translation unit as the object to be initialized. 
+
 6. What is the difference between R-Values and L-Values?
+
+R-Values are temporary values that exists only during the execution of the expression they are in. L-Values are variables that have specific memory addresses which can be accessed beyond a single expression.
+
 7. Is this code safe? If so why? If not why?
 	std::string foo()
 	{
-		std::string something = “avalue”;
+		std::string something = "avalue";
 		return something;
 	}
 	
 	Bonus: What would most compilers do with this code?
-8. Why would you use new rather than malloc when allocating an object? Likewise, what’s the difference between free and delete?
+
+Yes. As the string is being initialized with a string literal, the constructor won't throw any exceptions. Also, the return is done by value, so no references or pointers are involved.
+Bonus: Most compilers would perform the equivalent of std::move() in the return value instead of a copy. Depending on the optimization level, the function might also be inlined.
+
+8. Why would you use new rather than malloc when allocating an object? Likewise, whatï¿½s the difference between free and delete?
+
+Because new calls the constructor of the object, whereas malloc doesnâ€™t. As for free/delete, delete calls the destructor of the object, whereas free doesnâ€™t.
+
 9. Explain the purpose of std::move, and std::forward. 
+
+std::move is a way of indicating that an object may be moved to another one in a memory efficient way by avoid copying. The source object will become invalid and the destination one will receive the moved data.
+std::forward is a way of casting a templated function parameter to either a lvalue or a rvalue, depending on the parameters used on the call. This allows for perfect-forwarding, where the value category of the parameters doesn't change and avoids the need of creating multiple templates to accommodate these parameters differences.
+
 10. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
+
+With the use of synchronization mechanisms.
+Integer value: std::atomic<int>.
+User define type: std::mutex, std::condition_variable, std::counting_semaphore or std::binary_semaphore depending on the type of computation being performed. Another way would be to control the threads scheduling with std::async and std::future.
+
 11. What are the some of the principles of object-oriented programming?
+
+Encapsulation: the ability to bundle variables and methods that operate on them together in a single entity.
+Abstraction: the ability to hide unnecessary information from the user, leaving only the relevant variables and methods available for use.
+Inheritance: the ability to derive a class from another one, this way being able to share common implementation specific details between multiple classes and extend functionality.
+Polymorphsim: the ability to use the same interface to access different types of data. Some examples are methods that share the same name but different signatures and overrided base class methods. 
+
 12. Explain inheritance vs composition vs aggregation?
+
+Inheritance: IS-A relationship. A class derives from another class to extend its functionality.
+Composition: PART-OF relationship. A class contains another class whose scope is tied to its lifetime.
+Aggregation: HAS-A relationship. A class contains another class whose scope is not tied to its lifetime.
+
 13. Should you always initialize variables? 
+
+Yes. Initializing variables will avoid accessing and performing computations with undefined values and may save a lot of debugging time.
+
 14. Write a program (or multiple) in a known programming language to do the following:
 	a. Query for installed windows patches. 
 	b. Query for installed Linux Packages
 	c. Query for installed Mac Packages
+
+Answer can be found in this folder: step1/src/14/main.cpp.
+
 15. Write a program (or multiple) in a known programming language to do the following:
 	a. Query for windows system information. 
 	b. Query for Linux system information
 	c. Query Mac system information
+
+Answer can be found in this folder: step1/src/15/main.cpp.
+
 16. What concept(s) in C++ would you use to manage resources automatically?
 	a. How important are these concepts? 	
 	b. What tools are you familiar with for tracking resource allocations? 
+
+Smart pointers.
+a: Very. It keeps the code clean, helps prevent memory leaks and shows clear indication of ownership of resources.
+b: Visual Studio diagnostic tools and libmtrace. I also used valgrind a long time ago.
+
 17. What security concerns have you come across in the past and how have you addressed them?
+
+Only thing I ever did security related has a basic access control for restricting commands to a playout solution in the first company I worked for.
+
 18. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
+
+Visual Studio Debugger, GDB, Windows Event Viewer, procmon, performance counters, Prometheus stats, logs, git, comments, doxygen, documentation, asserts and unit tests.
+
 19. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
+
+Doxygen, comments, unit tests, documentation and git.
+
 20. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
-	a. Consider both a long term and short-term solutions. 
+	a. Consider both a long term and short-term solutions.
+
+I will initially spend some time studying the code to try to get a good understanding of the section I have to change and make sure I can keep the scope of the changes as low as possible. Checking the code coverage and branching for the parts that require change will also help have a better visualization of possible side-effects. I would also use this time to gather some good test cases for the code that will change. If someone in the company has already worked in the same project, I would also ask for any tips and help reviewing the changes.
+Short-term solution: if the change is small and only necessary for a small portion of the users, I would make a on/off config to trigger the new code behaviour, while the default options is to keep as is. If the change is big or required for a lot/all users, I would try to make the changes in the smallest and most self-contained scope possible and then run the test cases that I wrote while studying the code to make sure behaviour didn't change.
+Long-term solution: a long-term solution would involve creating several test cases and documentation for the system, which will not only help during these changes, but any future ones as well as providing customer support. The code changes would involve incremental refactoring to minimize the possibility of creating large issues as well as to facilitate testing.
+
 21. What concerns do you had supporting legacy operating systems? (If any)
+
+Only code change I had to make on a legacy system was to support TCP/IP connections on a system that previously worked only with serial communication. I created a base class for the communication interface and used a config to switch between serial and TCP/IP base classes, this way making minimal changes to the code.
+
 22. Tell us about a project your worked on that you found to be interesting or unusual.
+
+I developed a frequency modulation synthesizer in an Arduino Due board with hardware controls, MIDI input and stereo P10 output. It closed resembled a Yamaha DX7 (an iconic FM synth). It was my first time developing in a micro-controller and it was a good experience to adapt code to be more efficient to increase the polyphony of the synth. Some examples of this include: using a sine lookup table instead of the costly sin() call, inlining functions to avoid pushing them to the stack, avoiding copies and costly synchronization mechanisms where possible, and many other code decisions. By the end of it, it was able to reproduce a 6-note polyphony at 48000kHz.
