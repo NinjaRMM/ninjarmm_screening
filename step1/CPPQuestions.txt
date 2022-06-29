@@ -1,4 +1,172 @@
 1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
+
+std::string
+-----------
+https://cplusplus.com/reference/string/string/
+
+std::strings are a very efficient and dynamically allocated and improved string type compared to old ANSI C strings. They contain a huge number of member functions that allow you to trim, copy, use operators, iterate a char buffer. 
+
+std::vector
+------------
+https://cplusplus.com/reference/vector/vector/
+
+Most commonly used STL container ( if you discard the fact std::string is a container for chars :-) )is std::vector, which is a dynamic array . 
+It supports the index [] operator but you can push values into it using the push_back method or pop using push_back. It is usually recommended in place of regular C arrays because it can dynamically change its size allocating it internally. If you intend to access elements by index it is highly recommended because the [] operator returns values in constant time 
+
+https://cplusplus.com/reference/vector/vector/operator[]/
+
+Say you need to store a large number of objects, e.g, a large collection of objects, you would basically simply add them to the container. Suppose this made inside a loop that will be executed several times. By using a vector you safe guard your program to hold all the required objects.
+
+std::vector<myObject> Large
+while( Condition )
+{
+    MyObject o = getObjectFromAnyPlace();
+    Large.push_back( o );
+    // or use C++11 emplace_back if you want to construct it
+}
+
+// let's say now you need to iterate over
+for( auto& O: Large )
+{
+}
+
+or use the [] operator to individually access them. If you need to sort it, or find an element, if you behave exactly as a regular array. I made use of vectors at the code 
+
+https://github.com/zlogdanbr/mycpp/blob/master/src/util.h in the class csvprocessing because I can store elements from a csv file inside a vector<vector<double>> so I can use the values as a 2D array. Suffice to say using a vector is largely cleaner than a regular double 2D C array
+
+
+
+std::list
+------------
+https://cplusplus.com/reference/list/list/
+It is a double linked list. 
+
+My favorite definition of its advantage is 
+
+"Lists are sequence containers that allow constant time insert and erase operations anywhere within the sequence, and iteration in both directions" 
+( https://cplusplus.com/reference/list/list/ )
+
+You cannot do this with a vector, so in cases you need to insert or erase elements in constant time, a list is very efficient.
+
+With a vector, you could not do this.
+
+std::list<int> Large;
+while( Condition )
+{
+    MyObject o = getObjectFromAnyPlace();
+    Large.push_back( o );
+}
+
+for( auto it = Large.begin(); it != Large.end; it++ )
+{
+    if ( condition )
+    	Large.erase(it);
+}
+
+You don't have a [] operator but for everything related to data structures and algorithms you can safely use list
+
+List supports push_back, pop_back, erase, insert and sort method, which is not provided by std::vector and you need to use a STL generic algorithm function sort.
+I have taught myself data structures so I implemented a very large double linked list so to learn but what is the point when you got a double LL ready for use
+
+https://github.com/zlogdanbr/mycpp/blob/master/src/util.h
+		template<typename T >
+		class cllist
+		{
+		public:
+			cllist()
+
+std::deque
+------------------
+https://cplusplus.com/reference/deque/deque/
+
+A double ended queue. But in reality you get the best of both worlds
+
+A dynamic array and a container that allows you to iterate as a linked list. Or more properly
+
+"deque (usually pronounced like "deck") is an irregular acronym of double-ended queue. Double-ended queues are sequence containers with dynamic sizes that can be expanded or contracted on both ends (either its front or its back)." https://cplusplus.com/reference/deque/deque/
+
+I copy here the complexity of the erase and insert methods of a list and a deque
+
+Deque
+erase:Linear on the number of elements erased (destructions). Plus, depending on the particular library implemention, up to an additional linear time on the number of elements between position and one of the ends of the deque.
+insert:Linear on the number of elements inserted (copy/move construction). Plus, depending on the particular library implemention, up to an additional linear in the number of elements between position and one of the ends of the deque.
+
+List
+erase: Linear in the number of elements erased (destructions).
+insert: Linear in the number of elements inserted (copy/move construction).
+
+When you need to mix the behavior it may be a good choice specially if you want to access elements using the operator[]
+
+
+std::queue
+---------------
+https://cplusplus.com/reference/queue/queue/
+
+A FIFO ( first in first out queue structure )
+
+Suppose you are gathering financial transacions and they are queued because of timeouts. It seems natural that the ones that need to be taken out of the queues are first ones
+
+std::stack
+------------
+https://cplusplus.com/reference/stack/stack/
+
+A LIFO ( last in first out)
+
+A stack is usefull when the last element should be the first one removed from the structure due to a priority. searching over the internet I found the example of a stack of plates. 
+
+std::priority_queue
+---------------------
+https://cplusplus.com/reference/queue/priority_queue/
+
+I honestly never used one.
+
+Now associative containers
+
+std::map/std::multimap/std::set/std::multiset
+-----------------------------
+https://cplusplus.com/reference/map/
+
+When you need to store elements using a key that you need to use later maps are the best options. For example, if you want to store pairs, one being an indexer and the other the actual value, eg
+
+ID  NAME
+0   AA
+1   BB
+2   CC
+
+You can use a map to store them and retrieve values using the indexer
+std::map<int,std::string> m;
+//supose you want to assign the values to a map using insert
+// to later get it, you can use
+
+std::cout << m[0] << std::endl;
+
+This is made in constant time.
+
+A map does not allow that two equal elements are inserted whereas a multimap does. The drawback is that they require you to provide a means ( a functor, a lambda function) to sort your object and every time an object is inserted inside a map it is sorted. Which has the following complexity
+
+"If a single element is inserted, logarithmic in size in general, but amortized constant if a hint is given and the position given is the optimal."
+https://cplusplus.com/reference/map/map/insert/
+
+A set is a container that whose indexer is the element itself. Eg
+
+std::set<int> s;
+
+In the same manner, a set requires you to provide a means ( a functor, a lambda function) to sort your object and every time an object is inserted inside a set it is sorted. 
+
+A multiset allows multiple inputs of the same object.
+
+Although, 
+
+
+
+
+
+
+
+
+
+
+
 2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
 3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
 4. Explain the keyword: static. What does it mean in each context?
@@ -7,12 +175,12 @@
 7. Is this code safe? If so why? If not why?
 	std::string foo()
 	{
-		std::string something = ìavalueî;
+		std::string something = ‚Äúavalue‚Äù;
 		return something;
 	}
 	
 	Bonus: What would most compilers do with this code?
-8. Why would you use new rather than malloc when allocating an object? Likewise, whatís the difference between free and delete?
+8. Why would you use new rather than malloc when allocating an object? Likewise, what‚Äôs the difference between free and delete?
 9. Explain the purpose of std::move, and std::forward. 
 10. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
 11. What are the some of the principles of object-oriented programming?
