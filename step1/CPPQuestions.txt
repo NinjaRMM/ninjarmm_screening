@@ -491,7 +491,18 @@ void inc()
 std::thread t1{inc};
 std::thread t2{inc};
 
-So, with a mutex, the variable can be accessed only by the thread that locked it.
+So, with a mutex, the variable can be accessed only by the thread that locked it. I found out that C++17 allows a better mechanism
+
+std::mutex my_mutex;
+void inc() 
+{
+    std::lock_guard g(my_mutex;);
+    global = global + 1;
+}
+
+So you don't have to unlock it, and the RAII principle will apply when g goes out of scope.
+
+
 
 
 11. What are the some of the principles of object-oriented programming?
