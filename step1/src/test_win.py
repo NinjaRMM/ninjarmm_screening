@@ -5,9 +5,12 @@ import wmi
 from windows_tools.updates import get_windows_updates
 
 def main(argv):
+    
+    # it uses the package windows_tools to print all the windows patches
     for update in get_windows_updates(filter_duplicates=True):
         pprint.pprint(update)
     
+    # uses the package wmi to get information about current computer
     c = wmi.WMI()   
     my_system = c.Win32_ComputerSystem()[0]     
     print(f"Manufacturer: {my_system.Manufacturer}")
