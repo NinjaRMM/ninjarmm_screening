@@ -502,6 +502,37 @@ void inc()
 
 So you don't have to unlock it, and the RAII principle will apply when g goes out of scope.
 
+For a user defined type, the mutex can be declared as a member variable.
+
+struct MyData
+{
+	int a ;
+	int b ;
+	void foo(){};
+	std::mutex my_mutex;
+};
+
+
+MyData m_data;
+void run(const char* m) 
+{
+	std::cout << m << std::endl;
+    m_data.my_mutex.lock();
+    m_data.a = 1;
+	m_data.a = 2;
+	m_data.my_mutex.unlock();
+}
+
+
+int main()
+{	
+	std::thread t1{run,"one"};
+	std::thread t2{run,"two"};	
+	
+	t1.join();
+	t2.join();
+}
+
 
 
 
