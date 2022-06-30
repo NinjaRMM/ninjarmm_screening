@@ -5,7 +5,10 @@ import subprocess
 
 def main(argv):
     
+    # shows all the packages isntalled by running rpm -qa
     errcode = subprocess.call(["rpm", "-qa"  ],stderr=subprocess.DEVNULL)
+    
+    # prints operational system info using os library
     print(os.uname())
 
                  
