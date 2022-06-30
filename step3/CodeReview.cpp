@@ -11,6 +11,9 @@ Comments are encouraged.
 */
 
 
+// note please see src/step3.cpp
+// I made my corrections there
+
 struct ThirdPartyAVSoftware
 {
     std::wstring Name;
