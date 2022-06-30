@@ -206,12 +206,86 @@ https://www.geeksforgeeks.org/quick-sort/
 
 Complexity O(nlog(n))
 
-
-
+Note: these algorithms are not my strongest point. I never had any formal training in them and so I basically use the sort algorithm at the C++ STL.
 
 3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
+
+Suppose you have polymorphic very simple set of classes.
+
+class A
+{
+public:
+   A(){};
+   virtual ~A(){};
+};
+
+then you extend it
+
+class B : public A
+{
+public:
+  B(){};
+  virtual ~B(){};
+}
+
+if you don't declare the destructors virtual and instantiate  an object B , when destructed it may lead to several errors depending on the compiler you used. By using the virtual destructors you garantee that objects of allocated by both classes are deallocated.
+
+
+I have seen a case where a program extended a factory class, but the base factory class did not deallocated the objects allocated by the extended one. Worst, the extended class did not even have a destructor. Just by adding the virtual desctructor we reduced the leakage of memory. The we implemented a deallaction mechanism to delete the objects the extended class allocated.
+
+
+
 4. Explain the keyword: static. What does it mean in each context?
+
+A static variable means the variable will remain in memory until the program is terminated and its contents can be accessed in your application as long as you inform the linker where it is declared.
+
+static int A = 0;
+you can refer to it to the linker by adding
+extern int A ; in the start of your source. Ugly but effective
+
+A static variable can also be shared by many instances of the same class.
+
+class A{
+public:
+  A()
+  {
+  	count_me++;
+  }
+  
+  static int count_me = 0;
+}
+
+So if we have 
+
+A aa{};
+A ab{};
+
+Every isntance of A is reflected in the static variabe count_me.
+
+A static function allows you to modify static variables
+
+"It is a member function that is used to access only static data members. It cannot access non-static data members not even call non-static member functions. It can be called even if no objects of the class exist. It is also used to maintain a single copy of the class member function across different objects of the class."
+
+So
+class A{
+public:
+
+  
+  static void foo();
+  
+}
+
+
+you may call it as A::foo();
+
+
+
+
 5. When are static member variables initialized? 
+
+When the program is loaded in memory, so they are initialized just once.
+
+
 6. What is the difference between R-Values and L-Values?
 7. Is this code safe? If so why? If not why?
 	std::string foo()
