@@ -1,3 +1,19 @@
+// Daniel Vasconcelos Gomes
+
+
+NOTES: 
+(1) Some items I admit that I had to research like C++11 threads and move semantics
+The former becuse I mostly use posix threads semaphore, mutexes and shared resources through shared memory
+The latter because my current employer uses c++03 and our compilers God forbids us support C++11 partially.
+I have tried to mention boost to them. They looked over me as if I was crazy.
+(2) I always cite the website I looked over the internet to answer.
+(3) I studied electrical engineering so I never had formal training in data structures so basically I have used C++ STL
+for everything. As I indicate below, my answers to sort algorithms were rather rubish because I never had to implement a sort algorithm to use professionally
+(4) If anything here looks too brief or not too well explained it was not my intention. Under my mental limitations I tried my best
+(5) Thank you for not making me do online tests where you hardly have time to properly do anything and you are asked to go through details of printf formats
+(6) I am 49. I still need to learn a lot.
+(7) If you see a TODO and something not answered please I apologize I either didnt have time to answer or could not.
+
 1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
 
 std::string
@@ -33,7 +49,6 @@ for( auto& O: Large )
 or use the [] operator to individually access them. If you need to sort it, or find an element, if you behave exactly as a regular array. I made use of vectors at the code 
 
 https://github.com/zlogdanbr/mycpp/blob/master/src/util.h in the class csvprocessing because I can store elements from a csv file inside a vector<vector<double>> so I can use the values as a 2D array. Suffice to say using a vector is largely cleaner than a regular double 2D C array
-
 
 
 std::list
@@ -206,7 +221,7 @@ https://www.geeksforgeeks.org/quick-sort/
 
 Complexity O(nlog(n))
 
-Note: these algorithms are not my strongest point. I never had any formal training in them and so I basically use the sort algorithm at the C++ STL.
+Note: these algorithms are not my strongest point. I never had any formal training in them and so I basically have used the sort algorithm at the C++ STL, which someone told me to internally use qsort for many STL implementations.
 
 3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
 
@@ -287,6 +302,21 @@ When the program is loaded in memory, so they are initialized just once.
 
 
 6. What is the difference between R-Values and L-Values?
+
+From "the source"
+
+https://isocpp.org/wiki/faq/cpp11-language#rval
+
+"The distinction between lvalues (what can be used on the left-hand side of an assignment) and rvalues (what can be used on the right-hand side of an assignment) goes back to Christopher Strachey (the father of C++’s distant ancestor CPL and of denotational semantics)."
+
+So
+
+char* f = nullptr; // f is a lvalue and nullptr is a rvalue
+int b = 1;// b is  a lvalue and 1 is a rvalue
+
+
+
+
 7. Is this code safe? If so why? If not why?
 	std::string foo()
 	{
@@ -295,12 +325,271 @@ When the program is loaded in memory, so they are initialized just once.
 	}
 	
 	Bonus: What would most compilers do with this code?
+	
+	
+When I build that function with
+
+"C:\Program Files (x86)\Embarcadero\Dev-Cpp\TDM-GCC-64\bin\g++.exe"  -Wall -Wextra -Wpedantic -std=c++14 -o "cu" "cu.cpp"
+Process started (PID=85256) >>>
+cu.cpp:157:26: error: stray '\342' in program
+  157 |  std::string something = â€œavalueâ€;
+  
+  cu.cpp:157:26: error: stray '\342' in program
+  157 |  std::string something = â€œavalueâ€;
+      |                          ^
+cu.cpp:157:27: error: stray '\200' in program
+  157 |  std::string something = â€œavalueâ€;
+      |                           ^
+cu.cpp:157:28: error: stray '\234' in program
+  157 |  std::string something = â€œavalueâ€;
+      |                            ^
+cu.cpp:157:35: error: stray '\342' in program
+  157 |  std::string something = â€œavalueâ€;
+      |                                   ^
+cu.cpp:157:36: error: stray '\200' in program
+  157 |  std::string something = â€œavalueâ€;
+      |                                    ^
+cu.cpp:157:37: error: stray '\235' in program
+  157 |  std::string something = â€œavalueâ€;
+      |                                     ^
+cu.cpp: In function 'std::string foo()':
+cu.cpp:157:29: error: 'avalue' was not declared in this scope
+  157 |  std::string something = â€œavalueâ€;
+      |                             ^~~~~~
+      
+ So if the actual code contains unicode characters, it will not be compiled.
+ 
+On the other hand if we use
+ 
+std::string foo()
+{
+	std::string something = "avalue";
+	return something;
+}
+		
+int main()
+{
+	cout << foo() << endl;	
+}
+
+it seems safe for me because you are assigning a const char array to c++ stl string.
+
+Ok I decided to build it using
+ -v -Wall -Wextra -Wpedantic -std=c++14
+ 
+ And still I don't see any warnings.
+ 
+note:
+I use notepad++ configured as this web site shows
+http://www.edparrish.net/common/npp4c.html
+
 8. Why would you use new rather than malloc when allocating an object? Likewise, what’s the difference between free and delete?
+
+new is the C++ operator for dynamic allocation. Malloc was created to allocate memory in C programs and it requires some obnoxious castings.
+free will simply remove the memory allocated by malloc whereas delete will be run when the object is destructed. free will not call the destructor of a class.
+
 9. Explain the purpose of std::move, and std::forward. 
+
+The main purpose is to move the memory resource from one object to other without duplicating memory
+
+"std::move is used to indicate that an object t may be "moved from", i.e. allowing the efficient transfer of resources from t to another object."
+
+When you write move contructors and move operators =, you tell the compiler to simply move the memory resource. 
+
+"Move constructor moves the resources in the heap, i.e., unlike copy constructors which copy the data of the existing object and assigning it to the new object move constructor just makes the pointer of the declared object to point to the data of temporary object and nulls out the pointer of the temporary objects. Thus, move constructor prevents unnecessarily copying data in the memory. "
+https://www.geeksforgeeks.org/move-constructors-in-c-with-examples/
+
+
+TODO: Add example of move constructors
+TODO: add std::forward
+
 10. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
+
+Usually a semaphore or a mutex should be used to access data resources that are shared between threads so that they safely access each resource.
+IN the modern C++ approach:
+
+TODO: Explain.
+
+
+
+
 11. What are the some of the principles of object-oriented programming?
+
+Polymorphism, inheritance, encapsulation
+
+inheritance: classes House, Apartment and Trailler extend Home.
+Polymorphism: Home is a pure virtual class used below as base pointer for all the objects
+
+#include <iostream>
+#include <memory>
+ 
+using namespace std;
+ 
+// Base pure virtual class
+class Home
+{
+public:
+    Home(){};
+    virtual ~Home(){};
+    virtual int Build() = 0;
+};
+
+// Objects created by factory
+// Object 1
+class House: public Home
+{
+public:
+    House():Home(){};
+    virtual ~House(){ cout << "Destructor House" << endl;};
+    virtual int Build() override
+    {
+        cout << "Building a house..." << endl ;
+        return 0;
+    };
+};
+ 
+// Object 2
+class Apartment: public Home
+{
+public:
+    Apartment():Home(){};
+    virtual ~Apartment(){ cout << "Apartment" << endl;};
+    virtual int Build() override
+    {
+        cout << "Building a apartment..." << endl ;
+       return 0;
+    };
+};
+ 
+// Object 3
+class Trailler: public Home
+{
+public:
+    Trailler():Home(){};
+    virtual ~Trailler(){ cout << "Destructor Trailler" << endl;};
+    virtual int Build() override
+    {
+        cout << "Building a Trailler..." << endl ;
+        return 0;
+    };
+};
+
+the factory class use the polimorphic structure
+
+class MyClassFactory
+{
+public:
+    std::unique_ptr<Home> getObjc( int option ) const;
+};
+ 
+// we dont have to declare that the method returns a specific
+// object we just tell the compiler this will be decided in runtime
+// by the compiler who uses this polymorphic structure
+std::unique_ptr<Home> MyClassFactory::getObjc( int option ) const
+{             
+    std::unique_ptr<Home> uptr;
+    switch(option)
+    {
+        case 1:
+            uptr = make_unique<House>();
+            break;
+        case 2:
+            uptr = make_unique<Apartment>();       
+            break;
+        case 3:
+            uptr = make_unique<Trailler>();
+            break;
+        default:
+            return nullptr;
+    }
+    return uptr;
+}
+
+encapsulation
+
+The capacity of a class to hide its internal data to be internally accessed. This is controlled by keywork modifiers
+public, protected and private. Usually a class would give access to a member variable through accessors 
+
+set and get which set the variable or get its value.
+
+
 12. Explain inheritance vs composition vs aggregation?
+
+inheritance
+-------------
+The capacity to extend a base object. Eg
+
+class CandyFactory
+{
+public:
+   Cake returnACake();
+};
+
+class CandyAndSnack: public CandyFactory
+{
+public:
+  HHamburguer getHamburguer();
+}
+
+Class CandyAndSnack heirs the ability to produce a cake by heritage and implements an hamburguer.
+
+Compositon
+---------------
+A class internally uses another class
+
+class orange
+{
+};
+
+class lime
+{
+};
+
+class banana
+{
+};
+
+class FruitSalad
+{
+public:
+	FruitSalad(){};
+	orange o;
+	lime l;
+	banana b;
+	void doMix()
+	{
+		// put all the together
+	}
+}
+
+Agreggation
+
+A pointer to a class is shared by the class
+
+class A
+{
+public:
+};
+
+class B
+{
+public:
+ A* p;
+}
+
+int main()
+{
+	A* a = new A;
+	B b;
+	b.p = a;
+
+}
+
 13. Should you always initialize variables? 
+
+ALWAYS.
+
+
 14. Write a program (or multiple) in a known programming language to do the following:
 	a. Query for installed windows patches. 
 	b. Query for installed Linux Packages
@@ -309,13 +598,140 @@ When the program is loaded in memory, so they are initialized just once.
 	a. Query for windows system information. 
 	b. Query for Linux system information
 	c. Query Mac system information
+	
 16. What concept(s) in C++ would you use to manage resources automatically?
 	a. How important are these concepts? 	
 	b. What tools are you familiar with for tracking resource allocations? 
+	
+a) C++11 introduced smart pointers. They allow that memory is properly deallocated whenever it goes out of scope. They are very very important.
+C++03 does not have smart pointers just the deprecated and buggy auto_ptr and even so nobody uses it. Factory classes that allocate raw pointer memory are dangerous, as well as filling STL containers with pointers and leaving them there. I have seen huge banking systems go down because of these two
+
+b) When I lastly programmed in Windows ( some 9 years ago ) I used a collection of small apps that allowed me to see threads, linkage and memory space. Visual Studio has improved somehow in this regard. In the last years I used topas and ps commands plus some custom commands to check memories. I am not sure if this is what you asked for. 
+
 17. What security concerns have you come across in the past and how have you addressed them?
+
+1. Test buffers, objects and containers passed to functions or methods always
+eg
+
+int foo( char* b)
+{
+ if ( b == nulltpr )
+ 	return -1;
+//
+}
+
+or
+
+int foo( std::vector<int>& s )
+{
+	// if it is empty it will later give errors
+	if ( s.empty() == true )
+		return -1;
+}
+
+2. If you are not going to change the object or buffer pass it as const
+
+int foo( const char* b)
+{
+ if ( b == nulltpr )
+ 	return -1;
+//
+}
+
+or
+
+int foo( const std::vector<int>& s )
+{
+	// if it is empty it will later give errors
+	if ( s.empty() == true )
+		return -1;
+}
+
+3. Always indicate properly limits/sizes for raw allocated pointer buffers
+
+int foo( const char* b, size_t n, int MAX )
+{
+ if ( b == nulltpr )
+ 	return -1;
+//
+
+// after some code you need to check the size using n and MAX
+
+4. Use std::strings not ANSI C null terminated strings
+
+5. First be clear, then optimize
+Obfuscated code leads to general misuage 
+
+6. use exceptions but with care and don't abuse of them
+
+7. Don't hardcode 
+
+8. Always think about those malignous beings called hackers when you write code
+if you use memcpy be sure to use it checking boundaries
+use strncpy only if there is no other way
+check if buffers are not NULL before using them
+
+9. Double check a function after you finish it and think as a maligant being. 
+
+10. Use STL vectors always 
+
+11. Smart pointers
+
+12. Code review
+
+13. Listen to testers, let them go berzerk.
+
+
+}
+
 18. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
-19. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
+
+I cannot work without notepad++, HxD ( hex reader ), Winmerge, Winscp and putty.
+A decent *nix shell is mandatory even if you have to have cygwin
+vim and vi.
+I cannot work without python. It is always good to have it for automation of tasks.
+A large monitor
+coffe.
+music
+sharing knowledge
+A C++17 compiler
+
+
+
+19. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.  
+
+I have worked with some of the most cumbersome source control tool: p4. 
+Clearcase was good.
+I liked using the old SCCS Unix. That is old school but the sources are well.
+Today SVN is just perfect if you use it with care.
+winmerge
+diff
+notepad++
+sharing knowledge
+A C++17 compiler
+mutual help
+history of failures
+proper documentation
+proper commenting
+
 20. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
 	a. Consider both a long term and short-term solutions. 
+	
+	First thing is learn how to use it.
+	Learn what the change is.
+	For a short term a debugger is mandatory
+	find the specific point where you need to change looking at the code and using the debugger
+	write your own notes of the architecture.
+	fix problems.
+	
+	It will be very good to document the code, and the whole processes.
 21. What concerns do you had supporting legacy operating systems? (If any)
+
+That i recall I had to write a small c++ app for an old Linux distro centos and it was very difficult to find a WxWidgets library
+Compilers. I am concerned that a product is updated to a certain OS and the product uses an old compiler.
+
 22. Tell us about a project you worked on that you found to be interesting or unusual.
+
+In 2013 it was my last day at a company. They had put my inside a HUGE brazilian bank. The bank did not know I would leave. At that day, at 6 pm they call me at a desk and said: "Can you help us? There is a hacker trying to do bruteforce attack and we need you to modify a C program to save connection attempts and repetions.  I went home at 6 am the next day. 
+
+
