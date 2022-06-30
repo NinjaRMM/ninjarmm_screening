@@ -456,10 +456,42 @@ TODO
 10. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
 
 Usually a semaphore or a mutex should be used to access data resources that are shared between threads so that they safely access each resource.
-IN the modern C++ approach:
+C++11 has introduced a threading library to language.
 
-TODO: Explain.
+In the code below, the global variable is shared between two threads, which can lead to racing problems
 
+// ...
+int global = 0;
+void inc() 
+{
+    global = global + 1;
+}
+
+// ...
+
+std::thread t1{inc};
+std::thread t2{inc};
+
+// ...
+
+So if we add a mutex object we solve this problem.
+
+#include <mutex>
+std::mutex my_mutex;
+// ...
+int global = 0;
+void inc() 
+{
+    my_mutex.lock();
+    global = global + 1;
+    my_mutex.unlock();
+}
+
+// ...
+std::thread t1{inc};
+std::thread t2{inc};
+
+So, with a mutex, the variable can be accessed only by the thread that locked it.
 
 
 11. What are the some of the principles of object-oriented programming?
