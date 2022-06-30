@@ -9,11 +9,9 @@ NOTES:
 (2) I always cite the website I looked over the internet or the book I used as a reference to answer.
 (3) I studied electrical engineering so I never had formal training in data structures so basically I have used C++ STL
 for everything. As I indicate below, my answers to sort algorithms were rather rubish because I never had to implement a sort algorithm to use professionally
-(4) If anything here looks too brief or not too well explained it was not my intention. Under my mental limitations I tried my best
-(5) Thank you for not making me do online tests where you hardly have time to properly do anything and you are asked to go through details of printf formats
-(6) I am 49. I still need to learn a lot.
-(7) If you see a TODO and something not answered please I apologize I either didnt have time to answer or could not.
-(8) I use notepad++ and gcc ( TDM-GCC-64) configured as this web site shows http://www.edparrish.net/common/npp4c.html
+(4) Thank you for not making me do online tests where you hardly have time to properly do anything and you are asked to go through details of printf formats
+(5) If you see a TODO and something not answered please I apologize I either didnt have time to answer or could not.
+(6) I use notepad++ and gcc ( TDM-GCC-64) configured as this web site shows http://www.edparrish.net/common/npp4c.html
 
 
 References used:
