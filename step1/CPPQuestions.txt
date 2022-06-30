@@ -1,5 +1,7 @@
 // Daniel Vasconcelos Gomes
 // code interview Ninja8
+// 30/06/2022
+// daniel.vasconcelosgomes@gmail.com
 
 
 NOTES: 
