@@ -29,6 +29,8 @@
 
 #include <bits/stdc++.h>
 
+
+// Base virtual class
 class Job
 {
 public:
@@ -63,6 +65,7 @@ private:
 	int Hours;
 };
 
+// Derived programmer class
 class Programmer: public Job
 {
 public:
@@ -80,6 +83,7 @@ public:
 
 };
 
+// Derived pilot class
 class Pilot: public Job
 {
 public:
@@ -97,8 +101,7 @@ public:
 
 };
 
-
-
+// runs the DoWork method
 void RunWork( const std::vector<Job*>& jobs )
 {
 	for( auto& j :jobs)
@@ -107,6 +110,7 @@ void RunWork( const std::vector<Job*>& jobs )
 	}
 }
 
+// remove allocated memory
 void clearContainer(std::vector<Job*>& jobs)
 {
 	for( auto& j :jobs)
@@ -127,7 +131,7 @@ auto compare_it =
 []( const std::string& s1, 
 	const std::string& s2 )
 {
-	return  s1.size() == s2.size();
+	return  s1 == s2;
 };
 		
 		
