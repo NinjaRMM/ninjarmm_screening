@@ -1,21 +1,38 @@
 // Daniel Vasconcelos Gomes
 // code interview Ninja8
-// 30/06/2022
+// June 2022
 // daniel.vasconcelosgomes@gmail.com
 
 
 NOTES: 
-(1) Some items I admit that I had to research like C++11 threads and move semantics
-The former becuse I mostly use posix threads semaphore, mutexes and shared resources through shared memory
-The latter because my current employer uses c++03 and our compilers God forbids us support C++11 partially.
-I have tried to mention boost to them. They looked over me as if I was crazy.
-(2) I always cite the website I looked over the internet to answer.
+(1) Some items I admit that I had to research like C++11 threads 
+(2) I always cite the website I looked over the internet or the book I used as a reference to answer.
 (3) I studied electrical engineering so I never had formal training in data structures so basically I have used C++ STL
 for everything. As I indicate below, my answers to sort algorithms were rather rubish because I never had to implement a sort algorithm to use professionally
 (4) If anything here looks too brief or not too well explained it was not my intention. Under my mental limitations I tried my best
 (5) Thank you for not making me do online tests where you hardly have time to properly do anything and you are asked to go through details of printf formats
 (6) I am 49. I still need to learn a lot.
 (7) If you see a TODO and something not answered please I apologize I either didnt have time to answer or could not.
+(8) I use notepad++ and gcc ( TDM-GCC-64) configured as this web site shows http://www.edparrish.net/common/npp4c.html
+
+
+References used:
+
+https://www.geeksforgeeks.org
+https://isocpp.org/faq
+https://cplusplus.com/reference
+Sams Teach your self C++ In One hour day Shidarta Rhao 8th Edition
+C++ Standard Library Quick Reference P.V Weert/M. Gregoire
+Programming principles and pratices B. Stroustrup ( aka the MAN )
+
+Hould you require to review more code written by me:
+
+https://github.com/zlogdanbr/mypython  		contains my python code
+https://github.com/zlogdanbr/mycpp     		contains a large template header file with my useful classes and functions in C++
+https://github.com/zlogdanbr/corona_stat	contains python code wrote to display corona virus statistics
+https://github.com/zlogdanbr/framework		contains a C/C++ framework I wrote in 2014 for a small project
+https://github.com/zlogdanbr/images		contains code I am organizing into classes to use opencv
+
 
 1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
 
@@ -97,7 +114,7 @@ std::deque
 ------------------
 https://cplusplus.com/reference/deque/deque/
 
-A double ended queue. But in reality you get the best of both worlds
+A double ended queue. But in reality you get the best of both worlds, but not quite. A deque does not store elements in contigous memory locations so my experience says they are not as fast as a vector. However you can push_front elements in them or pop in both ends.
 
 A dynamic array and a container that allows you to iterate as a linked list. Or more properly
 
@@ -382,9 +399,10 @@ Ok I decided to build it using
  
  And still I don't see any warnings.
  
+ There might be a security issue if "avalue" is a confidential data that might be hacked by inspecting the final binary.
+ 
 note:
-I use notepad++ configured as this web site shows
-http://www.edparrish.net/common/npp4c.html
+
 
 8. Why would you use new rather than malloc when allocating an object? Likewise, what’s the difference between free and delete?
 
@@ -393,6 +411,11 @@ free will simply remove the memory allocated by malloc whereas delete will be ru
 
 9. Explain the purpose of std::move, and std::forward. 
 
+https://isocpp.org/blog/2018/02/quick-q-whats-the-difference-between-stdmove-and-stdforward
+
+
+std::move
+----------------------
 The main purpose is to move the memory resource from one object to other without duplicating memory
 
 "std::move is used to indicate that an object t may be "moved from", i.e. allowing the efficient transfer of resources from t to another object."
@@ -402,9 +425,33 @@ When you write move contructors and move operators =, you tell the compiler to s
 "Move constructor moves the resources in the heap, i.e., unlike copy constructors which copy the data of the existing object and assigning it to the new object move constructor just makes the pointer of the declared object to point to the data of temporary object and nulls out the pointer of the temporary objects. Thus, move constructor prevents unnecessarily copying data in the memory. "
 https://www.geeksforgeeks.org/move-constructors-in-c-with-examples/
 
+if you take a look at my repository 
+https://github.com/zlogdanbr/mycpp/blob/master/src/util.h
 
-TODO: Add example of move constructors
-TODO: add std::forward
+I have a template class that implements a matrix class
+
+template<typename T>
+		class Dmatrix final {
+
+I overloaded operators + and -
+
+So say you have do use these operators in a simplified manner, eg
+
+Dmatrix<double> d1;// constuction ommited but internally it holds a vector<vector<double> 
+
+Dmatrix<double> d2;
+
+Dmatrix<double> d3;
+
+If you do this
+
+d1 = d2 + d3; 
+
+You are using the operator +. This operator allocates memory from the stack for a new matrix object that will hold the sum . By using the move constructors you simply avoid copying data and thus saves memory usage
+
+std::forward
+----------------
+TODO
 
 10. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
 
@@ -412,7 +459,6 @@ Usually a semaphore or a mutex should be used to access data resources that are 
 IN the modern C++ approach:
 
 TODO: Explain.
-
 
 
 
@@ -598,15 +644,15 @@ ALWAYS.
 	Please see src/test_win.py        
 	b. Query for installed Linux Packages
 	Please see src/test_linux.py    
-	c. Query for installed Mac Packages
-	
-I don1t have a mac to test	
+	c. Query for installed Mac Packages	
+        I don't have a mac to test, but src/test_linux.py  can be adapted	
 15. Write a program (or multiple) in a known programming language to do the following:
 	a. Query for windows system information. 
 	Please see src/test_win.py
 	b. Query for Linux system information
 	Please see src/test_linux.py
 	c. Query Mac system information
+	I don't have a mac to test, but src/test_linux.py  can be adapted
 	
 16. What concept(s) in C++ would you use to manage resources automatically?
 	a. How important are these concepts? 	
@@ -695,28 +741,28 @@ check if buffers are not NULL before using them
 
 18. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
 
-I cannot work without notepad++, HxD ( hex reader ), Winmerge, Winscp and putty.
+Notepad++, HxD ( hex reader ), Winmerge, Winscp and putty
+vim, vi
 A decent *nix shell is mandatory even if you have to have cygwin
-vim and vi.
-I cannot work without python. It is always good to have it for automation of tasks.
+python
+For windows DEFINITELY Visual Studio and Qt for GUIs
+
 A large monitor
-coffe.
-music
 sharing knowledge
 A C++17 compiler
-
+coffe.
+music.
 
 
 19. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.  
 
-I have worked with some of the most cumbersome source control tool: p4. 
-Clearcase was good.
-I liked using the old SCCS Unix. That is old school but the sources are well.
-Today SVN is just perfect if you use it with care.
+To know well what you need to modify or fix
+A source management tool like SVN.
 winmerge
 diff
 notepad++
 sharing knowledge
+commenting code
 A C++17 compiler
 mutual help
 history of failures
@@ -726,17 +772,19 @@ proper commenting
 20. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
 	a. Consider both a long term and short-term solutions. 
 	
-	First thing is learn how to use it.
+	First thing is learn how to use it, ask the users of the system to explain it. Take notes.
 	Learn what the change is.
 	For a short term a debugger is mandatory
 	find the specific point where you need to change looking at the code and using the debugger
 	write your own notes of the architecture.
-	fix problems.
-	
+	fix problems.	
 	It will be very good to document the code, and the whole processes.
+	
+I actually had to this in 2013. There was an authorization system which consisted of a Windows processes and few ISAPIs had to be ported from Visual C++ 2002 to Visual C++ 2010.
+
 21. What concerns do you had supporting legacy operating systems? (If any)
 
-That i recall I had to write a small c++ app for an old Linux distro centos and it was very difficult to find a WxWidgets library
+That I recall I had to write a small c++ app for an old Linux distro centos and it was very difficult to find a WxWidgets library
 Compilers. I am concerned that a product is updated to a certain OS and the product uses an old compiler.
 
 22. Tell us about a project you worked on that you found to be interesting or unusual.
