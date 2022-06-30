@@ -496,7 +496,7 @@ So, with a mutex, the variable can be accessed only by the thread that locked it
 std::mutex my_mutex;
 void inc() 
 {
-    std::lock_guard g(my_mutex;);
+    std::lock_guard g(my_mutex);
     global = global + 1;
 }
 
