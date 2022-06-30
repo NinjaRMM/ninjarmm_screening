@@ -25,7 +25,7 @@ Sams Teach your self C++ In One hour day Shidarta Rhao 8th Edition
 C++ Standard Library Quick Reference P.V Weert/M. Gregoire
 Programming principles and pratices B. Stroustrup ( aka the MAN )
 
-Hould you require to review more code written by me:
+Should you require to review more code written by me:
 
 https://github.com/zlogdanbr/mypython  		contains my python code
 https://github.com/zlogdanbr/mycpp     		contains a large template header file with my useful classes and functions in C++
