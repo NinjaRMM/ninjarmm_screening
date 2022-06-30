@@ -1,4 +1,5 @@
 // Daniel Vasconcelos Gomes
+// code interview Ninja8
 
 
 NOTES: 
@@ -591,9 +592,33 @@ ALWAYS.
 
 
 14. Write a program (or multiple) in a known programming language to do the following:
-	a. Query for installed windows patches. 
+	a. Query for installed windows patches.	
+	
+import sys
+import os
+import pprint
+from windows_tools.updates import get_windows_updates
+
+def main(argv):
+    for update in get_windows_updates(filter_duplicates=True):
+        pprint.pprint(update)                 
+if __name__ == '__main__':
+    main(sys.argv)  
+    
+    
 	b. Query for installed Linux Packages
+import os
+import sys
+import subprocess
+
+def main(argv):    
+    errcode = subprocess.call(["rpm", "-qa"  ],stderr=subprocess.DEVNULL)                
+if __name__ == '__main__':
+    main(sys.argv)  
+    
 	c. Query for installed Mac Packages
+	
+I don1t have a mac to test	
 15. Write a program (or multiple) in a known programming language to do the following:
 	a. Query for windows system information. 
 	b. Query for Linux system information
