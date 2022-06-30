@@ -592,36 +592,18 @@ ALWAYS.
 
 
 14. Write a program (or multiple) in a known programming language to do the following:
-	a. Query for installed windows patches.	
-	
-import sys
-import os
-import pprint
-from windows_tools.updates import get_windows_updates
-
-def main(argv):
-    for update in get_windows_updates(filter_duplicates=True):
-        pprint.pprint(update)                 
-if __name__ == '__main__':
-    main(sys.argv)  
-    
-    
+	a. Query for installed windows patches.		
+	Please see src/test_win.py        
 	b. Query for installed Linux Packages
-import os
-import sys
-import subprocess
-
-def main(argv):    
-    errcode = subprocess.call(["rpm", "-qa"  ],stderr=subprocess.DEVNULL)                
-if __name__ == '__main__':
-    main(sys.argv)  
-    
+	Please see src/test_linux.py    
 	c. Query for installed Mac Packages
 	
 I don1t have a mac to test	
 15. Write a program (or multiple) in a known programming language to do the following:
 	a. Query for windows system information. 
+	Please see src/test_win.py
 	b. Query for Linux system information
+	Please see src/test_linux.py
 	c. Query Mac system information
 	
 16. What concept(s) in C++ would you use to manage resources automatically?
