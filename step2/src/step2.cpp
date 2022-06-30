@@ -32,8 +32,8 @@
 class Job
 {
 public:
-	Job(	std::string Name,
-			std::string Description, 
+	Job(	const std::string& Name,
+			const std::string& Description, 
 			int Hours):Name{Name}, Description{Description}, Hours{Hours}
 	{
 	};	
@@ -66,8 +66,8 @@ private:
 class Programmer: public Job
 {
 public:
-	Programmer(	std::string Name,
-				std::string Description, 
+	Programmer(	const std::string& Name,
+				const std::string& Description, 
 				int Hours):Job(Name,Description,Hours){};
 	virtual ~Programmer()
 	{
@@ -83,9 +83,9 @@ public:
 class Pilot: public Job
 {
 public:
-	Pilot(	std::string Name,
-				std::string Description, 
-				int Hours):Job(Name,Description,Hours){};
+	Pilot(	const std::string& Name,
+			const std::string& Description, 
+			int Hours):Job(Name,Description,Hours){};
 	virtual ~Pilot()
 	{
 		std::cout << "Calling Pilot Destructor" << std::endl;
@@ -141,6 +141,13 @@ int testContainer(std::vector<std::string>& s, Lambda& f, std::string test)
 			cnt++;
 	}
 	return cnt;
+}
+
+
+std::string foo()
+{
+	std::string something = "avalue";
+	return something;
 }
 
 int main()
