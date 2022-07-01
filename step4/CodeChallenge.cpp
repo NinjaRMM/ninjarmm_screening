@@ -8,6 +8,8 @@ We do expect you to execute this code.
 This file contains the 'main' function. Program execution begins and ends there.
 */
 
+// I edited the source and implemented at src/step4.cpp
+
 #include <iostream>
 
 typedef struct SampleObject1
