@@ -30,7 +30,7 @@ https://github.com/zlogdanbr/mypython  		contains my python code
 https://github.com/zlogdanbr/mycpp     		contains a large template header file with my useful classes and functions in C++
 https://github.com/zlogdanbr/corona_stat	contains python code wrote to display corona virus statistics
 https://github.com/zlogdanbr/framework		contains a C/C++ framework I wrote in 2014 for a small project
-https://github.com/zlogdanbr/images		contains code I am organizing into classes to use opencv
+https://github.com/zlogdanbr/images		contains code I am organizing into classes to use and learn opencv
 
 
 1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
@@ -148,6 +148,7 @@ A LIFO ( last in first out)
 
 A stack is usefull when the last element should be the first one removed from the structure due to a priority. searching over the internet I found the example of a stack of plates. 
 
+
 std::priority_queue
 ---------------------
 https://cplusplus.com/reference/queue/priority_queue/
@@ -222,6 +223,7 @@ I used it to store pointers to objects dynammical allocated by a class and requi
 		}
 	};
 
+There are more specialized containers like boolean vectors, bitset, etc.
 
 2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
 
@@ -407,6 +409,7 @@ note:
 
 new is the C++ operator for dynamic allocation. Malloc was created to allocate memory in C programs and it requires some obnoxious castings.
 free will simply remove the memory allocated by malloc whereas delete will be run when the object is destructed. free will not call the destructor of a class.
+Honestly, I get more annoyed by seeing malloc in a c++ program than seeing void main() or God have mercy on me NULL terminated strings
 
 9. Explain the purpose of std::move, and std::forward. 
 
