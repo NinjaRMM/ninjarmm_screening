@@ -1,14 +1,14 @@
-// Daniel Vasconcelos Gomes
-// code interview Ninja8
-// June 2022
-// daniel.vasconcelosgomes@gmail.com
+Ninja8 Screening test
+Daniel Vasconcelos Gomes July 2022
+daniel.vasconcelosgomes@gmail.com
+https://github.com/zlogdanbr/ninjarmm_screening
++55 11 983906930
 
 
 NOTES: 
 (1) Some items I admit that I had to research like C++11 threads 
 (2) I always cite the website I looked over the internet or the book I used as a reference to answer.
-(3) I studied electrical engineering so I never had formal training in data structures so basically I have used C++ STL
-for everything. As I indicate below, my answers to sort algorithms were rather rubish because I never had to implement a sort algorithm to use professionally
+(3) I studied electrical engineering so I never had formal training in data structures so basically I have used C++ STL for everything. As I indicate below, my answers to sort algorithms were rather rubish because I never had to implement a sort algorithm to use professionally.
 (4) Thank you for not making me do online tests where you hardly have time to properly do anything and you are asked to go through details of printf formats
 (5) If you see a TODO and something not answered please I apologize I either didnt have time to answer or could not.
 (6) I use notepad++ and gcc ( TDM-GCC-64) configured as this web site shows http://www.edparrish.net/common/npp4c.html
@@ -808,8 +808,9 @@ check if buffers are not NULL before using them
 
 13. Listen to testers, let them go berzerk.
 
+14. Always prefer to allocate memory at stack and if not use smart pointers. 
 
-}
+
 
 18. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
 
@@ -817,8 +818,7 @@ Notepad++, HxD ( hex reader ), Winmerge, Winscp and putty
 vim, vi
 A decent *nix shell is mandatory even if you have to have cygwin
 python
-For windows DEFINITELY Visual Studio and Qt for GUIs
-
+For windows DEFINITELY Visual Studio for windows system programming  and Qt for GUIs
 A large monitor
 sharing knowledge
 A C++17 compiler
