@@ -6,9 +6,10 @@ https://github.com/zlogdanbr/ninjarmm_screening
 
 
 NOTES: 
-(1) Some items I admit that I had to research like C++11 threads 
+(1) Some items I admit that I had to research like C++11 threads and variadic templates. It was not bad at all because I can use them now. C++ native threads have me impressed since posix threads are a bit cumbersome and doing multi platform code benefits from this usage. 
 (2) I always cite the website I looked over the internet or the book I used as a reference to answer.
-(3) I studied electrical engineering so I never had formal training in data structures so basically I have used C++ STL for everything. As I indicate below, my answers to sort algorithms were rather rubish because I never had to implement a sort algorithm to use professionally.
+(3) I studied electrical engineering so I never had formal training in data structures and alogrithms so basically I have used C++ STL for everything. As I indicate below, my answers to sort algorithms were rather rubish because I never had to implement a sort algorithm to use professionally. My template header file
+https://github.com/zlogdanbr/mycpp/blob/master/src/util.h contains some of what I did.
 (4) Thank you for not making me do online tests where you hardly have time to properly do anything and you are asked to go through details of printf formats
 (5) If you see a TODO and something not answered please I apologize I either didnt have time to answer or could not.
 (6) I use notepad++ and gcc ( TDM-GCC-64) configured as this web site shows http://www.edparrish.net/common/npp4c.html
