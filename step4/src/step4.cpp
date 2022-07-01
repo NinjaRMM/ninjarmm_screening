@@ -8,6 +8,15 @@ We do expect you to execute this code.
 This file contains the 'main' function. Program execution begins and ends there.
 */
 
+// Ninja8 Screening test
+// Daniel Vasconcelos Gomes July 2022
+// daniel.vasconcelosgomes@gmail.com
+// https://github.com/zlogdanbr/ninjarmm_screening
+// +55 11 983906930
+// I used c++17 because it is easier to dabble with variadic templates
+// I could not think of any other solution besides using variadic templates.
+// building this with C++14 will throw some compiler warnings
+
 #include <iostream>
 
 typedef struct SampleObject1
@@ -36,13 +45,15 @@ OBJ_STR objStr;
 //Here's a template function that can accept a sample object and 3 integer parameters. It checks if the sum of the integer params is positive or not.
 //The third integer param is optional so it's declared as a default param
 //Inside the function is some existing code that needs to exist, but not relevant to this exercise. 
+
+// renamed old function still used 
 template <typename T, typename U>
 T checkIfPositive_impl(const U& u, const int& param1, const int& param2, int param3 = 0)
 {
     return u.getResult(param1, param2, param3);
 }
 
-
+// new function now accepts extra parameters using variadic templates
 template <typename T, typename U, typename...Args>
 T checkIfPositive( const U& u, const int& param1, const int& param2, int param3 = 0, Args&...params)
 {
