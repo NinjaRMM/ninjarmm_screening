@@ -10,7 +10,13 @@ Comments are encouraged.
 
 */
 
-
+/*
+Ninja8 Screening test
+Daniel Vasconcelos Gomes July 2022
+daniel.vasconcelosgomes@gmail.com
+https://github.com/zlogdanbr/ninjarmm_screening
++55 11 983906930
+*/
 // note please see src/step3.cpp
 // I made my corrections there
 
