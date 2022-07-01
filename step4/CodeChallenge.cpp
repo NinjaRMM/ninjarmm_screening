@@ -8,7 +8,12 @@ We do expect you to execute this code.
 This file contains the 'main' function. Program execution begins and ends there.
 */
 
-// I edited the source and implemented at src/step4.cpp
+//I edited the source and implemented at src/step4.cpp
+//Ninja8 Screening test
+//Daniel Vasconcelos Gomes July 2022
+//daniel.vasconcelosgomes@gmail.com
+//https://github.com/zlogdanbr/ninjarmm_screening
+//+55 11 983906930
 
 #include <iostream>
 
