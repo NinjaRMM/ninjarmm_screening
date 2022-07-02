@@ -4,7 +4,7 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += \
-        main.cpp
+        ../src/main.cpp
 
 DISTFILES += \
     ../../Requirements.txt
