@@ -1,9 +1,34 @@
 1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
+Despite there are 16 listed containers in http://cppreference.com, I like to group them in 4 basic types of containers in C++: hard (or impossible to change) size, like array and std::vector; easy to insert and delete elements, like std::list; sorted, like std::set; and indexed, like std::map.
+I would use the "hard to change size" group in situations where the number of elements is know in compiler time, or during programa execution, but is unlike to change.
+The "easy to insert and delete" containers are useful when the number of elements in the containers will change a lot, by addition or removal, during program execution.
+The containers in the "sorted group" are good when the elements must be kept sorted, no matter how many are inserted or removed.
+"indexed containers" are indeicated when there are a large number of elementes and/or the size of the elements is too big to move in order to keep the group sorted.
+
 2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
+Sorting algorithms are recips to organize a group of elements in a certain order.
+Examples are Bubble Sort, Insertion Sort and Merge Sort.
+Bubble Sort iterates as many times as necessary in the group, swapping the elements, until all are sorted.
+Insertion Sort copies the elements from the original to a second group, placing then in the right order.
+Merge Sort finds the middle of group, sorts each half by recursively finding the middle of each group, and sorting them.
+Bubble Sorts is recommended for groups of small number of elements, as it has a high complexity order.
+Insertion Sort could be used when you are transfering data from persistance media to memory.
+Merge Sort deals with large groups mucht better than Bubble and Insertion, in terms of CPU and memory usage, as it is not necessary to crate a copy of the group.
+
 3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
+To assure that when objects of sub-classes are destroyed, the destructor of the base class is called.
+
 4. Explain the keyword: static. What does it mean in each context?
+First, allow to present a definition of a variable: it is memory area with address, name, type, size and value.
+When a program is built, the file that contains the program has 2 memory areas. One is for the functions and the other is for variables that are know (or created) at compile time, the 'static' area.
+So, static referes to variables which at least address, name, type and size are known in compile time.
+
 5. When are static member variables initialized? 
+Statics are initialized before the 'main' function starts.
+
 6. What is the difference between R-Values and L-Values?
+R-Values are temporary values, which can not be explicitly referenced, while L-Values are referable values.
+
 7. Is this code safe? If so why? If not why?
 	std::string foo()
 	{
@@ -11,28 +36,95 @@
 		return something;
 	}
 	
-	Bonus: What would most compilers do with this code?
+        Bonus: What would most compilers do with this code?
+
+It is safe because when 'foo' finishes, the value of 'something' is copied into the stack of the function that called 'foo', as a temporary value.
+So, as no address inside 'foo' is referenced by any other function, when the memory for 'foo' is removed from the stack, no invalid address will be referenced.
+
+
 8. Why would you use new rather than malloc when allocating an object? Likewise, what’s the difference between free and delete?
+
 9. Explain the purpose of std::move, and std::forward. 
+std::move is used to move the contents of an object to another, instead of copying.
+std::forward allows objects to be passed from one function to another, keeping its R-Value or L-Value semantics.
+
 10. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
+I would protect the access by some mutual exclusive access.
+For an integer value, I would declare it as 'std::atomic<int>'.
+For a user defined type, I would declare a std::mutex as an attribute, and use some lock mechanism in the methods that would change the values of other attributes.
+
 11. What are the some of the principles of object-oriented programming?
+IMHO, the most important are encapsulation and abstraction, while inheritance and polymorphism are recognized by most as the two other principles.
+
 12. Explain inheritance vs composition vs aggregation?
+Inheritance is the mechanism through which a class (sub-class) uses attributes and methods of other classes (super-classes), by a declarative way.
+Composition between class A and B means inside class A will be an object of class B as its attribute. So, B object will exists while A object exists.
+Aggregation between class A and B means inside class A will be a reference to an  object of class B as its attribute. So B object can exist even if after A object is destroyed.
+
 13. Should you always initialize variables? 
+Yes, as it prevents use of variables with undefined value.
+
 14. Write a program (or multiple) in a known programming language to do the following:
 	a. Query for installed windows patches. 
 	b. Query for installed Linux Packages
+Assuming debian packaging system, we can use 'apt' with the option 'list', and providing parameters, to query the package database.
 	c. Query for installed Mac Packages
+
 15. Write a program (or multiple) in a known programming language to do the following:
 	a. Query for windows system information. 
 	b. Query for Linux system information
+There are many system information one can get from a Linux system, and many commands to retrieve them. 'uname' for kernel version, kernel build date, etc.; 'ip' for data about network, and many more.
 	c. Query Mac system information
+
 16. What concept(s) in C++ would you use to manage resources automatically?
+I would use 'std::shared_ptr' and 'std::unique_ptr'
 	a. How important are these concepts? 	
+The smart pointers classes allow use of dynamic created objects, without the need of keeping track when the allocated memory will have no more references, in order to release it, causing the object to be destroyed.
 	b. What tools are you familiar with for tracking resource allocations? 
+
 17. What security concerns have you come across in the past and how have you addressed them?
+
 18. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
+For tools, I think an Integrated Develoment Envinroment (IDE) that integrates good code editor with syntax highlight, automatic identation, integration with static analysis tools, goto symbol definition, find usage of a symbol; compiling and the possibility to jump to the line with error; debugging with attaching to a running process is very usefull.
+Regarding techniques, I try to stick with the basics: encapsulation, high cohesion, loose coupling, focus on reusing code, separate testing, parameterize (dependency injection) as much as possible.
+
 19. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
+
+
 20. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
 	a. Consider both a long term and short-term solutions. 
+For short-term, I would try to follow the code, from top until the point that should be modified.
+For long-tern, I would like to try to create some (UML) diagrams that would make it easier to have a big picture perspective, or design, of the code.
+
 21. What concerns do you had supporting legacy operating systems? (If any)
+If it is a correction, keep the rest of the system running; if it is a new functionality, again to make the rest of the system running, but try to identify code that can be reused in the new functionality.
+
 22. Tell us about a project you worked on that you found to be interesting or unusual.
+In 2016, I developed a system for helping the recover of just born babies in Intensive Care Unit.
+
+The system was composed of a application (M) on a cell phone (Android or iOS), used by the mother of the child; a program (W) running on a Windows Server inside the hospital; a program (R) running on a Raspberry PI; a small speaker (S); and an application running on a Android cell phone, used by the person responsible for the ICU (I).
+
+This is a how the system worked:
+- The chief of the ICU uses I to register the name of the baby and his mother, also defining in which bed the baby will be
+- The mother records an audio message using M
+- M sends the message to W through the Internet
+- W finds out in which bed the baby is
+- W send the audio file to R
+- R plays the audio in S (using VLC program)
+
+M and I were developed using Qt/C++. The User Interface look and interation were defined by a UX designer.
+Communication from M to W, and from W to R were written in C++ using BSD Socket.
+The protocol, both format message and message interaction, was designed for this system.
+The same client code that runs on M runs os W, when M acts like a client towards R.
+The server code that runs on W is the same server code that runs on R.
+
+I helped defintion the functionality along with the Marketing and Medical department of the hospital, and I did the tecnhical specification, design and implementation all by mylself, except the UX, as described above.
+
+In this project I learned a lot about many things, but the hardware part, specially the speaker, was very interesting.
+I choosed a very small speaker, in order to occupy as little space as possible in the baby's bed, and in the development location it worked very well.
+However, when I started testing in the ICU, all we could hear was noise, like a radio out of tune.
+I learned that the many equipments in the ICU caused a heavy eletrical interference in the small speaker. So, I had to test about 4 other speakers until I found one that worked well inside the ICU.
+Another interesting fact about the hardware is that in the original solution, the energy for the speaker came from the Raspberry PI, but in the ICU that also did not work, and I had to plug the speaker directly into the eletrical network of the buiding.
+
+A TV report was made about the system, and can be watched at https://globoplay.globo.com/v/5787134/.
+
