@@ -1,5 +1,5 @@
 // Daniel Vasconcelos Gomes
-// 2022 June Testing Ninja8
+// 2022 June Testing NinjaOne
 
 // Requirements
 /**
