@@ -11,7 +11,7 @@ Comments are encouraged.
 */
 
 /*
-Ninja8 Screening test
+NinjaOne Screening test
 Daniel Vasconcelos Gomes July 2022
 daniel.vasconcelosgomes@gmail.com
 https://github.com/zlogdanbr/ninjarmm_screening
