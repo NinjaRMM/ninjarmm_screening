@@ -8,7 +8,7 @@ We do expect you to execute this code.
 This file contains the 'main' function. Program execution begins and ends there.
 */
 
-// Ninja8 Screening test
+// NinjaOne Screening test
 // Daniel Vasconcelos Gomes July 2022
 // daniel.vasconcelosgomes@gmail.com
 // https://github.com/zlogdanbr/ninjarmm_screening
