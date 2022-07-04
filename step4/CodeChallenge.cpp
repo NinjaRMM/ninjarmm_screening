@@ -9,7 +9,7 @@ This file contains the 'main' function. Program execution begins and ends there.
 */
 
 //I edited the source and implemented at src/step4.cpp
-//Ninja8 Screening test
+//NinjaOne Screening test
 //Daniel Vasconcelos Gomes July 2022
 //daniel.vasconcelosgomes@gmail.com
 //https://github.com/zlogdanbr/ninjarmm_screening
