@@ -43,6 +43,13 @@ So, as no address inside 'foo' is referenced by any other function, when the mem
 
 
 8. Why would you use new rather than malloc when allocating an object? Likewise, what’s the difference between free and delete?
+'new' allows initialization of the dynamic allocated memory, not only for user defined types, using constructors, but also for primitive types.
+'new' is a C++ operator, part of the C++ language, while 'malloc' is a library function.
+'new' returns a specific, well defined type, while 'malloc' returns 'void *' that needs to be casted.
+The necessary size for 'new' is calculated at compile time, while the programmer has to calculate the necessary amount for 'malloc'.
+
+Like 'new', 'delete' is a operator, part of the C++, while 'free' is a library function.
+Most important, 'delete' calls the destructor of the type of the pointed to.
 
 9. Explain the purpose of std::move, and std::forward. 
 std::move is used to move the contents of an object to another, instead of copying.
@@ -65,16 +72,25 @@ Aggregation between class A and B means inside class A will be a reference to an
 Yes, as it prevents use of variables with undefined value.
 
 14. Write a program (or multiple) in a known programming language to do the following:
+It is hard, and sometimes not very usefull, to write a program without a good definition of its functionality, in this case, what data the user actually wants, but I would say that...
 	a. Query for installed windows patches. 
-	b. Query for installed Linux Packages
+After reading https://social.technet.microsoft.com/wiki/contents/articles/4197.windows-how-to-list-all-of-the-windows-and-software-updates-applied-to-a-computer.aspx, I would use the multi purpose 'wmic' command.
+
+        b. Query for installed Linux Packages
 Assuming debian packaging system, we can use 'apt' with the option 'list', and providing parameters, to query the package database.
-	c. Query for installed Mac Packages
+
+        c. Query for installed Mac Packages
+As far as I know, one can use 'brew' to query for packages in MacOS.
 
 15. Write a program (or multiple) in a known programming language to do the following:
 	a. Query for windows system information. 
+As I answered in the question above, I would use 'wmic' command to try to retrieve the defined data.
+
 	b. Query for Linux system information
 There are many system information one can get from a Linux system, and many commands to retrieve them. 'uname' for kernel version, kernel build date, etc.; 'ip' for data about network, and many more.
+
 	c. Query Mac system information
+I believe many commands used in Linux would also work on MacOS.
 
 16. What concept(s) in C++ would you use to manage resources automatically?
 I would use 'std::shared_ptr' and 'std::unique_ptr'
@@ -83,13 +99,14 @@ The smart pointers classes allow use of dynamic created objects, without the nee
 	b. What tools are you familiar with for tracking resource allocations? 
 
 17. What security concerns have you come across in the past and how have you addressed them?
+I was never the responsible programmer for implementing security functions in the systems I worked, but I am familiar with hashes, criptography and digital certificate to address security issues.
 
 18. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
 For tools, I think an Integrated Develoment Envinroment (IDE) that integrates good code editor with syntax highlight, automatic identation, integration with static analysis tools, goto symbol definition, find usage of a symbol; compiling and the possibility to jump to the line with error; debugging with attaching to a running process is very usefull.
 Regarding techniques, I try to stick with the basics: encapsulation, high cohesion, loose coupling, focus on reusing code, separate testing, parameterize (dependency injection) as much as possible.
 
 19. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
-
+I use top-down analysis flow of the functions, and for multithread situations, I like to have a thread safe print function.
 
 20. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
 	a. Consider both a long term and short-term solutions. 
