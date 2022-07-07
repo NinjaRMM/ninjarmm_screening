@@ -1,20 +1,122 @@
 1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
+
+    The two most used and important types are sequences and associative containers. Sequences are designed for elements that have some kind of 
+	sequential order, like a list, and are used in most situations to represent plain of groups of data. The most important sequential container 
+	is std::vector, which is a contiguous array of data that can grow dynamically (its static version would be std::array). Due to the locality
+	of data, its the prefered type of container for many situations, even over std::forward_list (single linked list) and std::list (double linked
+	list), as even if you are using only the extremes, the fact that data is contiguous and will land in cache is much more important than the 
+	additional allocs. Howver, the list have a smaller memory footprint which could be useful in certain cases. There's also std::deque which is 
+	an indexed queue, which, by not being contiguous still suffers the same disadvantages as the lists against vector.
+
+	The associative containers are normally ordered, but they also have unordered versions, which in practice is usually more useful. This type of
+	containers has data that can be searched fast usually by some kind of hash (tree in the case of ordered). The most important is std::map/unordered_map, 
+	which stores key-value pairs and is useful for most situations that involve a search. For example, if you have a list of vms with information like
+	OS, version, etc, in a class called VirtualMachineMetadata, and you want to access quickly one by its hostname, you can use a 
+	map<hostname, VirtualMachineMetadata> so you can go from one to the other. std::set/unordered_set only stores each element once, and is useful if you
+	want to avoid repeated elements or check if they already exist. In the rare case you want multiple times the same key, both have a multi-
+	version, but they are much less useful.
+
+	Finally, there are container adaptors, which are stacks and queues, providing a LIFO and a FIFO interface. They only provide an interface, and 
+	intenally can use a sequence container (by default, deque).
+
 2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
+
+    Bubblesort: The most intuitive sorting algorithm, but very inefficient. Iterate through the list, and compare each element. If they are not in 
+	order, swap them. Repeat until done. It's O(n^2). The only use case would be when you are 99% sure the list is already sorted or only a few elements
+	are out of place (but are close the position would be), as in that case it's O(n).
+
+	Insertionsort: Another very intuitive and simple to implement algorithm. It iterates through the list and puts each element in its place on it. It's
+	useful in the case of very small datasets where building more datastructures would have more overhead than the straightsorting.
+
+	Mergesort: A relatively simple algorithm but very efficient and stable, as it's O(nlogn). Divide the lists by two recursively until they are by one,
+	and keep merging them in order. Intuitive and easy enough to implement, the good side is that it's very good to run on paralell. AsSign each thread/core
+	or even vms each half and they can subdivide further if they have the resources. 
+
+	Timsort: The combination of mergesort and insertionsort, created for python, but also used in Rust's sort. The idea is that it detects contiguous
+	sorted subarrays and merges them like a mergesort. Since those subarrays are abitrary length and not a fixed size like mergesort, it can avoid many
+	comparisons. It works well on "natural" data and is used in many languages.
+
+	Quicksort: The default in many languages, including C++. Like Mergesort it's O(nlogn), but it's not stable, its worst case, which is when the list
+	already has some type of sorting (which type depends on the implementation of the pivot), its O(n^2). It works by selecting a pivot and move it until
+	it has a sorted list on one side (if doing smallest to largest, we choose the rightmost element as pivot and we move it to the left, leaving smaller
+	elements to the left of the pivot, and an unsorted list to the right). Then repeat with the unordered list. It's usually more cache efficient than
+	mergesort. Efficient versions usually have some kind of logic to the election of the pivot instead of choosing extremes.
+
 3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
+
+	Virtual destructors are necesary so maintain the hierarchy in destructors, so when you delete a derive class through its base class point, the
+	destructor called is the derived, not the base. Not using them could cause leaks and all kind of unintended code being executed. An example would
+	be a DerivedClass from BaseClass, which on its constructor reserves some memory, and its destructor frees it. If we do:
+
+	BaseClass* b = new DerivedClass();
+	delete b;
+
+	The destructor ~BaseClass will be called, instead of ~DerivedClass, so all that memory will be leaking. Since a big part of C++ is RAII and 
+	constructors/destructors get used for things like locks or even I/O, it's usually the case that you should use them when you want your class
+	to be inherited, even if you aren't going to use base class pointers at first. It will bite later if you don't.
+
 4. Explain the keyword: static. What does it mean in each context?
-5. When are static member variables initialized? 
+
+	- static variable or function in a file/namespace: Limits the scope of that element to that obj file. Useful when you dont want those functions 
+	to be used outside of that "module" (internal linkage).
+	- static member function in a class: This functions is not limited to any instance of a class, and can be used without it. Useful for general behavior
+	that doesn't require specific data.
+	- static variable in a class: Same but for a variable. A very common use is a counter for generating ids.
+	- static variable in a function: The variable will persist between calls. Can be rather dangerous but can be used for small caches.
+
+5. When are static member variables initialized?
+
+	Initialization for static member variable is only allowed for const like a integer literal so there are no dynamic dependencies and cannot violate
+	the ODR. Standard doesn't guarantee when they are initialized, only that its in order of their definition and in before any usage in any compilation 
+	unit (which usually means they are statically initialized at the point or their definition), before main().
+
 6. What is the difference between R-Values and L-Values?
+
+	L-values are expressions that point to specific memory (identity), and rvalues don't point anywhere. In a more technical definition, l-value have
+	identity and cannot be moved (they have to be copied), and r-values do not have identity and can be moved.
+
 7. Is this code safe? If so why? If not why?
 	std::string foo()
 	{
-		std::string something = “avalue”;
+		std::string something = "avalue";
 		return something;
 	}
 	
 	Bonus: What would most compilers do with this code?
-8. Why would you use new rather than malloc when allocating an object? Likewise, what’s the difference between free and delete?
+
+	Yes, C++ as a language guarantees return value optimization, therefore it will be always safe and won't alloc any temporal object to be copied 
+	in the caller (unlike when you pass a value to a function which will be copied). 
+	When a compiler sees this function used, it will (most likely) generate the string directly on the parent and avoid the call at all. Tested on
+	godbolt.org with clang14. The function itself is generated in any case just in case there's a external dependency for abi reasons, but can be 
+	skipped with an inline.
+
+8. Why would you use new rather than malloc when allocating an object? Likewise, what's the difference between free and delete?
+
+	"new" will call the constructor, therefore in addition to reserve enough memory for the object, it will also initialize and 
+	run specific code. "delete" will do the same but with its constructor.
+	Generally for any object you should always use new over malloc.
+
 9. Explain the purpose of std::move, and std::forward. 
+
+	std::move when you want to call a function which instead of copying the values, it will take ownership of them.
+	std::forward when a function with move semantics wants to keep using them to a called function. It's easier to see with an example.
+
+	f(const T& a) { print("L-VALUE"); }
+	f(T&& a) { print("R-VALUE"); }
+	void parent(T&& a)
+	{
+		f(a); // will print L-VALUE
+		f(std::forward(a)); // will print R-VALUE
+	}
+
 10. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
+
+	It varies a lot by case as there are many different situations. For simple things like an integer, using atomics 
+	is the easiest way to get _safe_ values between threads, but keep in mind that memory safe and actually working and
+	safe are different things. The use of locks is probably needed for many operations.
+	For more complex objects, wrapping up with std::lock_guard and a mutex will be the traditional way to go. Whatever that
+	wrapper is only for that object or it has more will depend heavily on the architecture.
+
 11. What are the some of the principles of object-oriented programming?
 12. Explain inheritance vs composition vs aggregation?
 13. Should you always initialize variables? 
