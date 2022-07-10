@@ -118,23 +118,86 @@
 	wrapper is only for that object or it has more will depend heavily on the architecture.
 
 11. What are the some of the principles of object-oriented programming?
+
+	Abstract behaviors through interfaces and data through classes which have relationships between each other (either inheritance or composition). 
+	Each data structure should also be able to manage a state through its lifetime, exposing only certain calls and encapsulating the rest. 
+
 12. Explain inheritance vs composition vs aggregation?
+
+	With inheritance, a class (child) derives from another (parent), thus having (inheriting) its behavior, and possibly overriding it. 
+	When using composition, a class (contained) is part of another (container). If anyone wants the contained behavior, it has through the 
+	interface exposed by the container. The contained only has meaning as part of the container.
+	Aggregation is similar to composition, but while the container compooses multiple contained, these same contained can still exist outside
+	of the container: they can be in other containers of exist individually. 
+
 13. Should you always initialize variables? 
+
+	Yes. It's not always needed, but you don't want a commit a year from now will touch or what will do before giving value. A patch could easily break
+	this just because you didn't initialize properly. 
+
 14. Write a program (or multiple) in a known programming language to do the following:
 	a. Query for installed windows patches. 
 	b. Query for installed Linux Packages
 	c. Query for installed Mac Packages
+
+	See main.cpp in this folder
+
 15. Write a program (or multiple) in a known programming language to do the following:
 	a. Query for windows system information. 
 	b. Query for Linux system information
 	c. Query Mac system information
+
+	See main.cpp in this folder
+
 16. What concept(s) in C++ would you use to manage resources automatically?
 	a. How important are these concepts? 	
 	b. What tools are you familiar with for tracking resource allocations? 
+
+	RAII, one of the most important concepts and one that separates proper C++ from "C with classes". It's the most basic tool for all
+	resources, although its mostly used for memory, but can also be used for locks, external resources like files, etc.
+	Without it, C++ is completely unsafe, especially in the presence of exceptions.
+
+	The ones I have used by far the most are WinDBG and VLD. I have also used Valgrind on a couple of occasions.
+
 17. What security concerns have you come across in the past and how have you addressed them?
+
+	IOCTL calls for drivers, which were solved through a challenge system, so only certain authorized app could interact with them. 
+	OpenSSL... Everything about it is pretty much a security concern (it's a bit of "cause and solution of all problems"), and requires 
+	careful reading of the docs.
+	Sensitive data leaking on .NET memory due to certain third APIs using plain strings instead of SecureString, requiring code that could
+	adquire raw unsafe pointers to that data, tracking where they are copied and delete them after usage.
+
 18. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
+
+	The most important would be a sane build system. Doesn't matter if its through CMAKE, through some IDE, shell script or whatever, but 
+	if the code is easy and fast to build, it helps inmensely.
+	A simple way to deploy in a "real" enviroment helps a lot. Unit testing helps a lot, but many times functionality is about interacting
+	with a third party for which you have no control of, like getting data from the OS. The easiest is the functionality to deploy, the
+	easier it will be to test.
+	A good CI system that also runs a static analyzer is also going to catch a lot of issues early.
+
 19. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
+
+	A test suite can help a lot to have confidence in each patch. Code reviews are also very helpful, especially starting out on a new
+	codebase, as they always have their own idionsyncrasies. Strong, reliable log systems are essentiul to discover issues. 
+
 20. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
 	a. Consider both a long term and short-term solutions. 
+
+	Try to leave it cleaner than it was before, avoiding big changes unless the new feature really requires them. In the cases where large
+	changes are needed, try to decouple as much as possible with the old codebase, adding tests if feasible. Use feature flags to have both
+	version running along in case the feature is big and will take a lot of time, it will help test and reduce side effects.
+	I don't have any knowledge of the legacy codebase itself, start trying to make an architecture overview and overall flow of the functionality
+	through debugging or logging to at least understand the philosphy of the program.
+
 21. What concerns do you had supporting legacy operating systems? (If any)
+
+	Lack of functionality, or the functionality is hidden away in some undocumented function in god knows which DLL. The good thing is that those 
+	legacy OS won't release an update and you can mostly use undocumented functionality quite reliably, but it's usually undocumented for a reason,
+	and has limitations or awkward usage.
+	Sometimes it also forces to use legacy compiles with terrible pre-C++11 support, usually non standard (MSVC). 
+	
 22. Tell us about a project you worked on that you found to be interesting or unusual.
+
+	A WXP Driver that did SSDT Hooking. The hooking was already dibe in a very peculiar way, it was very flexible, and you could essentially reconfigure
+	all hooks at runtime to do whatever you wanted. It was security hell, but very powerful, but allowed incredible amount of options to control.
