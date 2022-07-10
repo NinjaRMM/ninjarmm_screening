@@ -103,7 +103,8 @@ int main(int, char **)
         std::cout << std::endl;
     }
     
-    std::cout << "Step 2, Second exercise, requirement h to i: " << std::endl;
+
+    std::cout << "Step 2, Second exercise, requirement h: " << std::endl;
     unsigned int httpResonseCode = 404;
     unsigned int minResponseCode = 500;
     unsigned int maxResponseCode = 599;
