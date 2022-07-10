@@ -1,9 +1,250 @@
 1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
+
+	The containars included in c++ standard libray are :
+
+	1) array
+		
+		It represent a contiguos and fix size array of elements, in memory each element is beside the other, so internally is easy to reach any element using and index.
+
+		This container can be use when have a collection of elements which are not going to change even in the number of them and are going to be access using an index.
+			
+
+	2) vector
+	
+		This container represent a contiguos dynamical array of elements, in memory each element is beside the other, so internally is easy to reach any element using and index or iterator,
+		but this container allow to insert and delete elements dinamically, the elements order is this containes are as it arrive.
+		
+		This container is used when we have a collection of elements in which we are going to add and delete elements and is efficient when we need to access it using an index or an iterator.
+		On this container we could instert in between elements but it could be inefficient in terms of amout of process.
+		
+	3) deque
+	
+		This container a set of elements allocated in different pieces of memory and linked by two pointers, so an element could be access using an iterator forward and backward, but we could 
+		not use an index.
+		
+		This container speend a little more memory than a vector but are much more effient when we need to insert a element in between elements of the list and move it as well.
+		
+		This container can be usefull to implement a list of sort order of elements inserted dynamically.
+		
+		
+	4) forward_list
+	
+
+		This container a set of elements allocated in different pieces of memory and linked by one pointers, so an element could be access using an iterator just in forward, but we could 
+		not use an index.
+		
+		This container speend a less more memory than a deque but is more inefficient when we need to access an element by position.
+		
+		This container can be usefull to implement a list of sort of elements inserted dynamically with a large number of elements whish are going to be access by an forward iterator .
+	
+	5) list
+	
+		This container is similar than deque just is more efficient in time accessing elements by position , but needs more memory to preserve known memory elements in which can start the search.
+		
+		This container can be usefull to implement a list of sort order of elements inserted dynamically in less time than deque regarding the extra amount of memory needed.
+		
+	6) stack
+	
+		This container implements a queue of element with last in first out access method.
+		
+		It can be used to store and retrive the data in a recurcive algorithm.
+		
+	7) queue
+	
+		This container implements a queue of elements with first in first out acce method.
+		
+		It can be used to manage the data package in a communication algorithm.
+		
+	8) priority_queue
+	
+		This container is similar than stack container, just when the element is pushed instead of being placed in the first position, it will be placed according to a certain order or priority.
+		
+		This container can be used to symulate a bank queue in which exist several kinds of customers.
+		
+	9) set
+	
+		This container represent a list of ordered elements , in addition the access keys are the elements inself. Internally the ordered key is implemented using a binay tree.
+			
+		This container can be used when we need to know if a PIN exist in a list.
+			
+		When we use this containar we should have in mind the element has to be unique.
+		
+	10) map
+	
+		This container represent a list of elements where each element is represent by a key , in addition the keys can be ordered. Internally the ordered key is implemented using a binay tree.
+				
+		This container can be used when we need to locate person data using as a key a PIN number.
+				
+		When we use this containar we should have in mind the key number has to be unique.
+		
+	11) multiset
+	
+		This container is similar than a set just it allows to have a several equal elements.
+		
+		This container can be user to know the number of persons with the same edge.
+		
+	12) multimap
+	
+		This container is similar than a map just it allows to have a several equal elements.
+		
+		This container can be used to obtain the list of persons who have the same zip address number.
+	
+		
+	13) unordered_set
+	
+		This container represent a list of elements , in addition the access keys are the elements inself. Internally the key is not ordered so that means this container is very fast.
+			
+		This container can be used store a list of ticket numbers as quick as possible then the list can be ordered in other container.
+			
+		When we use this containar we should have in mind the element has to be unique.
+		
+	14) unordered_multiset
+	
+		This container is similar than a unordered_set just it allows to have a several equal elements.
+				
+		This container can be used store a list of person zip address numbers as quick as possible then the list can be ordered in other container.
+
+	15) unordered_multimap
+	
+		This container represent a list of elements where each element is represent by a key , the keys are not in ordered so there is fast than unordered_map, the key can be repeted 
+	
+		This container can be used when we need store finantial exchange data referenced by currency and then write it on a data base.
+
+	16) unordered_map
+	
+		This container represent a list of elements where each element is represent by a key , the keys are not in ordered so there is fast than map, just the key should be unique. 
+	
+		This container can be used when we need store finantial exchange data referenced by transaction number and then write it on a data base.
+						
+
+
+
+
 2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
-3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
+
+	In all cases we are going to ordered integer numbers from smaller to higher 
+
+	1) Insertion Sort
+	
+		In this algorithm we have a double link list in which we are going to find the right position of a new element making a touring since the first element until find a higher value element than the new element.
+		
+		This algorithm is easy to implement and can be efficient if number of elements is short, because in the worst case it need to tour of all elements each time element is inserted.
+		
+		Examples can be :
+		
+		a) Have a list of icons ordered by resource identification number
+		b) Have a list of basketball players data ordered by shirt number
+		
+	
+	2) Quick Sort
+	
+		This algorithm can be implemented using a binary tree and a set of pivots in order to divide in blocks of numbers.
+		
+		This algorithm is more complex to implement than Insertion Sort , but in large number of data is faster, in the worst case in which the number are already ordered it will be similar than Insertion Sort
+		
+		
+		Excamples can be :
+		
+		a) Order finantial transaction by price.
+		b) Order large number of persons by height.
+	
+	3) Tree Sort
+	
+		This algotithm is a binary tree itself in which each new element are going to navigate through the tree starting in the root. if it grater to the current branch will go to left if not will go to right branch until reach the last branch.
+		
+		This algorithm has a level of complication to implement medium, the amount of used memory could be hight, but it can manage large cuantities of information.
+		
+		After the tree is fill out it can be balanced or add balanced dynamic algorithm in order to increse the search speed.
+		
+		This algorithm allow delete and insert elements.
+		
+		Examples can be:
+		
+		a) Order data packages bu id in comunication process.
+		b) Order data packages by pattern in a compression process.
+	
+3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly.
+
+	The propouse of virtual destructure is to be ensure the destructor method of a derived class will be called when the base class is deleted.
+	
+	If we use a normal destructor in a base - derived class system the derived destructor are not going to be called when the base class is deleted.
+	
+	
+	example:
+	
+	Exampe in : VirtualDestructor.cpp
+	
+	Result :
+	
+	
+	Constructing base
+	Constructing derived
+	Destructing derived
+	Destructing base
+	
+	If we just missed "virtual" in the destructors the result will be:
+	
+	Constructing base
+	Constructing derived
+	Destructing base
+	
+	
+	
+	
+	
 4. Explain the keyword: static. What does it mean in each context?
-5. When are static member variables initialized? 
+
+	static is related to object with the following characteristics:
+	
+	-Is going to be created when the process starts and are goring to be delete until the process ends.
+	-It has always the same memory address.
+	-Is unique.
+	
+	Behaviour in each context:
+	
+	a) Inside function
+		
+		The static variable are going to be allocated just one time , so each time we call the function the value are going to be the same and the address as well
+		
+	b) Inside class
+	
+		The static variable are going to be allocated just one time, so each time the class will be created the variable are going to be shared and be se same.
+		
+	c) Like object
+	
+		An static Object will be created when the process start and will be deleted when it ends.
+		
+	d) class method
+	
+		An static class method can be called with out create the class in which belongs
+		
+	e) class member:
+	
+		An static class memeber can be access with out create the class in which belongs
+		
+	
+	
+5. When are static member variables initialized?
+
+	The static member should be initialized like any other variable, though there are create when the process start are not initialized; 
+	
 6. What is the difference between R-Values and L-Values?
+
+	L-Values are all variables and objects which has a valid memory address
+	
+	R-Values are values which have not memory address it has a very short live and reside in a registry, many times they are used like parameter. 
+	
+		Example :
+		
+		int a = 2345;  // a is a L-Value and 2345 is a R-Value
+		
+		FunctionA("123456") // "123456" is a R-Value
+		
+		std::string localString = "abcdefg";
+		FunctionB(std::move(localString)); // std::move(localString) convert localString to R-Value
+		
+	
+	
 7. Is this code safe? If so why? If not why?
 	std::string foo()
 	{
@@ -11,28 +252,229 @@
 		return something;
 	}
 	
+	This code is not safe, because "something" reside in the stack, when the function returns all the stack variables are deleted included "something" before execute ret instuction, 
+	so this function are going to return an invalid address  
+
 	Bonus: What would most compilers do with this code?
+	
+	return an address which is not longer valid;
+	
+	
 8. Why would you use new rather than malloc when allocating an object? Likewise, what’s the difference between free and delete?
+
+	Both function allocate the object size memory in the heap, the difference between new and malloc is that new call constructor method and malloc does not
+	as well as delete call destructor method and free does not
+
 9. Explain the purpose of std::move, and std::forward. 
+
+	std::move convert a L-Value into R-Value then move the content of the source object to std::move object , then is passing bu parameter to othre function avoid the internal copy ;
+	
+	Example:
+	
+		std::string localString = "abcdefg";
+		FunctionB(std::move(localString)); // std::move(localString) convert localString to R-Value
+		
+	std::forward are going to be the paramenter for the template classes which can received a L-Value or R-Value indistinctly
+	
+	Example:
+
+		Example in L-RValues.cpp
+		
+	
 10. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
+
+	In order to share resources safetly between threads in necesary use any kind of semaphores it could be std::mutex
+	
+	No matter what type of resource are you going to share int this case integer or user defined type always need to use a semaphore;
+	
 11. What are the some of the principles of object-oriented programming?
+
+	a) Inharitance
+	b) Polymorphism
+	c) Encapsulation
+	d) Abstraction
+	e) Function Overloading
+	f) Operator Overloading
+
 12. Explain inheritance vs composition vs aggregation?
+
+	This 3 concepts are related to relation between one complex object with one or more simple objects (Memebers)
+	
+	a) inheritance
+		
+		The realation has the follow characteristics :
+		
+		a.1) The part (member) is part of the object (class).
+		a.2) The part (member) can belong to more than one object (class).
+		a.3) The part (member) has its existence managed by the object (class).
+		a.4) The part (member) does not know about the existence of the object (class).
+		a.5) The part (member) can contain virtual methods which can be overloaded by the object (class).
+		
+		
+	b) composition
+	
+		The realation has the follow characteristics :
+		
+		b.1) The part (member) is part of the object (class).
+		b.2) The part (member) can only belong to one object (class).
+		b.3) The part (member) has its existence managed by the object (class).
+		b.4) The part (member) does not know about the existence of the object (class).
+		
+
+
+
+	c) agreggation
+	
+
+		The realation has the follow characteristics :
+		
+		b.1) The part (member) is part of the object (class).
+		b.2) The part (member) can belong to more than one object (class).
+		b.3) The part (member) does not have its existence managed by the object  (class).
+		b.4) The part (member) does not know about the existence of the object (class).
+
+	Example is in Composition_Agreggation_Inheritance.cpp file						
+		
+
 13. Should you always initialize variables? 
+
+	Yes all variables always should be initialized
+	
 14. Write a program (or multiple) in a known programming language to do the following:
+
+	We can use VCPKG for all plataforms
+	In the console write followin commands
+	
 	a. Query for installed windows patches. 
+	
+		1) Install VCPKG 
+			
+			git clone https://github.com/Microsoft/vcpkg.git
+			.\vcpkg\bootstrap-vcpkg.bat
+		
+		2 Install patch
+		
+			vcpkg install [packages to install]
+		
 	b. Query for installed Linux Packages
+	
+		1) Install VCPKG 
+			
+			git clone https://github.com/Microsoft/vcpkg.git
+			./vcpkg/bootstrap-vcpkg.sh
+		
+		2 Install patch
+		
+			vcpkg install [packages to install]
+		
 	c. Query for installed Mac Packages
+	
+		1) Install VCPKG 
+			
+			git clone https://github.com/Microsoft/vcpkg.git
+			./vcpkg/bootstrap-vcpkg.sh
+		
+		2 Install patch
+		
+			vcpkg install [packages to install]
+		
+	
 15. Write a program (or multiple) in a known programming language to do the following:
 	a. Query for windows system information. 
+	
+		The program is step1/WindowSystemInformation.cpp
+		
 	b. Query for Linux system information
+	
+		The program is step1/LinuxSystemInformation.cpp
+		
 	c. Query Mac system information
+	
+		In Mac we can compile c++ code and the OS services are going to be same as linux, so we can use the same code as Linux
+		
+		step1/LinuxSystemInformation.cpp
+	
 16. What concept(s) in C++ would you use to manage resources automatically?
-	a. How important are these concepts? 	
-	b. What tools are you familiar with for tracking resource allocations? 
+
+	- Smart Pointers
+	- COM ( just for windows )
+	
+	
+	a. How important are these concepts? 
+		
+		This pattern can be used to avoid memory leaks
+	
+	b. What tools are you familiar with for tracking resource allocations?
+			
+	
+		CRT library for windows
+	
 17. What security concerns have you come across in the past and how have you addressed them?
+
+	1) Authentication insecurity using just user and password
+		
+		I enhance the security genetaing dinamically a QR code which is read by movil app
+		
+	2) Avoid code injections in the network 
+	
+		Replace Json messages for binary messages.
+
+	
+
 18. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
-19. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
+
+	Tools
+	
+		a) IDE ( Integrate development enviroment) like Visual Studio, Code, XCode, QT.
+		b) Debugger 
+		c) Compiler
+		d) Hexadecial editor
+		e) Spy ( Windows )
+		f) Memory dump tool
+		g) Use a repository hosting service like Github
+		f) Use a Tickets system like Jira
+		g) Use a Wikie system
+		h) Use a internal chat system.
+	
+	Techniques
+	
+		a) Unit Test
+		b) Write Log files 
+		c) Agile mothodology
+		
+		
+
+19. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.
+
+	Tools
+		a) package installer / updater
+		b) Include code in the software to execute an automatical update.
+		
+	
+	Techniques
+	
+		a) Well documented and pubished instructions to install and update the packages.
+
 20. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
 	a. Consider both a long term and short-term solutions. 
+	
+	1) Understand what the code has to do 
+	2) Understand how the code is working helped with a debugger
+	3) Make changes as is requerided (short term)
+	4) Test helped with debugger (short term)
+	5) Rewrite all the code regarded all the requirments in modern lenguage ( long term)
+	6) Implement the unit test for the requeriments (long term)
+	
 21. What concerns do you had supporting legacy operating systems? (If any)
+
+	In legacy operating systems for me the one concern is the failure of the memory manager.
+	The other concern is related to be non preemptive operatin system.
+	
 22. Tell us about a project you worked on that you found to be interesting or unusual.
+
+	1) Project to transmit and receive video to and from embedded devices runing on linux with a poor network connection.
+		
+		In this project i had to develop the UDP connection and deal with memory and processor restrictions.
+		All the project was developed using QT as IDE and GPU was involved as well
+		
+	

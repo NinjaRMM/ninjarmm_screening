@@ -17,4 +17,7 @@
 		ii. auto count = ContainsTheString([](const std::string& tested) { return tested == “test” }, theStrings);
 	j. Write any other code you feel would show off your understanding of C/C++ and programming in general. Bonus: Variadic Template /w usage. 
 	k. All The source can be in 1 file, it should compile and there should be no runtime errors, and no memory leaks. Use built in types freely to help you manage resources. 
+	
+	My Program was made in MS Visual Studio and need to be compiled with active MultiThread Option.
+	The name of program is NinjaRequeriments.cpp
 
