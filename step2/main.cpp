@@ -83,8 +83,14 @@ class Pilot : public Job
     }
 };
 
+template <class T> bool IsInBounds(T value, T min, T max)
+{
+    return value >= min && value <= max;
+}
+
 int main(int, char **)
 {
+    std::cout << "Step 2, First exercise, requirements a to g: " << std::endl;
     std::vector<std::unique_ptr<Job>> jobs;
     jobs.push_back(std::make_unique<Programmer>());
     jobs.push_back(std::make_unique<Pilot>());
@@ -96,4 +102,11 @@ int main(int, char **)
         job->DoWork();
         std::cout << std::endl;
     }
+    
+    std::cout << "Step 2, Second exercise, requirement h to i: " << std::endl;
+    unsigned int httpResonseCode = 404;
+    unsigned int minResponseCode = 500;
+    unsigned int maxResponseCode = 599;
+    std::cout << "Value: " << httpResonseCode << ", min: " << minResponseCode << ", max: " << maxResponseCode << std::endl;
+    std::cout << "Is in Bounds: " << IsInBounds<uint32_t>(httpResonseCode, 500, 599) << std::endl;
 }
