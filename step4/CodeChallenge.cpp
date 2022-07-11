@@ -37,6 +37,13 @@ OBJ_STR objStr;
 //The third integer param is optional so it's declared as a default param
 //Inside the function is some existing code that needs to exist, but not relevant to this exercise. 
 template <typename T, typename U>
+T checkIfPositive(const U& u, const int& param1, const int& param2, int param3, int& sum)
+{
+    sum = param1 + param2 + param3;
+    return checkIfPositive<T, U>(u, param1, param2, param3);
+}
+
+template <typename T, typename U>
 T checkIfPositive(const U& u, const int& param1, const int& param2, int param3 = 0)
 {
 
@@ -46,7 +53,6 @@ T checkIfPositive(const U& u, const int& param1, const int& param2, int param3 =
     SOME EXISTING CODE
 
     */
-
     return u.getResult(param1, param2, param3);
 }
 
@@ -78,7 +84,7 @@ int main()
     //How are you going to solve this problem? 
     //You can only change the code inside the EDITABLE SECTION OF CODE
     //Hint, the following calls should now be valid moving forward:
-    /*
+    
     int total = 0;
 
     iResult = checkIfPositive<int, OBJ_INT>(objInt, 1, 2);
@@ -98,7 +104,7 @@ int main()
 
     sResult = checkIfPositive<std::string, OBJ_STR>(objStr, 1, 2, 3, total); //<-- Total is output param
     std::cout << sResult << " " << total << std::endl;
-    */
+    
 
     return 0;
 
