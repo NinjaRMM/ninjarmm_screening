@@ -1,0 +1,22 @@
+2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
+
+Sorting algorithms are used to arrange elements of an array or list in a specific order.
+Bubble sort, selection sort and quickSort are some examples of sorting algorithms.
+
+a. The Bubble sort algorithm compares compares two adjacent elements and swaps them until they are not in the intended order.
+Each element of the array move to the end in each iteration.
+For example, a small business may use bubble sort to arrange a list of employees by the length of time they have worked at the business. 
+Bubble sort may be a practical means of sorting in this scenario because the data set is likely small and may not need many passes through the list to put the data in the right order.
+
+b. The selection sort algorithm sorts an array by repeatedly finding the minimum element (considering ascending order) from the unsorted part and putting it at the beginning. 
+The algorithm maintains two subarrays in a given array, the subarray which is already sorted and remaining subarray which is unsorted. 
+In every iteration of selection sort, the minimum element (considering ascending order) from the unsorted subarray is picked and moved to the sorted subarray.
+For example, a shoe store may use selection sort to organize the shoes pairs from smaller to largest.
+
+c. The quickSort algorithm uses the "divide and conquer approach".
+First the array is divided into subarrays by selecting a pivot element (element selected from the array).
+While dividing the array, the pivot element should be positioned in such a way that elements less than pivot are kept on the left side and elements greater than pivot are on the right side of the pivot.
+Second the left and right subarrays are also divided using the same approach. This process continues until each subarray contains a single element.
+At last the elements are already sorted. Finally, elements are combined to form a sorted array.
+An example of quickSort is for sorting various data like sorting files by name/date/price, sorting of students by their roll no., sorting of account profile by given id, etc.
+

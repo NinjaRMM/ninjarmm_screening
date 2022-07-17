@@ -1,0 +1,4 @@
+5. When are static member variables initialized? 
+
+They're initialized before the program starts (i.e. before main is entered).
+When there are two or more definitions (of static data) in a single CPP file, then they're initialized in the sequence in which they're defined in the file (the one defined earlier/higher in the file is initialized before the next one is).

@@ -1,0 +1,9 @@
+9. Explain the purpose of std::move, and std::forward.
+
+std::move is used to indicate that an object t may be "moved from", i.e. allowing the efficient transfer of resources from t to another object.
+In particular, std::move produces an xvalue expression that identifies its argument t. It is exactly equivalent to a static_cast to an rvalue reference type.
+
+std::forward returns an rvalue reference to arg if arg is not an lvalue reference.
+If arg is an lvalue reference, the function returns arg without modifying its type.
+This is a helper function to allow perfect forwarding of arguments taken as rvalue references to deduced types, preserving any potential move semantics involved.
+The need for this function stems from the fact that all named values (such as function parameters) always evaluate as lvalues (even those declared as rvalue references), and this poses difficulties in preserving potential move semantics on template functions that forward arguments to other functions.

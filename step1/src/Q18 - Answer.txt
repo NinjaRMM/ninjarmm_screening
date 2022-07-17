@@ -1,0 +1,5 @@
+18. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
+
+The tools that I think are very helpful during development is Visual Studio, Visual Studio Code, Winmerge, Notepad++ and Git.
+With this tools I can double check my work and is easy to correct a mistake or to make code adjustments.
+The technique that I like to worki with is pair programming. I think it helps a lot to have another point a view while coding, especially if is a very complex software to implement.  

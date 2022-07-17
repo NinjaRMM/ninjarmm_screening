@@ -1,0 +1,9 @@
+19. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.
+
+The most helpful tool for code maintenance is Git. Git allow us to track the code changes and to easily identify bugs from different versions in the software.
+For code maintenance I think that to write a readable code is very important. Not always a compact code means it is better to read and understand.
+Sometimes writing more lines makes the code cleaner and easier to read, and consequently, easier to maintain.
+Using variables names, classes and methods that describe the behavior of that code is easier to understand the functionality of the program.
+One of the most important things I think are helpful while coding is writing good comments, especially when it's a complex code.
+The comments will avoid other developers to take too much time to understand the code and to maintain it.
+   

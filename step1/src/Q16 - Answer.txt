@@ -1,0 +1,13 @@
+16. What concept(s) in C++ would you use to manage resources automatically?
+	a. How important are these concepts? 	
+	b. What tools are you familiar with for tracking resource allocations? 
+	
+One concept to manage resources automatically is by using resources handles and RAII (resource acquisition is initialization).
+The ideia is simple. We create a sort of proxy object for our resource.
+The constructor of the proxy will acquire the resource and the destructor will release the resource. The key idea of RAII is that the C++ runtime is the owner of the local object and therefore of the resource.
+Two typical examples of RAII in modern C++ are smart pointers and locks. Smart pointer takes care of their memory and locks take care of their mutexes.
+
+a. These concepts are very important because they prevent memory leaks in the code, avoiding the program to crash during execution.
+
+b. The Visual Studio profiler is a tool I used a lot to track memory leaks in a project I developed.
+

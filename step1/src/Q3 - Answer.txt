@@ -1,0 +1,5 @@
+3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
+
+Virtual destructors in C++ are used to avoid memory leaks especially when your class contains unmanaged code, i.e., contains pointers or object handles to files, databases or other external objects.
+One thing with have to be carefull is to avoid deletion of an instance through a base class pointer.
+To avoid that, we can make the base class estructor protected and nonvirtual; by doing so, the compiler won't let us call delete on a base class pointer.

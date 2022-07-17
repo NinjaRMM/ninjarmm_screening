@@ -1,0 +1,12 @@
+8. Why would you use new rather than malloc when allocating an object? Likewise, what’s the difference between free and delete?
+
+a. It's better to use new over malloc, because new is an operator whereas malloc is a library function.
+New allocates memory and calls constructor for object initialization. But malloc allocates memory and does not call constructor.
+Return type of new is exact data type while malloc returns void*.
+And also, new is faster than malloc because an operator is always faster than a function.
+
+
+b. The difference between delete and free, is that delete is an operator that de-allocates the memory dynamically while the free is a function that destroys the memory at the runtime.
+The delete operator is used to delete the pointer, which is either allocated using new operator or a NULL pointer, whereas the free function is used to delete the pointer that is either allocated using malloc, calloc or realloc function or NULL pointer.
+When the delete operator destroys the allocated memory, then it calls the destructor of the class in C++, whereas the free function does not call the destructor; it only frees the memory from the heap.
+And also, the delete operator is faster than the free function.

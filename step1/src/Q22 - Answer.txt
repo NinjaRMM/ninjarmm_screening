@@ -1,0 +1,5 @@
+22. Tell us about a project you worked on that you found to be interesting or unusual.
+
+I've worked in a project to create and API for totem kiosks using cryptography.
+That was my first time working with cryptography and I found very interesting how the process to encrypt and decrypt data works.
+That project was also the first time I've worked programming an ATM keyborad for testing the API.

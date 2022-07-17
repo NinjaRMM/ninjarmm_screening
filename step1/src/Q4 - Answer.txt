@@ -1,0 +1,21 @@
+4. Explain the keyword: static. What does it mean in each context?
+
+Static is a keyword in C++ used to give special characteristics to an element. 
+Static elements are allocated storage only once in a program lifetime in static storage area. 
+And they have a scope till the program lifetime. Static Keyword can be used with following:
+
+a. Static variable in functions are initialized only once, and then they hold there value even through function calls.
+These static variables are stored on static storage area , not in stack.
+
+b Static Class Objects are allocated storage in static storage area, and have scope till the end of program.
+Static objects are also initialized using constructors like other normal objects. 
+Assignment to zero, on using static keyword is only for primitive datatypes, not for user defined datatypes.
+
+c. Static member Variable in class are those members which are shared by all the objects. 
+Static data member has a single piece of storage, and is not available as separate copy with each object, like other non-static data members.
+Static member variables (data members) are not initialied using constructor, because these are not dependent on object initialization.
+Also, it must be initialized explicitly, always outside the class. If not initialized, Linker will give error.
+
+d .Static Member Functions work for the class as whole rather than for a particular object of a class.
+It can be called using an object and the direct member access . operator. 
+But, its more typical to call a static member function by itself, using class name and scope resolution :: operator.

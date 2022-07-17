@@ -1,0 +1,9 @@
+21. What concerns do you had supporting legacy operating systems? (If any)
+The main concern supporting legacy operating systems are:
+
+a. Compatibility. As it uses outdated technologies, the legacy system can become incompatible with new systems or technologies that are also essential to the business.
+
+b. Support. If the vendor is no longer selling the system or software your company is using, nor offering support for it, it is not likely that he will be able to help when a problem arises.
+
+c. Security. The lack of support, updates or maintenance, as well as the fact of using old security protocols and standards, leads to creating patches that can end up causing security breaches. 
+This can also make meeting regulatory compliance more difficult.

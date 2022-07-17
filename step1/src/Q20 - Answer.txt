@@ -1,0 +1,7 @@
+20. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
+	a. Consider both a long term and short-term solutions.
+	
+A short-term solution would be to use automated tests to make sure the code still behaves as it should after refactoring the code.
+The purpose of the tests is to have a benchmark of the code's business rules. After that, it's possible to refactor the code in small parts.
+
+A long term solutions would be to rewrite, document and test the code.  

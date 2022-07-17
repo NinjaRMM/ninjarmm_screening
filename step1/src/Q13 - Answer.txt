@@ -1,0 +1,4 @@
+13. Should you always initialize variables? 
+
+In general, yes, it is always better choice to initialize variables (local scoped, automatic storage, specifically) upon definition. 
+Doing so avoids the possibility of using unitialized values, which may lead to undefined behaviour.

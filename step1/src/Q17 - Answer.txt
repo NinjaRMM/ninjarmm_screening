@@ -1,0 +1,4 @@
+17. What security concerns have you come across in the past and how have you addressed them?
+
+One of the most common concern that I have come across is to avoid buffer overruns, I always make sure to check the data lenght data was inserted in the buff.
+That's a big concern, because, working with ATM applications, that buffer overruns might be an entrace point for hackers to crack passwords.

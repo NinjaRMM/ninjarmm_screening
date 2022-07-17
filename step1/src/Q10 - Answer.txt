@@ -1,0 +1,12 @@
+10. How do you share resources safely between threads? How would you share an integer value vs user defined type?
+
+A safe way to share resources safely between threads it's by using mutex (mutual exclusion).
+Before accessing a shared data structure, we lock the mutex associated with that data, and when we've finished accessing the data structure, we unlock the mutex. 
+The Thread Library then ensures that once one thread has locked a specific mutex, all other threads that try to lock the same mutex have to wait until the thread that successfully locked the mutex unlocks it. 
+This ensures that all threads see a self-consistent view of the shared data, without any broken invariants.
+
+To share an integer value between threads, we can use std::atomic<int>, that is an atomic object.
+Objects of atomic types are the only C++ objects that are free from data races; that is, if one thread writes to an atomic object while another thread reads from it, the behavior is well-defined.
+
+For user defined type we can use std::tuple which allow us to get a value by type.
+std::tuple is not thread-safe, therefore, we put it as a private attribute of a class.

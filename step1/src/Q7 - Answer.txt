@@ -1,0 +1,13 @@
+7. Is this code safe? If so why? If not why?
+	std::string foo()
+	{
+		std::string something = “avalue”;
+		return something;
+	}
+	
+	Bonus: What would most compilers do with this code?
+	
+	To make this code safe, it's better to define the string something as a const.
+	That will avoid any changes to the content of the string.
+	
+	Most compilers won't give a warning message for this code.

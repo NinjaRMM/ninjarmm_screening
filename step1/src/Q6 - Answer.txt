@@ -1,0 +1,6 @@
+6. What is the difference between R-Values and L-Values?
+
+An lvalue is an object reference and an rvalue is a value. The difference between lvalues and rvalues plays a role in the writing and understanding of expressions.
+An lvalue is an expression that yields an object reference, such as a variable name, an array subscript reference, a dereferenced pointer, or a function call that returns a reference. An lvalue always has a defined region of storage, so you can take its address.
+An rvalue is an expression that is not an lvalue. Examples of rvalues include literals, the results of most operators, and function calls that return nonreferences. An rvalue does not necessarily have any storage associated with it.
+Strictly speaking, a function is an lvalue, but the only uses for it are to use it in calling the function, or determining the function’s address. Most of the time, the term lvalue means object lvalue, and this book follows that convention.

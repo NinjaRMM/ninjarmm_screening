@@ -1,0 +1,27 @@
+1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
+
+a. The sequence containers allow us to store elements that can be accessed in sequential order.
+Internally, sequential containers are implemented as arrays or linked lists data structures.
+The types of sequential containers are array, vector, deque, list and forward list.
+We can use vectors to manage ever-changing data elements. 
+For example if we want to represent the weights of boxes in a warehouse, and we have to make sure that they don't exceed the weight limit, we can use a vector to remove and add only the boxes weights that are within the weight limit.    
+Vectors can resize itself automatically when an element is inserted or deleted depending on the need of the task to be executed.
+
+b. The associative containers allow us to store elements in sorted order. 
+The order doesn't depend upon when the element is inserted.
+Internally, they are implemented as binary tree data structures.
+The types of associative containers are set, map, multiset, multimap.
+For example, we can use map to store keys and their values which allows fast access to the value by using its key.
+Map is very useful in a weather application, for example, because it's an effective way to save and look up the current temperature in a set of cities around the world. 
+
+c. Unordered associative containers provide the unsorted versions of the associative container.
+Internally, unordered associative containers are implemented as hash table data structures.
+The types of unordered associative containers are unordered set, unordered map, unordered multiset and unordered multimap.
+For example, we can use unordered map, that has a similiar behaviour to map, and stores keys and values.
+The advantage of unordered map, over map, is that it performs faster when accessing individual elements by their keys.
+
+d. The containers adapters take an existing STL container and provide a restricted interface to make them behave differently.
+The types of container adapters are stack, queue and priority queue.
+The stack data structure follows the LIFO (last in first out) principle. It means that the last entered item it's removed first.
+An example of stack is to reverse a word, where the word is pushed to a stack, letter by letter, and them pop the letters from the stack.
+

@@ -1,0 +1,16 @@
+12. Explain inheritance vs composition vs aggregation?
+
+a. Inheritance refers to using properties and methods of an already exiting class in a new class. 
+We call this already existing class the parent class, superclass or base class. 
+The new class is called the child class, sub class or derived class.
+
+b. Composition is a special type of aggregation that implies ownership. 
+An object depends on another object and there is a dependency. 
+Let’s look at a school object and a classroom object. 
+The classroom object cannot exist without the school object. 
+If the school object is destroyed, the classroom object is also destroyed.
+
+c. Aggregation is an association that describes the “has a” relationship between objects. 
+There is no dependency between the two objects. For instance, assume a classroom and student. 
+Student object can exist without the classroom object. So, this is an aggregation. 
+In other words, if the part can exist outside the whole, we call this an aggregation.
