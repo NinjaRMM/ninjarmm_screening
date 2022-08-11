@@ -26,10 +26,11 @@
        the sorted array/list. Quick Sort in its general form is an in-place sort and it does not require any extra storage, therefore no extra allocation and 
        deallocation of memory is needed. Due to these factors, Quick Sort is a good choice to sort arrays.
 3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
-   a.  Making both base and derived classes destructors virtual guarantees that the object of the derived class is destructed properly, i.e., both base class and 
-       derived class destructors are called. The order of invocation of such destructors is derived before the base. So one must be careful to not "delete" allocated 
-       memory in the base class from the derived class destructor. Also, it must be ascertained that both the base and derived class destructors are virtual, or the 
-       destruction of the derived object will have undefined behavior.
+   a.  Making the base class destructor virtual guarantees that the object of the derived class is destructed properly, i.e., both base class and 
+       derived class destructors are called, when delete is invoked on a base class pointer to an instantiation of the derived class. The order of invocation is 
+       the derived destructor is called before the base destructor. So one must be careful to not "delete" allocated memory obtained in the base class constructor 
+       from the derived class destructor. If the base class destructor is not declared virtual, you may cause a leak of allocated memory in the derived class as its 
+       destructor will not be invoked if a base class pointer was used in the call to "new" for the derived class instantiation.
 4. Explain the keyword: static. What does it mean in each context?
    a. "Global Variables" - the specifier 'static' before the type of the global variable makes it only accessible from within the .cpp file it has been defined in 
        (internal linkage and file scope). It's storage persists for the life of the executing program.
