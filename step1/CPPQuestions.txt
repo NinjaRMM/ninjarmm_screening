@@ -1,4 +1,15 @@
 1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
+    a. "Sequential containers" are used for data structures that store objects of the same type in a linear manner.
+       They are usually implemented as arrays or linked-lists. Used if preserving the order of insertion is a necessity.  
+    b. "Sequential container adapters" are a special type of container class that are wrappers around other sequential container types (such as a vector, deque, or  
+        list). These container adapters encapsulate the underlying container type and limit the user interfaces accordingly. Used if controlling the order of 
+	extraction is desired, ie., LIFO, FIFO, by priority. 
+    b. "Associative containers" provide sorted data structures that provide a fast lookup (O(log n) time) using keys. The STL Associative Container types can be 
+        divided in two ways: containers which require unique keys, and those which allow multiple entries using the same key. They are usually implemented as binary 
+	trees. Used when the order of insertion doesn't matter but sorted entries are desired. 
+    c. "Unordered associative containers" provide unsorted data structures that can be accessed using a hash. Access times are O(n) in the worst-case, but much 
+        faster than linear time for most operations, with average times of O(1). They are usually implemented as hash tables. Used when sorted entries are not needed 
+	and very fast average operation times are required.
 2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
 3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
 4. Explain the keyword: static. What does it mean in each context?
