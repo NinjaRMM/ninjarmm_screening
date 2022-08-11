@@ -17,12 +17,30 @@
    b. "Merge Sort" is a divide and conquer sorting algorithm. In this algorithm, the array/list is initially divided into two equal halves and then they are combined 
        in a sorted manner. It as a recursive algorithm that continuously splits the array/list in half until it cannot be further divided. 
        Merge Sort is a stable sort which means that elements of equal value in an array/list maintain their original order respectively in the sorted array/list. 
-       Especially useful for sorting linked lists as additional space is not required to sort them as you would need to sort arrays, and insertion takes O(1) time.
-   c. "QuickSort" is also a divide and conquer sorting algorithm. It picks an element as a pivot and partitions the given array around the picked pivot. There are 
+       It requires O(N) extra storage to sort arrays, with N denoting the array size which may be quite expensive. Allocating and de-allocating the extra 
+       space used for merge sort with arrays increases the running time of the algorithm. It is used for sorting linked lists as additional 
+       space is not required to sort them as you would need to sort arrays, and insertion takes O(1) time.
+   c. "Quick Sort" is also a divide and conquer sorting algorithm. It picks an element as a pivot and partitions the given array around the picked pivot. There are 
        several pivot strategies, such as last element, first, random, etc. It is a recursive algorithm that continuously splits the array/list until it cannot be 
-       further divided. 
+       further divided. Quick Sort is an unstable sort which means that elements of equal value in an array/list do not maintain their original order respectively in 
+       the sorted array/list. Quick Sort in its general form is an in-place sort and it does not require any extra storage, therefore no extra allocation and 
+       deallocation of memory is needed. Due to these factors, Quick Sort is a good choice to sort arrays.
 3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
+   a.  Making both base and derived classes destructors virtual guarantees that the object of the derived class is destructed properly, i.e., both base class and 
+       derived class destructors are called. The order of invocation of such destructors is derived before the base. So one must be careful to not "delete" allocated 
+       memory in the base class from the derived class destructor. Also, it must be ascertained that both the base and derived class destructors are virtual, or the 
+       destruction of the derived object will have undefined behavior.
 4. Explain the keyword: static. What does it mean in each context?
+   a. "Global Variables" - the specifier 'static' before the type of the global variable makes it only accessible from within the .cpp file it has been defined in 
+       (internal linkage and file scope). It's storage persists for the life of the executing program.
+   b. "Local Variables" - the specifier 'static' before the type of the local variable makes it only accessible from within the scope it has been defined in 
+       (internal linkage), and its state persists across invocations of said block of code. It's storage persists for the life of the executing program.
+   b. "Functions" - the specifier 'static' before the function declaration limits its linkage to internal. It can only be used within the file it was defined in.
+   c. "Member Variables of Classes" - the specifier 'static' before the type of the variable within the class makes it accessible outside of an instance of the 
+       class (class variable). It is accessible by prepending the class name as a scope identifier along with the scope operator (aClass::staticVar). It's also 
+       accessible through an instance of the class, but it's not considered a best practice. It's storage persists for the life of the executing program.
+   d. "Functions of Classes" - 
+   
 5. When are static member variables initialized? 
 6. What is the difference between R-Values and L-Values?
 7. Is this code safe? If so why? If not why?
