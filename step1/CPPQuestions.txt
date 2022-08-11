@@ -37,12 +37,20 @@
        (internal linkage), and its state persists across invocations of said block of code. It's storage persists for the life of the executing program.
    b. "Functions" - the specifier 'static' before the function declaration limits its linkage to internal. It can only be used within the file it was defined in.
    c. "Member Variables of Classes" - the specifier 'static' before the type of the variable within the class makes it accessible outside of an instance of the 
-       class (class variable). It is accessible by prepending the class name as a scope identifier along with the scope operator (aClass::staticVar). It's also 
-       accessible through an instance of the class, but it's not considered a best practice. It's storage persists for the life of the executing program.
-   d. "Functions of Classes" - 
-   
+       class (class variable). It is accessible by prepending the class name as a scope identifier along with the scope resolution operator (ClassName::staticVar). 
+       It is also accessible through an instance of the class, but it's not considered a best practice. It's storage persists for the life of the executing program.
+   d. "Functions of Classes" - the specifier 'static' before the function declaration in a class, means that they are not associated with any object of the class, 
+       i.e they have no *this pointer. They can be called using the class name and scope resolution operator (ClassName::staticFunctionName()). Static member 
+       functions of a class can only directly access static member variables of a class, since they do not have a *this pointer.
 5. When are static member variables initialized? 
+   a.  They are initialized prior to program execution and should be done in the .cpp file prior to any use of objects, functions, etc. defined in the same file.
+       The order of their definition in the class should be used in initialization as well. 
 6. What is the difference between R-Values and L-Values?
+   a.  An "l-value" is an expression that yields an object reference, such as a variable name, an array subscript reference, a dereferenced pointer, or a function 
+       call that returns a reference. An l-value always has a defined region of storage, so you can take its address.
+
+   b.  An "r-value" is an expression that is not an lvalue. Examples of r-values include literals, the results of most operators, and function calls that return 
+       nonreferences. An r-value does not necessarily have any storage associated with it. 
 7. Is this code safe? If so why? If not why?
 	std::string foo()
 	{
