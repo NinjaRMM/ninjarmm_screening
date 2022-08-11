@@ -48,7 +48,6 @@
 6. What is the difference between R-Values and L-Values?
    a.  An "l-value" is an expression that yields an object reference, such as a variable name, an array subscript reference, a dereferenced pointer, or a function 
        call that returns a reference. An l-value always has a defined region of storage, so you can take its address.
-
    b.  An "r-value" is an expression that is not an lvalue. Examples of r-values include literals, the results of most operators, and function calls that return 
        nonreferences. An r-value does not necessarily have any storage associated with it. 
 7. Is this code safe? If so why? If not why?
@@ -99,12 +98,30 @@
     c.  For user defined types (UDTs) I may still use std::atomic but depending on the member variable types, the synchronization of the object across threads may be 
         implemented using locks.
 11. What are the some of the principles of object-oriented programming?
-     
+    a. "Encapsulation" - the mechanism of data hiding by restricting access to class instance variables via public methods. Instance variables are kept private and 
+        their accessor methods are made public. It is the binding of the data and functions that operate on that data into a single unit known as the class.
+    b. "Abstraction" - abstracting away the implementation details of a class and only presenting a clean, easy-to-use interface via the class’s member functions.
+    c. "Inheritance" - classes can be organized into hierarchies where a class might have one or more parent or child classes. If a class has a parent class, we say 
+        it is derived or inherited from the parent class and it represents an “IS-A” type relationship. That is to say, the child class “IS-A” type of the parent 
+	class. Therefore, if a class inherits from another class, it automatically obtains much of the same functionality and properties from that class and can be 
+	extended to contain separate code and data. A nice feature of inheritance is that it often leads to good code reuse since a parent class’s functions don’t 
+	need to be re-defined in any of its child classes.
+    d. "Polymorphism" - because derived objects share the same interface as their parents, the calling code can call any function in that class’ interface. At run-
+        time, the appropriate function will be called depending on the type of object passed leading to possibly different behaviors. This is termed "run-time 
+	polymorphism" and is implemented using virtual functions. Another form is "compile-time polymorphism" that is implemented by overloading functions/operators 
+	and using templates.
 12. Explain inheritance vs composition vs aggregation?
+    a. "Inheritance" is the extending of an existing class by deriving new child classes that "extend" the functionality while "reusing" the existing 
+        functionality/code. The child classes implement the "IS-A" relationship to the parent class.
+    b. "Aggregation" is the grouping of objects into another object. It's a "uses" relationship. The used objects are independent and can exist outside of the 
+        container object. The container object may be destroyed and the used objects can still exist.
+    c. "Composition" is a stronger form of aggregation. It's a "owns" relationship. The owned objects are not independent of the container object. They cease to 
+        exist when the container object is destroyed.	
 13. Should you always initialize variables? 
+    a.  Yes! Doing so avoids the possibility of using unitialized values, which may lead to undefined behaviour.
 14. What concept(s) in C++ would you use to manage resources automatically?
-	a. How important are these concepts? 	
-	b. What tools are you familiar with for tracking resource allocations? 
+    a. How important are these concepts? 	
+    b. What tools are you familiar with for tracking resource allocations? 
 15. What security concerns have you come across in the past and how have you addressed them?
 16. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
 17. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
