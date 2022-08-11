@@ -11,6 +11,16 @@
         faster than linear time for most operations, with average times of O(1). They are usually implemented as hash tables. Used when sorted entries are not needed 
 	and very fast average operation times are required.
 2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
+   a. "Bubble Sort" is the simplest sorting algorithm that works by repeatedly swapping the adjacent elements if they are in the wrong order. This algorithm is not 
+       suitable for large data sets as its average and worst-case time complexity is quite high. Used for its capability to detect a tiny sorting discrepancy (like a 
+       swap of just two elements) in almost-sorted arrays. 
+   b. "Merge Sort" is a divide and conquer sorting algorithm. In this algorithm, the array/list is initially divided into two equal halves and then they are combined 
+       in a sorted manner. It as a recursive algorithm that continuously splits the array/list in half until it cannot be further divided. 
+       Merge Sort is a stable sort which means that elements of equal value in an array/list maintain their original order respectively in the sorted array/list. 
+       Especially useful for sorting linked lists as additional space is not required to sort them as you would need to sort arrays, and insertion takes O(1) time.
+   c. "QuickSort" is also a divide and conquer sorting algorithm. It picks an element as a pivot and partitions the given array around the picked pivot. There are 
+       several pivot strategies, such as last element, first, random, etc. It is a recursive algorithm that continuously splits the array/list until it cannot be 
+       further divided. 
 3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
 4. Explain the keyword: static. What does it mean in each context?
 5. When are static member variables initialized? 
