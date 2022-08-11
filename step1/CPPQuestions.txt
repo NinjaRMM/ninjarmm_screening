@@ -59,11 +59,47 @@
 		return something;
 	}
 	
+	This code is 100% safe as it returns a string object which will be copied into an instantiated object in the calling scope.
+	If this function was returning the reference or pointer to the "something" variable declared within its scope, it would be a problem, as the returned 
+	reference/pointer would be to an out of scope variable in the process of being destroyed.  
+	
 	Bonus: What would most compilers do with this code?
+	Nothing! This is legal. 
+	
 8. Why would you use new rather than malloc when allocating an object? Likewise, what's the difference between free and delete?
+   a.  "new" allocates memory and calls the constructor for object initialization. "malloc" allocates memory but does not call the constructor.
+        The return type of new is the exact data type while malloc returns void*. new performs the full desired object initialization.
+   b.  "delete" deallocates memory and calls the destructor for proper object cleanup. "free" deallocates the memory but does not call the destructor.
+        delete performs the full desired object cleanup.   
 9. Explain the purpose of std::move, and std::forward. 
+   a.  "std::move" - In C++11, in addition to copy constructors, objects can have move constructors. (And in addition to copy assignment operators, they have move 
+        assignment operators.) The move constructor is used instead of the copy constructor, if the object has type "rvalue-reference" (Type &&). std::move() is a 
+	cast that produces an rvalue-reference to an object, to enable moving from it. It's a new C++ way to avoid copies. For example, using a move constructor, a 
+	std::vector could just copy its internal pointer to data to the new object, leaving the moved object in an moved from state, therefore not copying all the 
+	data.
+   b.  "std::forward" - This is a helper function to allow perfect forwarding of arguments taken as rvalue references to deduced types, preserving any potential move 
+        semantics involved. The need for this function stems from the fact that all named values (such as function parameters) always evaluate as lvalues (even those 
+	declared as rvalue references), and this poses difficulties in preserving potential move semantics on template functions that forward arguments to other 
+	functions. 
+	Example:
+	void foo(int& i){
+            ...
+        }
+        void foo(int&& i){
+            ...
+        }
+	
+	template <typename T>
+        void f(T&& val){
+            foo(std::forward<T>(val));    // std::forward needed to ensure the second foo function is invoked
+        }	
 10. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
+    a.  You would use synchronization primitives for shared data between threads. Coordinating access to a shared variable is achieved with mutexes and locks in C++.
+    b.  For synchronization of integral types, I would likely use "std::atomic<T> x" where T is an integral type and x is a variable of said type. It is lock free. 
+    c.  For user defined types (UDTs) I may still use std::atomic but depending on the member variable types, the synchronization of the object across threads may be 
+        implemented using locks.
 11. What are the some of the principles of object-oriented programming?
+     
 12. Explain inheritance vs composition vs aggregation?
 13. Should you always initialize variables? 
 14. What concept(s) in C++ would you use to manage resources automatically?
