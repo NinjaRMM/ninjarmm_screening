@@ -1,9 +1,57 @@
 1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
+
+Array - a continous list of elements that does not change in size
+	- Used for static lists that usually do not change
+Vector - a continous list of elements that can dynamically change in size
+	- Used to be able to add and remove elements in the beginning end or in-between
+Set - a continous list of elements that only contains unique items, no duplicates
+	- Used to store lists where order does not matter but uniqueness does
+Map - an ordered list of key value pairs
+	- Usually used to be able to identify/search objects by key
+List - a double linked list of elements
+	- used when fast searching is needed in both forward and backward directions
+forward_list - single linked list
+	- used for fast searching in single/downstream direction
+Because list and forwards lists are linked by pointers, insertion and deletion is usually faster then vectors and arrays
+ 
+Stack - and ordered list where the last object inserted sits on the top/beginning of the "stack"
+	- largely used in recursive algorithms using push and pop operation
+dequeu - and order list where objects can be inserted to either the front or back of the list
+	- I seed it as a double sided stack, usually used to process as a Queue where the first element in is the first element processed
+
 2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
+
+Linear sort - searchs through a list and always puts the smallest (or largest depending on order desired) at the front of the list.
+	- In a list of N items you search the whole list the fist time for the first element (i), swap it, then do it again for N-1 elements for element i+1 
+
+Buble Sort - This algorithm "bubbles" the largest element to the end of the list (nth) element by comparing each element (starting at the beginning) to the
+	element next to it
+	-Not good for large list, probably the slowest sort
+
+Merge Sort
+	- Is a recursive algorithm that cuts the list in half, then that half in half and so on, until you cannot cut in half anymore
+		then individual items are sorted back up, 2 items then  4 then 8 
+	- Use in very large lists
+
+
 3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
+	Virtual destructor guarantees that the correct destructor will be called when the object is deleted
+	when handling a "polymorphic" object, that is a base class pointer, pointing to a derived class.
+	- Not using it correctly could result in the wrong destructor being called and cleanup is not done correctly
+
+
 4. Explain the keyword: static. What does it mean in each context?
+	static variable -initialized once, does not change value ever again
+	static member - applies to the class, does not change for any instance of that class
+	static member function - can be called without having an object of that class
+
 5. When are static member variables initialized? 
-6. What is the difference between R-Values and L-Values?
+	at startup
+
+6. What is the difference between R-Values and L-Values? 
+	L-values are pointers to an object or  variable
+	R-values are the actual values
+
 7. Is this code safe? If so why? If not why?
 	std::string foo()
 	{
@@ -14,19 +62,50 @@
 >>>>>>> 4251ae5 (Test materials for NinjaOne candidates. Looking forward to your commits!)
 		return something;
 	}
+
+Yes, this code is safe because the value returned is kept in the "stack" of the function
+The caller only gets the image, not the memory.
 	
 	Bonus: What would most compilers do with this code?
+	I don't think the compiler wil complain.
+
 <<<<<<< HEAD
 8. Why would you use new rather than malloc when allocating an object? Likewise, what’s the difference between free and delete?
+
+Use "new" when creating an object, user malloc when creating a memory location.
+likewise, delete should be used when deleting an object, free when deleting memory.
+
+
 =======
 8. Why would you use new rather than malloc when allocating an object? Likewise, what's the difference between free and delete?
 >>>>>>> 4251ae5 (Test materials for NinjaOne candidates. Looking forward to your commits!)
-9. Explain the purpose of std::move, and std::forward. 
-10. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
+
+9. Explain the purpose of std::move, and std::forward.
+
+Honestly I've never used move and forward in my code. I understand move and and attempt to move the contents of one object to another, 
+whild forward deals with maintaining rvalues as rvalues and lvalues as lvalues when passing then to a function.
+
+ 
+10. How do you share resources safely between threads? How would you share an integer value vs user defined type?
+
+Put the code that deals with the shared resource in a critical section.
+integer can be passed as values, defined objects as references.
+
+ 
 11. What are the some of the principles of object-oriented programming?
+Polymorphism, inheritance, abstraction, encapsulation.
+
+
 12. Explain inheritance vs composition vs aggregation?
-13. Should you always initialize variables? 
+in inheritance, a superclass has a "kind of" relationship with the subclass.
+in composition multiple objects make up the "new" object
+in aggregation on object is associated with another (independent) object
+
+13. Should you always initialize variables?
+No.
+ 
 <<<<<<< HEAD
+**** NOTE number 14 and 15 are a duplicate of Part 2 of the assessment, see file in part 2
 14. Write a program (or multiple) in a known programming language to do the following:
 	a. Query for installed windows patches. 
 	b. Query for installed Linux Packages
@@ -38,14 +117,36 @@
 16. What concept(s) in C++ would you use to manage resources automatically?
 	a. How important are these concepts? 	
 	b. What tools are you familiar with for tracking resource allocations? 
+	- I have not been part of a project that does resource management, only resource consumption.
+
 17. What security concerns have you come across in the past and how have you addressed them?
+	- Sending sensitive data across the network or internet
+	- Use encryption and private virtual network
+
 18. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
+	Visual studio, WinDBG, DLL depency tracker, code reviews.
+
 19. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
 20. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
-	a. Consider both a long term and short-term solutions. 
+	a. Consider both a long term and short-term solutions.
+            1. Trace and debug the existing process
+	    2. Document the existing process
+	    3. Make my changes 
+	    4. Document/log the changes
+	    4. Create tests for the process
+ 
 21. What concerns do you had supporting legacy operating systems? (If any)
+	- Lack of or non-existing support for OS
+        - Outdated hardware may not be replaceable
+
 22. Tell us about a project you worked on that you found to be interesting or unusual.
+	-The requirement was, create an application/module that given a decibel level
+	produce that decibel level output to the headphone jack. A specific model of 
+	headphones is provided and your module should be calibrated and tested using a decibel meter.
+
 =======
+Everyting below this line is duplicated
+
 14. What concept(s) in C++ would you use to manage resources automatically?
 	a. How important are these concepts? 	
 	b. What tools are you familiar with for tracking resource allocations? 

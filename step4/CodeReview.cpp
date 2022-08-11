@@ -45,6 +45,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
     if (FAILED(hr))
     {
         std::cout << "Failed to query antivirus product list. ";
+        //xxxPtrProductList->Release() ??
         return false;
     }
 
@@ -52,6 +53,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
     if (FAILED(hr))
     {
         std::cout << "Failed to query product count.";
+        //xxxPtrProductList->Release() ??
         return false;
     }
 
@@ -77,6 +79,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         hr = PtrProduct->get_ProductState(&ProductState);
         if (FAILED(hr))
         {
+            //***PtrProduct->Release();
             std::cout << "Failed to query AV product state.";
             continue;
         }
@@ -97,6 +100,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         hr = PtrProduct->get_SignatureStatus(&ProductStatus);
         if (FAILED(hr))
         {
+            //***PtrProduct->Release();
             std::cout << "Failed to query AV product definition state.";
             continue;
         }
@@ -106,22 +110,27 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         hr = PtrProduct->get_ProductStateTimestamp(&PtrVal);
         if (FAILED(hr))
         {
+            //***PtrProduct->Release();
             std::cout << "Failed to query AV product definition state.";
             continue;
         }
         timestamp = std::wstring(PtrVal, SysStringLen(PtrVal));
         SysFreeString(PtrVal);
 
+        
         ThirdPartyAVSoftware thirdPartyAVSoftware;
         thirdPartyAVSoftware.Name = displayName;
         thirdPartyAVSoftware.DefinitionStatus = definitionState;
         thirdPartyAVSoftware.DefinitionUpdateTime = timestamp;
         thirdPartyAVSoftware.Description = state;
         thirdPartyAVSoftware.ProductState = state;
+        //xxx is there a better way to do this that does not call lthe constructor twice
         thirdPartyAVSoftwareMap[thirdPartyAVSoftware.Name] = thirdPartyAVSoftware;
 
         PtrProduct->Release();
     }
+
+    //xxx PtrProductList->Release() ??
 
     if (thirdPartyAVSoftwareMap.size() == 0)
     {
