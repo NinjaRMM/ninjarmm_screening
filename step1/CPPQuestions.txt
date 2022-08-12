@@ -171,7 +171,7 @@
         periodically have to restart it. Pursued all the python memory management investigation approaches and made some slight improvements but the container would 
 	eventually run out of memory. Python has a garbage collector and leaks are not supposed to happen. Looked at the C++ code that was being used in our python 
 	scripts but no leaks were detected there. It became obvious that it was a python internals issue with the python interpreter holding on to an increasing 
-	amount of memory in pools. Based on research, it turned out the fequent small memory allocations in a long running process would encounter this issue. The 
+	amount of memory in pools. Based on research, it turned out the frequent small memory allocations in a long running process would encounter this issue. The 
 	fix was that this multi-threaded python application had to be re-architected to use a sub-process that would periodically be stopped and would fork a new 
 	sub-process to take its place. The excessive memory usage issue was thus resolved. This same python issue has now been observed in other products and I am 
 	assisting in re-architecting these other apps to help resolve their memory consumption issues  
