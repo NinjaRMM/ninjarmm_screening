@@ -1,49 +1,139 @@
 1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
+
+* Basically there are 4 groups of containers: sequence containers, associative containers, unordered associative containers and container adaptors
+
+* Sequence containers
+** Sequence containers represent structures where data of the same type can be accessed as a sequence. A sequence container could be: vector, forward_list, list or deque. These kind of containers are mainly used when the contained elements are not going to be keep in certain order or optimized for searching. 
+** A vector provides a class to store a contiguously allocated sequence, the iterating a vector is cache-friendly.  As vector use case I can mention an histogram for an gray scale image. An histogram represents the amount of pixels at certain level, for instance between 0 to 255. For this case, I can use a vector with 256 elements, where an index of the vector represents the gray level and its value the quantity. Since I know the exact size of the histogram before hand, I can easily reserve the amount of space ffor it avoiding expansion of the vector at each pushing.
+** A list is a double-linked list where each element 'knows' its previous and next element in the sequence. As a list use case I can mention a deck of cards where each card is stored as an element in the list. At some moment in time, I would like to remove or add a new card but keeping the sequence in my hand. Since I know which are the previous and next element is cheap to remove or add a new one without moving all elements at each operation. In a vector all memory will be moved to guarantee that elements are stored contiguously making this operation more expensive.
+** A forward_list is a single linked list which consumes less storage than double linked lists because it keeps only a link to the next element. They are optimized for empy and very short lists. As a use case: a very large contact list in an embedded device where space is really critical and for each contact I would like to store their emails. Probably I would only save just a few emails in the whole list and for some of them just one or two different emails. Since the majority of theses items are very or short or empty a forward_list is a good choice.
+** A deque is a doubled-ended queue, it's an hybrid of a vector and a list. Elements in a deque can be inserted/removed at the front with constant time complexity which performs better than vectors. On the other hand, elements are kept in chunks and theres is no guarantee that offsetting a pointer to another element would be safe. As in a list elements can also be inserted and removed at any position. As a use case, imagine a ticket line where someone has the chance of going out and just get a better place or just going to the front.
+
+* Associative containers
+** An associative container is basically a balanced binary tree representation where order its meaningful. We can between among map, multimap, set and multiset
+** A map store date in the form key-value pairs. A key identifies a unique position in the tree which store a given value (which can be non-unique). Since order is a requirement a map can store a list of buy or selling offers at different price levels. For buying from the highest to the lowest and for selling viceversa. If someone wants to remove an offer, looking for its position will take logarithmic time. Also, looking for continious price levels is efficient because elements are ordered.
+** A multimap is basically a map where keys can be non-unique. Then, for each key value, multiple elements can be retrieved. Access to the elements mapped by the same key takes also logarithmic time however searching for an specific value depends on the amount of elements at the same key.
+** A set is an ordered structure where the values of its unique elements are used to preserver order. A set can be use to store a list of valid payment options, looking for the requested option will take logarithmic time.
+** A multiset is an ordered structure where the values of its non-unique elements are used to preserver order. As a use case, consider a shopping cart where several instance of the same object can be added, they are not unique but they are acessed effciently almost in logarithmic time. It is 'almost' because it also depends on the amount of repeated elements.
+
+* Unordered associative containers
+** Unordered containers are structures based on hash functions that are applied to keys to determine the location of an element. We can choose between unordered_map, unordered_multimap, ordered_set, unordered_multiset
+** An unordered_map and unordered_multimap are hash tables using a key and a value or values. For each given key a hash function is computed that indicates the exact position of it. If it is a multimap, the result of the hash function will return the first element of a list of same values. Access to elements is done in constant time in the average case or linear in the size of the map for the worst case. An unoredered_map can be used to access efficiently login information using a login string as key, given the login the hash is computed and then all information about it can be retrieved. Since login strings are not related to each other they don't follow any specific order, then a unoreded_map is an appropriate choice.
+** An unordered_set and unordered_multiset use their own values as keys for the hash function. In a set the value are uniques, in a multiset these ones are non-unique. An unordered_set can be use to store and retrieve efficiently a large list of banned words in a chatroom. These words are commonly unrelated and there is no need to iterate over them, then using hash functions is a reasonable choice.
+
+* Container adaptors
+** Adaptors are containers that provides specialized policies on top of other containers: stack, queue, priority_queue
+** A stack follows the LIFO policy to operate, elements are inserted and popped only at the back. For instance, a vector satisfies this property and can be used as the base container for this adaptor.
+** A queue folllow the FIFO policy to operate, elements are inserted at the back but popped at the beginning. For instance, a deque container satifies this property and can be used as base container for this adaptor.
+** A priority_queue is designed to give us access to the greatest element it contains. If this one is removed, then the next greatest element is avaible. There is the possibility to store repeated elements (different to a set). A vector or a deque can be used as base containers for this adaptor.
+
+
 2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
+* A sorting algorithm will take an input list and order all its elements based on a given criteria.
+* Bubble sort. This is the brute force sorting approach which basically compares all elements against others. It has n2 complexity however for a very small list it would be enough. Also, for its best case it would be linear time complexity.
+* Merge sort. This algorithm is based in divide and conquer principle, so it starts by splitting the input until n subsets with one element. Then, merge the subsets to produce sorting subsets and continue again until is only one subset remaining. This last one will be the sorted input. It has O(nlogn) complexity agains O(n2) of bubble sort.
+* Heap sort. This algorithm first step is to build a heap, which is basically a binary tree with a parent node is always greater than its children nodes. The second part removes the root element and add it to an array, then the heap is rebuild and then the next greatest element is taken and pushed into the output array, this will continue until the last element from the heap is removed. It has O(nlogn) complexity.
+
 3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
+
+* We need a virtual destructor to guarantee that when a pointer to a base class is deleted, the destructor of the derived one is invoked. If not, it would cause the resources owned by the deleted object to be leaked.
+
 4. Explain the keyword: static. What does it mean in each context?
+
+* An static function in a class means that this function is not associated with a particular object, then it can be called without creating an instance of a class. The same applies to an static variable member.
+* An static variable is a objected allocated once that will be used in all calls. It allows to preserve information between calls of a function without using a global variabale.
+
 5. When are static member variables initialized? 
+
+* A static member variable is generally initialized outside the class declaration. For some cases, it is allowed to initialize a static member in a class declaration if this member is a const of an integral or enum or constexpr.
+
 6. What is the difference between R-Values and L-Values?
+
+* An lvalue represents an object that has a defined location such as variable name or reference to an object, it's basically something that is addressable. On the other hand, an rvalue represents indicates a temporary object that cannot be modified but can be moved.
+
 7. Is this code safe? If so why? If not why?
 	std::string foo()
 	{
-<<<<<<< HEAD
-		std::string something = “avalue”;
-=======
-		std::string something = "avalue";
->>>>>>> 4251ae5 (Test materials for NinjaOne candidates. Looking forward to your commits!)
+		std::string something = \93avalue\94;
 		return something;
 	}
 	
 	Bonus: What would most compilers do with this code?
-<<<<<<< HEAD
-8. Why would you use new rather than malloc when allocating an object? Likewise, what’s the difference between free and delete?
-=======
-8. Why would you use new rather than malloc when allocating an object? Likewise, what's the difference between free and delete?
->>>>>>> 4251ae5 (Test materials for NinjaOne candidates. Looking forward to your commits!)
+
+* The code is safe because the return value is copied and it could be assigned (using a copy) to another variable.
+* A compiler would optimize this avoiding copies using Return Value Optimization which basically discards temporary objects and assign the resulting returned value directly to the requested variable.
+
+8. Why would you use new rather than malloc when allocating an object? Likewise, what\92s the difference between free and delete?
+
+* new calls the destructor of an object but malloc does not. If something is allocated using new, delete must be used to call the corresponding destructor. Using free will release memory but the destructor will not be called.
+
 9. Explain the purpose of std::move, and std::forward. 
+
+* std::move will basically cast any object to an rvalue leaving the object in a valid empty state. It can be used to tell the compiler to swap the value of an object and leave the original one empty but still valid.
+* std::forward is used to gurantee perfect forwarding for instance when using make_shared or make_unique, where constructor parameters are forwarded to the target constructors as-is, if it an rvalue was given it will be preserved, if is an value, the same applies.
+
 10. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
+
+* In the case of integer types std::atomic can be used without worries of a race condition. In the case of user defined types locks must be used to prevent multiple threads to access the same resource simultaneously.
+
 11. What are the some of the principles of object-oriented programming?
+
+* Encapsulation. All relevant information is restricted and contained into the class and not shared with others. Other objects cannot access or modify class members without explicit declaration permission. This is useful because each object is responsible for certain tasks making it independent and secure.
+* Polymorphism. It is the way object can share its behaviour and act in a different form if allowed. This is can de done using method overloading which allows to use the snsame function name with different parameters and also with method overriding which allows to rewrite the base method code using a derived class.
+* Inheritance. A class allows to be reused as a new one without writing all code again and extend its behaviour using new functions or modified versions of the original class.
+* Abstraction. This means that a class is implemented hiding all unncessary information from other classes focusing on what should be done by this class.
+
 12. Explain inheritance vs composition vs aggregation?
+
+* All three represent class relations. Inheritance means a is-a relation, for example a derived class Circle is-a Shape, therefore Circle has also all properties from a Shape.
+* Composition and aggregation are has-a relations which means that an object is used to act as part of another. The main difference is in the strictness of the relation, in the case of composition, the composing objects depend on the composed object and they will end their lifecycle as the main object ends. In the case of an aggregation, the aggregated object owns the aggregating objects but these ones can continue existing without the relation.
+
 13. Should you always initialize variables? 
-<<<<<<< HEAD
+* Yes, this provides security during implementation. This initialization can be done by assigning an initial value during its declaration or by using its constructor. Using variables without being initialized are undefined behaviour.
+
 14. Write a program (or multiple) in a known programming language to do the following:
 	a. Query for installed windows patches. 
 	b. Query for installed Linux Packages
 	c. Query for installed Mac Packages
+
 15. Write a program (or multiple) in a known programming language to do the following:
 	a. Query for windows system information. 
 	b. Query for Linux system information
 	c. Query Mac system information
+
 16. What concept(s) in C++ would you use to manage resources automatically?
+* Smart pointers
+* Scoped locks
+* Scoped objects, avoiding headp-allocation unncessarily
+
 	a. How important are these concepts? 	
+	* Automatic resource management is important to avoid memory leaking, deadlocks or any incorrect usage of an acquired resource that has not been released the the right time. For example, if a lock is enable and the code suddenly throws an exception, we need to unlock and return, otherwise the lock will still be active. The applies to memory, if an object is created all memory, files, sockets and any resource it depends on must be properly initialized in its constructor. When this object goes out of scope, its destructor must be called which have to release all resources.
+
 	b. What tools are you familiar with for tracking resource allocations? 
+		* I usually use valgrind to check for any leak or invalid write/read. Also, I've used eletricfence in some tasks to detec problems with dynamic allocations. Sometimes, I also use address sanitizer for memory leaks debugging.
+
 17. What security concerns have you come across in the past and how have you addressed them?
+* Once I was in charge to develop a test system for some hardware modules. Theses components were very sensitive and also expensive, so using them in a new system would be really risky. I suggest we should develop a simulation environment to avoid any further complication. We also discussed a more strict test policy for our code, not only unittest but integration with the simulator. After some months of development we were finally ready to use the actual hardware. I also suggest starting with the less risk operations such as monitoring.
+
 18. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
+* I personally use unit testing or any automatic testing technique to prove that what I have implemented is actually doing what is expected. First, I understand the requirements and then I try to write down some testing scenarios. Also, to prove that all the code I've implemented is at least used I use code coverage measure tools. I found gcov really useful and its output helps me to undestand what lines and branches are already covered. If something is not covered, I implement new tests.
+* I also find rellay really helpul writing code while thinking someone else is going to read it. Sometimes, a proper variable name or function helps to understand the goal of a certain piece of code.
+
 19. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
+* I guess this is very related to the last question. I personally believe that maintainability depends on a good planning. In software, I understand planning as a good architecture choice. To choose a good design it is crucial to understand all requirements and test cases. To come up with a good design it could take some time, so most of the times I try to desing a version quickly and discuss it with my colleagues. Sometimes, just a 10 minutes conversation helps me to see where are pros and cons of my design.
+* Clear code and names are also important as I mentioned in my last answer. Howerver, when this it not enough I believe comments are welcome. I try to write the most clear code possible to avoid too much explanation in comments but sometimes it is really necessary.
+
 20. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
 	a. Consider both a long term and short-term solutions. 
+* I would try to reach the most experienced person that has worked with this code and ask for some overview. If not possible, I would start asking what and why a change should be done, with these two question it would be clear for me all the expectations for this new change.
+* A second step would be deploying a test environment such any change made for me would be easy to check against what the system usually behaves.
+* Having the requirements (at least for my task) and test environment, I would start making small changes and for each change add documentation or maybe refactoring. With this minimum change I would test and continue with the next step. After some sucessful trials I would be more confident to change more code at once.
+* I would also try to add automaic tests for this change to help anyone that would make a change again at the same legacy code.
+ 
 21. What concerns do you had supporting legacy operating systems? (If any)
+* I believe legacy support is related to a good software version control. The first thing I would think is about all dependencies of the software I would like to deploy to my clients. I would have different repositories with dependencies for each operating system I would like to give support. Having all dependencies will help me to test any new update and avoid any surprise during deployment.
+* Legacy systems most of the time are also in old hardware, then it is also important not only testing new updates in a specific legacy operating system but also in an old hardware.
+
 22. Tell us about a project you worked on that you found to be interesting or unusual.
 =======
 14. What concept(s) in C++ would you use to manage resources automatically?
