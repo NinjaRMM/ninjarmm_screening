@@ -121,11 +121,39 @@
 13. Should you always initialize variables? 
     a.  Yes! Doing so avoids the possibility of using unitialized values, which may lead to undefined behaviour.
 14. What concept(s) in C++ would you use to manage resources automatically?
-    a. How important are these concepts? 	
-    b. What tools are you familiar with for tracking resource allocations? 
+    a.  Using objects declared on the stack - object will be automatically destroyed when it goes out of scope.
+    b.  Use smart pointers (since C++11) - 3 Types:
+        1. "Unique Pointer" (std::unique_ptr<>)
+            a. Exclusive ownership
+            b. Lightweight pointer
+            c. Destroys the object when goes out of scope
+	2. "Shared Pointer" (std::shared_ptr<>)
+            a. Shared ownership
+            b. Destroys the object when the last reference is released (reference count)
+	3. "Weak Pointer" (std::weak_ptr<>)
+            a. Breaks cyclic references
+            b. Used with shared_ptr
+    c. How important are these concepts? 
+       1.  These concepts are very important for preventing memory leaks. Using dynamic allocation without smart pointers can make the code more prone to memory 
+           leaks.
+    d. What tools are you familiar with for tracking resource allocations?
+       1.  Valgrind
+       2.  Visual Studio
 15. What security concerns have you come across in the past and how have you addressed them?
+    a.  Linux VMs and bare-metal servers access issues. Addressed by the proper configuration of Linux ip tables to control access by IP addresses and allowed ports 
+        and protocols.
 16. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
+    a.  Eclipse
+    b.  Vi
+    c.  gdb
+    d.  Visual C++
+    e.  Linux perf
+    f.  Valgrind
+    e.  UML Modeling an Design tools
+    f.  diff
 17. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
+    a.  Jira
+    b.  Code review tools to diff code
 18. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
 	a. Consider both a long term and short-term solutions. 
 19. What concerns do you had supporting legacy operating systems? (If any)
