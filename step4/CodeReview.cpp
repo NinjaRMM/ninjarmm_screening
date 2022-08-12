@@ -37,6 +37,8 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
     hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&PtrProductList));
     if (FAILED(hr))
     {
+        //This writing to the standard output cout be changed to std::cerr or 
+        //even for a more robust solution using a log mechanism
         std::cout << "Failed to create WSCProductList object. ";
         return false;
     }
@@ -112,6 +114,9 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         timestamp = std::wstring(PtrVal, SysStringLen(PtrVal));
         SysFreeString(PtrVal);
 
+        //Instead of creating an object and copying into the map, use emplace to forward the arguments to ThirdPartyAVSoftware ctor
+        //For instance, thirdPartyAVSoftwareMap.try_emplace(displayName, displayName, definitionState, timestamp, state))
+        //If there are equal values for displayName only the last value will be saved. Is it ok considereing displayName to be unique?
         ThirdPartyAVSoftware thirdPartyAVSoftware;
         thirdPartyAVSoftware.Name = displayName;
         thirdPartyAVSoftware.DefinitionStatus = definitionState;
@@ -123,6 +128,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         PtrProduct->Release();
     }
 
+    //It would be enough just return thirdPartyAVSoftwareMap.size();
     if (thirdPartyAVSoftwareMap.size() == 0)
     {
         return false;
