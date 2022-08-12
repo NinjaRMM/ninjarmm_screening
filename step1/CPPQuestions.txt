@@ -156,5 +156,22 @@
     b.  Code review tools to diff code
 18. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
 	a. Consider both a long term and short-term solutions. 
+	   1. First would enable existing log messages to trace the code and run the code to begin the process of understanding the flow.
+	   2. Depending on the executables, may try to run the code through a debugger and step through function calls, maybe setting breakpoints.
+	   3. Would visually analyze the code to see how it is organized.
+	   4. Longer term, if it's C++ code, would try to reverse-engineer the design by loading the code in UML analysis tools to obtain UML diagrams and call 
+	      charts. Would use this to help document the code design to assist myself and others in future work in this code base. Would add comments if needed to 
+	      make complex parts more understandable. Would create Wikis to capture this information.
 19. What concerns do you had supporting legacy operating systems? (If any)
+    a.  The main concern supporting legacy operating systems is that vendor support may no longer be available and there may not be any more updates that deal with 
+        later discovered issues. A strategy of generating fixes inhouse for open source code or work-arounds in our own code base would have to be pursued in such 
+	cases.
 20. Tell us about a project you worked on that you found to be interesting or unusual.
+    a.  Recently worked on a kubernetes managed docker container project. A python implemented pod (container) was running out of memory and kubernetes would 
+        periodically have to restart it. Pursued all the python memory management investigation approaches and made some slight improvements but the container would 
+	eventually run out of memory. Python has a garbage collector and leaks are not supposed to happen. Looked at the C++ code that was being used in our python 
+	scripts but no leaks were detected there. It became obvious that it was a python internals issue with the python interpreter holding on to an increasing 
+	amount of memory in pools. Based on research, it turned out the fequent small memory allocations in a long running process would encounter this issue. The 
+	fix was that this multi-threaded python application had to be re-architected to use a sub-process that would periodically be stopped and would fork a new 
+	sub-process to take its place. The excessive memory usage issue was thus resolved. This same python issue has now been observed in other products and I am 
+	assisting in re-architecting these other apps to help resolve their memory consumption issues  
