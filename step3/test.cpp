@@ -1,7 +1,30 @@
+//Tested using gcc 8.2 -std=c++17
+
 #include <iostream>
 #include <vector>
 #include <memory>
 #include <algorithm>
+#include <type_traits>
+#include <tuple>
+
+//item h
+template <typename... Args>
+struct show_off_reverse;
+
+template <>
+struct show_off_reverse<std::tuple<>>
+{
+    using type = std::tuple<>;
+};
+
+template <typename T, typename... Args>
+struct show_off_reverse<std::tuple<T, Args...>>
+{
+    using head = std::tuple<T>;
+    using tail = typename show_off_reverse<std::tuple<Args...>>::type;
+    using type = decltype(std::tuple_cat(std::declval<tail>(), std::declval<head>()));
+};
+
 
 //item a
 class Job
@@ -9,8 +32,8 @@ class Job
 public:
     Job(const std::string & name, const std::string desc, const uint32_t hours)
         : name_(name)
-        , desc_(desc)
-        , hours_(hours)
+          , desc_(desc)
+          , hours_(hours)
     {
     }
 
@@ -84,7 +107,6 @@ public:
         : Job(name, desc, hours)
     {
     }
-
 };
 
 //item h
@@ -96,9 +118,7 @@ void isInBounds(const Type httpResponseCode, const Type min, const Type max)
 }
 
 //item i
-void countItems(
-        bool (*function)(const std::string &),
-        const std::vector<std::string> & input)
+void countItems(bool (*function)(const std::string &), const std::vector<std::string> & input)
 {
     std::cout << std::count_if(input.begin(), input.end(), function) << std::endl;
 }
@@ -125,5 +145,7 @@ int main()
     //item h
     Programmer bob("Charles", "logging", 100);
     bob.log("this is log number ", 1, " written at ", 1660267691.122, " by ", bob, '\n');
+
+    static_assert(std::is_same_v<typename show_off_reverse<std::tuple<int, bool, char>>::type, std::tuple<char, bool, int> >);
 }
 
