@@ -1,11 +1,11 @@
 /*
 
 NINJARMM Code Review
- 
-Please review the below code. 
-We do not expect you to execute this code, but you are welcome to try. 
 
-Make any code updates that you see fit (If any). 
+Please review the below code.
+We do not expect you to execute this code, but you are welcome to try.
+
+Make any code updates that you see fit (If any).
 Comments are encouraged.
 
 */
@@ -34,6 +34,8 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
     std::wstring displayName, versionNumber, state, timestamp;
     std::string definitionState;
 
+    int cleanup = -1;
+
     hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&PtrProductList));
     if (FAILED(hr))
     {
@@ -44,6 +46,9 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
     hr = PtrProductList->Initialize(WSC_SECURITY_PROVIDER_ANTIVIRUS);
     if (FAILED(hr))
     {
+        // WILL - Release List - Created successfully above
+        PtrProductList->Release();
+
         std::cout << "Failed to query antivirus product list. ";
         return false;
     }
@@ -51,76 +56,102 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
     hr = PtrProductList->get_Count(&ProductCount);
     if (FAILED(hr))
     {
+        // WILL - Release List - Created successfully above
+        PtrProductList->Release();
+
         std::cout << "Failed to query product count.";
         return false;
     }
 
-    for (uint32_t i = 0; i < ProductCount; i++)
+    for (LONG i = 0; i < ProductCount; i++)
     {
-        hr = PtrProductList->get_Item(i, &PtrProduct);
-        if (FAILED(hr))
-        {
-            std::cout << "Failed to query AV product.";
-            continue;
+        // WILL - Added a cleanup block at the end of the loop as a try/catch
+        try {
+            hr = PtrProductList->get_Item(i, &PtrProduct);
+            if (FAILED(hr))
+            {
+                std::cout << "Failed to query AV product.";
+                throw cleanup;
+            }
+
+            hr = PtrProduct->get_ProductName(&PtrVal);
+            if (FAILED(hr))
+            {
+                std::cout << "Failed to query AV product name.";
+                throw cleanup;
+            }
+
+            displayName = std::wstring(PtrVal, SysStringLen(PtrVal));
+
+            hr = PtrProduct->get_ProductState(&ProductState);
+            if (FAILED(hr))
+            {
+                std::cout << "Failed to query AV product state.";
+                throw cleanup;
+            }
+
+            if (ProductState == WSC_SECURITY_PRODUCT_STATE_ON)
+            {
+                state = L"On";
+            }
+            else if (ProductState == WSC_SECURITY_PRODUCT_STATE_OFF)
+            {
+                state = L"Off";
+            }
+            else
+            {
+                state = L"Expired";
+            }
+
+            hr = PtrProduct->get_SignatureStatus(&ProductStatus);
+            if (FAILED(hr))
+            {
+                std::cout << "Failed to query AV product definition state.";
+                throw cleanup;
+            }
+
+            definitionState = (ProductStatus == WSC_SECURITY_PRODUCT_UP_TO_DATE) ? "UpToDate" : "OutOfDate";
+
+            hr = PtrProduct->get_ProductStateTimestamp(&PtrVal);
+            if (FAILED(hr))
+            {
+                std::cout << "Failed to query AV product definition state.";
+                throw cleanup;
+            }
+            timestamp = std::wstring(PtrVal, SysStringLen(PtrVal));
+
+            ThirdPartyAVSoftware thirdPartyAVSoftware;
+            thirdPartyAVSoftware.Name = displayName;
+            thirdPartyAVSoftware.DefinitionStatus = definitionState;
+            thirdPartyAVSoftware.DefinitionUpdateTime = timestamp;
+            thirdPartyAVSoftware.Description = state;
+            thirdPartyAVSoftware.ProductState = state;
+            thirdPartyAVSoftwareMap[thirdPartyAVSoftware.Name] = thirdPartyAVSoftware;
         }
 
-        hr = PtrProduct->get_ProductName(&PtrVal);
-        if (FAILED(hr))
+        catch (int i)
         {
-            PtrProduct->Release();
-            std::cout << "Failed to query AV product name.";
-            continue;
+            i = i; // To prevent compile warning
+
+            if (nullptr != PtrVal)
+            {
+                SysFreeString(PtrVal);
+                PtrVal = nullptr;
+            }
+
+            if (nullptr != PtrProduct)
+            {
+                PtrProduct->Release();
+                PtrProduct = nullptr;
+            }
         }
+    }
 
-        displayName = std::wstring(PtrVal, SysStringLen(PtrVal));
-
-        hr = PtrProduct->get_ProductState(&ProductState);
-        if (FAILED(hr))
-        {
-            std::cout << "Failed to query AV product state.";
-            continue;
-        }
-
-        if (ProductState == WSC_SECURITY_PRODUCT_STATE_ON)
-        {
-            state = L"On";
-        }
-        else if (ProductState == WSC_SECURITY_PRODUCT_STATE_OFF)
-        {
-            state = L"Off";
-        }
-        else
-        {
-            state = L"Expired";
-        }
-
-        hr = PtrProduct->get_SignatureStatus(&ProductStatus);
-        if (FAILED(hr))
-        {
-            std::cout << "Failed to query AV product definition state.";
-            continue;
-        }
-
-        definitionState = (ProductStatus == WSC_SECURITY_PRODUCT_UP_TO_DATE) ? "UpToDate" : "OutOfDate";
-
-        hr = PtrProduct->get_ProductStateTimestamp(&PtrVal);
-        if (FAILED(hr))
-        {
-            std::cout << "Failed to query AV product definition state.";
-            continue;
-        }
-        timestamp = std::wstring(PtrVal, SysStringLen(PtrVal));
-        SysFreeString(PtrVal);
-
-        ThirdPartyAVSoftware thirdPartyAVSoftware;
-        thirdPartyAVSoftware.Name = displayName;
-        thirdPartyAVSoftware.DefinitionStatus = definitionState;
-        thirdPartyAVSoftware.DefinitionUpdateTime = timestamp;
-        thirdPartyAVSoftware.Description = state;
-        thirdPartyAVSoftware.ProductState = state;
-        thirdPartyAVSoftwareMap[thirdPartyAVSoftware.Name] = thirdPartyAVSoftware;
-
-        PtrProduct->Release();
+    // WILL - Added cleanup of PtrProductList
+    if (nullptr != PtrProductList)
+    {
+        PtrProductList->Release();
+        PtrProductList = nullptr;
     }
 
     if (thirdPartyAVSoftwareMap.size() == 0)
