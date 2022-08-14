@@ -1,5 +1,5 @@
 // CodeChallenge.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
+//  Compiled and tested on VC++
 /*
 
 NINJARMM Code Challenge
