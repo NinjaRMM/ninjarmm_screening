@@ -7,6 +7,8 @@
 
   To use this code in production, I would need to test it for different versions of the operating systems and different 
   vendor distributions in the case of Linux. Code may need to be modified to handle different versions.
+  
+  root / administrator privileges are assumed
 */
 
 #include <iostream>
