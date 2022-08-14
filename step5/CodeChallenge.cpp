@@ -1,9 +1,11 @@
+// CodeChallenge.cpp : This file contains the 'main' function. Program execution begins and ends there.
+//
 /*
 
 NINJARMM Code Challenge
- 
-Please review the below code. 
-We do expect you to execute this code. 
+
+Please review the below code.
+We do expect you to execute this code.
 
 This file contains the 'main' function. Program execution begins and ends there.
 */
@@ -36,8 +38,11 @@ OBJ_STR objStr;
 //Here's a template function that can accept a sample object and 3 integer parameters. It checks if the sum of the integer params is positive or not.
 //The third integer param is optional so it's declared as a default param
 //Inside the function is some existing code that needs to exist, but not relevant to this exercise. 
+
+static int dummy;
+
 template <typename T, typename U>
-T checkIfPositive(const U& u, const int& param1, const int& param2, int param3 = 0)
+T checkIfPositive(const U& u, const int& param1, const int& param2, int param3=0, int &total=dummy)
 {
 
     // Assume there's already some existing code in here, some business logic that we are not interested in this exercise. 
@@ -46,6 +51,8 @@ T checkIfPositive(const U& u, const int& param1, const int& param2, int param3 =
     SOME EXISTING CODE
 
     */
+
+    total = param1 + param2 + param3;
 
     return u.getResult(param1, param2, param3);
 }
@@ -78,7 +85,7 @@ int main()
     //How are you going to solve this problem? 
     //You can only change the code inside the EDITABLE SECTION OF CODE
     //Hint, the following calls should now be valid moving forward:
-    /*
+    
     int total = 0;
 
     iResult = checkIfPositive<int, OBJ_INT>(objInt, 1, 2);
@@ -98,9 +105,8 @@ int main()
 
     sResult = checkIfPositive<std::string, OBJ_STR>(objStr, 1, 2, 3, total); //<-- Total is output param
     std::cout << sResult << " " << total << std::endl;
-    */
+    
 
     return 0;
 
 }
-
