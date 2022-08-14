@@ -1,11 +1,11 @@
-// CodeChallenge.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//  Compiled and tested on VC++
 /*
 
 NINJARMM Code Challenge
 
 Please review the below code.
 We do expect you to execute this code.
+
+Compiled and tested on VC++
 
 This file contains the 'main' function. Program execution begins and ends there.
 */
