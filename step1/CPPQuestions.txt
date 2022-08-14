@@ -50,7 +50,8 @@
    a.  An "l-value" is an expression that yields an object reference, such as a variable name, an array subscript reference, a dereferenced pointer, or a function 
        call that returns a reference. An l-value always has a defined region of storage, so you can take its address.
    b.  An "r-value" is an expression that is not an lvalue. Examples of r-values include literals, the results of most operators, and function calls that return 
-       nonreferences. An r-value does not necessarily have any storage associated with it. 
+       nonreferences. An r-value does not necessarily have any storage associated with it. It resides only on the right side of an assignment expression such as a 
+       literal or a temporary which is intended to be non-modifiable.
 7. Is this code safe? If so why? If not why?
 	std::string foo()
 	{
