@@ -150,12 +150,6 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
     }
 
     // WILL - Added post loop cleanup
-    if (nullptr != PtrProductList)
-    {
-        PtrProductList->Release();
-        PtrProductList = nullptr;
-    }
-
     if (nullptr != PtrVal)
     {
         SysFreeString(PtrVal);
@@ -166,6 +160,12 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
     {
         PtrProduct->Release();
         PtrProduct = nullptr;
+    }
+    
+    if (nullptr != PtrProductList)
+    {
+        PtrProductList->Release();
+        PtrProductList = nullptr;
     }
 
     if (thirdPartyAVSoftwareMap.size() == 0)
