@@ -60,12 +60,12 @@
 		return something;
 	}
 	
-	This code is 100% safe as it returns a string object which will be copied into an instantiated object in the calling scope.
-	If this function was returning the reference or pointer to the "something" variable declared within its scope, it would be a problem, as the returned 
-	reference/pointer would be to an out of scope variable in the process of being destroyed.  
+	This code is 100% safe as it returns by value. Since the std::string class has the move constructor, returning even the long strings by value is efficient. 
+	If an object has a move constructor, it’s said to be characterized with move-semantics. Move-semantics imply that the object is not copied to a different 
+	location on function return, thus, providing faster function execution time.
 	
 	Bonus: What would most compilers do with this code?
-	Nothing! This is legal. 
+	move constructor is invoked.
 	
 8. Why would you use new rather than malloc when allocating an object? Likewise, what's the difference between free and delete?
    a.  "new" allocates memory and calls the constructor for object initialization. "malloc" allocates memory but does not call the constructor.
