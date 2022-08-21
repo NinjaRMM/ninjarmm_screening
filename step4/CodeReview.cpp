@@ -10,6 +10,12 @@ Comments are encouraged.
 
 */
 
+/*------
+ * I will comment what I think are the issues here in the same file
+ * Besides that I will create a new VS solution/project with the code to execute the same but with my fixes trying to keep the same intention
+ *
+ *------
+ */
 
 struct ThirdPartyAVSoftware
 {
@@ -21,6 +27,11 @@ struct ThirdPartyAVSoftware
     std::wstring ProductState;
 };
 
+//--- for this function to work correctly COM library must be initialized on the current thread(CoInitialize(NULL))
+//--- implementation makes it harder to handle failure cases and do necesary clean up
+//--- the implementation also allows that some of the AV products detected are not stored in the map data
+//--- AV products data stored in the map only if ALL data can be retrived
+  
 bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftware>& thirdPartyAVSoftwareMap)
 {
     HRESULT hr = S_OK;
@@ -34,6 +45,8 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
     std::wstring displayName, versionNumber, state, timestamp;
     std::string definitionState;
 
+//-- variable naming convention does not use only one type of convention , only one type of convention is recommended
+
     hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&PtrProductList));
     if (FAILED(hr))
     {
@@ -41,6 +54,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         return false;
     }
 
+//--- PtrProductList is never released
     hr = PtrProductList->Initialize(WSC_SECURITY_PROVIDER_ANTIVIRUS);
     if (FAILED(hr))
     {
@@ -55,6 +69,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         return false;
     }
 
+//-- loop variable type not the same as the one used in the condition, one is unsigned and the other signed that is not a good practice
     for (uint32_t i = 0; i < ProductCount; i++)
     {
         hr = PtrProductList->get_Item(i, &PtrProduct);
@@ -68,6 +83,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         if (FAILED(hr))
         {
             PtrProduct->Release();
+//--- PtrProduct is released here but not in the failure cases that follows
             std::cout << "Failed to query AV product name.";
             continue;
         }

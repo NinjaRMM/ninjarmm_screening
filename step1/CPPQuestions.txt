@@ -1,30 +1,235 @@
 1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
+
+/Answer
+
+-Sequence containers
+
+array: Static contiguous array
+vector: Dynamic contiguous array
+deque: Double-ended queue
+forward_list: Singly-linked list
+list: Doubly-linked
+
+-Associative containers
+
+Set: Collection of unique keys, sorted by keys
+Map: Collection of key-value pairs, sorted by keys, keys are unique 
+multiset: Collection of keys, sorted by keys
+multimap: Collection of key-value pairs, sorted by keys
+
+-Unordered associative containers
+ 
+unordered_set: Collection of unique keys, hashed by keys
+unordered_map: Collection of key-value pairs, hashed by keys, keys are unique
+unordered_multiset: Collection of keys, hashed by keys
+unordered_multimap: Collection of key-value pairs
+
+-Container adaptors
+stack: Adapts a container to provide stack (LIFO data structure).
+queue: Adapts a container to provide queue (FIFO data structure).
+priority_queue: Adapts a container to provide priority queue. 
+
+The use case for each depends on the data, what is known about the data, what operation we would do on it and the time it takes to do it, if it is acceptable or not and what the specific container offers.
+
 2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
-3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
+
+/Answer
+
+- Quick Sort
+Is a Divide and Conquer algorithm.
+It picks an element as a pivot and partitions the given array around the picked pivot.
+The key process in quickSort is a partition().
+The target of partitions is, given an array and an element x of an array as the pivot, put x at its correct position in a sorted array and put all smaller elements (smaller than x) before x, and put all greater elements (greater than x) after x.
+
+Use case
+It is used in operational research and event-driven simulation.
+Numerical computations and in scientific research, for accuracy in calculations most of the efficiently developed algorithm uses priority queue and quick sort is used for sorting.
+
+- Bubble Sort
+Is the simplest sorting algorithm that works by repeatedly swapping the adjacent elements if they are in the wrong order.
+This algorithm is not suitable for large data sets as its average and worst-case time complexity is quite high.
+
+Use case
+Due to its simplicity, bubble sort is often used to introduce the concept of a sorting algorithm. 
+In computer graphics, it is popular for its capability to detect a tiny error (like a swap of just two elements) in almost-sorted arrays and fix it with just linear complexity (2n).
+
+- Merge Sort algorithm
+It has two steps: merging and sorting.
+The algorithm uses a divide-and-conquer approach to merge and sort a list.
+It can be helpful to think of this method as divide, conquer, and combine.
+Focuses on how to merge together two pre-sorted arrays such that the resulting array is also sorted.
+Mergesort can be implemented either recursively or iteratively.
+
+Use case
+It is used when we want a guaranteed running time of O(n log ⁡ n), regardless of the state of the input.
+Mergesort is a stable sort with a space complexity of O(n).
+
+IMPORTANT NOTE:
+To select an sorting algorithm you should consider the following:
+- Type of Data to be sorted
+- The structure where the data is stored.
+- Type of media where that data is. (it can be memory, disk or tape)
+- Execution order according to the type os data to sort. (if unknown assume worst case)
+- Space used according to the type os data to sort. (if unknown assume worst case)
+
+More information can be found at https://www.geeksforgeeks.org/sorting-algorithms/
+
+3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly.
+
+/Answer
+
+Making base class destructor virtual guarantees that the object of derived class is destructed properly.
+If a base class pointer has a derived class object and is deleted, the correct sequence of desructors are called.
+
+if not used correctly, results in undefined behavior like destructors not been called in the right sequence or not called at all.
+
 4. Explain the keyword: static. What does it mean in each context?
-5. When are static member variables initialized? 
+
+/Answer
+
+Basically it means that the scope of that entity (variable, object, function or class) will be the lifetime of the program.
+
+Static Variables : Global variables, Variables in a function, Variables in a class, Objects
+They will be created(allocated) and initialized only once at the beginning of the program and destroyed at the and.
+Can be accessed outside their scope and during lifetime of the program.
+
+Static Functions / Functions in Class :
+Can be accessed during the lifetime of the program.
+Can't use no-static entities in their implementation.
+
+More information on https://www.geeksforgeeks.org/static-keyword-cpp/
+
+5. When are static member variables initialized?
+
+/Answer
+
+At the beginning of the program execution (before source code starts execution).
+ 
 6. What is the difference between R-Values and L-Values?
+
+/Answer
+
+In C++
+“l-value” refers to a memory location that identifies an object.
+“r-value” refers to the data value that is stored at some address in memory.
+References in C++ are nothing but the alternative to the already existing variable.
+They are declared using the ‘&’ before the name of the variable.
+
 7. Is this code safe? If so why? If not why?
 	std::string foo()
 	{
 		std::string something = "avalue";
 		return something;
 	}
-	
 	Bonus: What would most compilers do with this code?
+	
+/Answer
+The code is save, object "something" is returned by value.
+
+/Bonus:
+create a temporary std::string object to store the return value and make it accessable to the function (foo) invocation.
+
 8. Why would you use new rather than malloc when allocating an object? Likewise, what's the difference between free and delete?
+
+/Answer
+
+Because it will create the object properly, including calling corresponding constructors, and to use "delete" to destroy it later.
+"delete" is used to destroy the object properly, including calling corresponding destructors
+
 9. Explain the purpose of std::move, and std::forward. 
-10. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
+
+/Answer
+
+std::move() is a function used to convert an lvalue reference into the rvalue reference.
+Used to move the resources from a source object i.e. for efficient transfer of resources from one object to another.
+
+std::forward() the idiomatic use of std::forward is inside a templated function with an argument declared as a forwarding reference, where the argument is now lvalue, used to retrieve the original value category, that it was called with, and pass it on further down the call chain (perfect forwarding).
+Some non-obvious properties of std::forward are that the return value can be more cv-qualified (i.e. can add a const).
+Also it allows for the case where the argument and return are different e.g. to forward expressions from derived type to it’s base type (even some scenarios where the base is derived from as private).
+
+10. How do you share resources safely between threads? How would you share an integer value vs user defined type?
+
+/Answer
+
+By limiting the read / write access to the resource to ONLY ONE thread at a time, making it thread safe (it can be done using lock and unlock or atomic<>)
+
+I would you share an integer value vs user defined type, in he same way thread-safe.
+ 
 11. What are the some of the principles of object-oriented programming?
+
+/Answer
+
+Abstraction
+Encapsulation
+Inheritance
+Polymorphism
+
 12. Explain inheritance vs composition vs aggregation?
+
+/Answer
+
+Inheritance:
+feature or a process in which, new classes are created from the existing classes.
+The new class created is called “derived class” or “child class” and the existing class is known as the “base class” or “parent class”.
+The derived class now is said to be inherited from the base class.
+
+Composition:
+The composition relationships are part-whole relationships where a part can only be a part of one object at a time.
+This means that the part is created when the object is created and destroyed when the object is destroyed.
+
+Aggregation: 
+The aggregation is also a part-whole relationship but here in aggregation, the parts can belong to more than one object at a time, and the whole object is not responsible for the existence of the parts.
+
 13. Should you always initialize variables? 
+
+/Answer
+
+yes, otherwise if used before any assignment the value will be random with some c++ compilers.
+
 14. What concept(s) in C++ would you use to manage resources automatically?
 	a. How important are these concepts? 	
 	b. What tools are you familiar with for tracking resource allocations? 
+	
+/Answer
+Smart Pointers and RAII	
+
+a. Very important it allows the resource management
+b. Debuggers, Memory Dumps, Logs/Trace analyzers
+	
 15. What security concerns have you come across in the past and how have you addressed them?
+
+/Answer
+
+Application security, contacted Network Security Staff
+
 16. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
-17. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
+
+/Answer
+Frameworks, compilers, linkers, debuggers, logs analyzers, test suits.
+
+17. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.
+
+/Answer 
+Creating useful documentation and logs , debuggers, logs analyzers, test suits.
+
 18. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
-	a. Consider both a long term and short-term solutions. 
+	a. Consider both a long term and short-term solutions.
+	
+/Answer
+
+If a hotfix is required, find the issue document it, do case testing, do as much test as possible, deploy change, monitor deployment, check logs, until confirmed it is stable by client or other person. 
+
+Long-term, start product documentation, create test suites ry to integrate with a CI.
+	
 19. What concerns do you had supporting legacy operating systems? (If any)
+
+/Answer
+
+Documentation / Support
+
 20. Tell us about a project you worked on that you found to be interesting or unusual. 
+
+/Answer
+
+Use of random numbers / law of the large numbers, real time multi-thread apps, estimations and predictions.
+
