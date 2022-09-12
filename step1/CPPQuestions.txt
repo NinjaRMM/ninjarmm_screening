@@ -1,9 +1,47 @@
 1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
+The STL containers are vector, list, deque, stack, queue, set, map, unordered_set and unordered_map and etc.
+vector, list and deque are sequence containers, the data are stored contiguously and elements can be easily access by the position.
+For vector, it is easy to append the element at the end, but costly with other element insertion and deletion. For deque, it is easy
+to insert or delete element at both ends, but not easy in the middle. For list, it is easy to insert or delete elements in the middle.
+stack and queue are container adapters, with stack using First In Last Out data structure and queue using First In First Out data structure.
+set, map, unordered_set and unordered_map are asscoiative containers. These containers provide a data structure with keys for fast and more efficient 
+data look-up. set is a data structure of unique keys and sorted by keys while map is a data structure of key-value pairs and sorted by keys. Good for
+dealing with sorted data.
+unordered_set is a data structure of keys, not sorted but hashed by keys while unordered_map is a data structure of key-value pair, not sorted but hashed by keys.
+Good for dealing with unsorted data.
+
+
 2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
+Three soring algorithms are listed here: bubble sort, merge sort and quick sort.
+bubble sort is the simple to implement, but not efficient in time, good for small amount of data and non critical applications.
+quick sort and merge sort use the divide and conquer method and are much more efficient than bubble sort, but are more difficult to implement.
+They are used in large data and time critical applications.
+
+
 3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
+If the base class does not have a virtual destrcuctor, the derived class uses a pointer to the base class, and the derived class object is deleted, 
+it happens that only the baser class destructor is deleted and the destructor of the derived class is not deleted, which may cause memory leak.
+If the base class uses a virtual destructor, then the destructor of the derived class as well as that of base class will be deleted and no memory leak will happen.
+
+
 4. Explain the keyword: static. What does it mean in each context?
+static can be used on both varibles and member functions.
+For static variables, the space of it is allocated for the life time of the program, so it can retain its value
+even when the function it resides in is exited and that is good for the application of a function counter for example.
+For static variables, object and member functions in a class, they are all in a scope of full life time of the program.
+static variables are shared by the objects of the class and there is only one copy of the static variable. Same is true
+for the static member functions of a class. And static memeber functions can only access static data variables or other
+static member functions.
+
+
 5. When are static member variables initialized? 
+Since static member variables has the full scope of the program, they are initialized at compile time before main() program starts.
+
+
 6. What is the difference between R-Values and L-Values?
+R-Values are temporary and volatile and does not have an address while L-Values are permanent and have memory address allocated to them.
+
+
 7. Is this code safe? If so why? If not why?
 	std::string foo()
 	{
@@ -12,19 +50,77 @@
 	}
 	
 	Bonus: What would most compilers do with this code?
+The code is safe to run because it simply returns a string value. The program does not have any syntax errors.
+Most compilers will make it into an inline function.
+
+
 8. Why would you use new rather than malloc when allocating an object? Likewise, what's the difference between free and delete?
+I prefer using 'new' rather than 'malloc'. 'new' is a C++ operator while 'malloc' is a C function. 'new' returns an exact data type
+while 'malloc' returns a pointer to a continuous chuck of memory. 'new' can return failure with a C++ exception while 'malloc'
+returns a 'NULL' on failure. 'new' can have the memory size automatically calculated while 'malloc' needs to have the size of memory
+manually calculated and specified. 'malloc' can change the memory size by 'realloc()' while 'new' cannot do the change.
+
+
 9. Explain the purpose of std::move, and std::forward. 
+std::move accepts an L-Value and changes it to an X-Value, making resources free for usage.
+std::forward can forward reference perfectly, with arguments taken as R-Value reference forwarded as R-Value and L-Value references forwarded as
+L-Value.
+
+
 10. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
+To share resources between threads, resources need to be locked and unlocked using mutex.
+
+
 11. What are the some of the principles of object-oriented programming?
+The principles of object-oeriented programming are Encapsulation, Data Abstraction, Polymorphism and Inheritance.
+
+
 12. Explain inheritance vs composition vs aggregation?
+Inheritance, Composition and Aggregation specify the relationship among objects.
+Inheritance specifies a 'IS A' relations between objects, a derivative relationship from abstract to physical in object description
+Composition is a strict relationship between objects. An object is part of another object and there is ownership in this relationship.
+Aggregation is a less strict relationship between objects. An object is related to another object but there is no ownership in this relationship.
+
+
 13. Should you always initialize variables? 
+Yes, it is good practice to initialize varibles always so that the variables are allocated with memory addesses.
+
+
 14. What concept(s) in C++ would you use to manage resources automatically?
 	a. How important are these concepts? 	
 	b. What tools are you familiar with for tracking resource allocations? 
+C++ resources management
+
+1. In writing the C++ code, always remember to return the memory allocated after usage.
+2. Pay attention to dynamically allocated memory and make sure it is returned after usage.
+3. Use local objects, references as much as possible to make the resources are returned after usage.
+
+a. These concepts are very important to prevent memeory leak and other running issues in C++ programs.
+b. Use Valgrind C++ to track memory leak and use running scripts in OS to check memory usage.
+
+
 15. What security concerns have you come across in the past and how have you addressed them?
+The C++ security concerns are buffer overflow, integar overflow, pointer usage, type conversion, string usage.
+To prevent such weaknesses in C++, use updated functions with exception check and boundary check, reference and smart pointers.
+
+
 16. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
+Use editing application 'vim' and version control tool 'git'.
+
 17. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
+Use difference tool such as 'diff' and 'git diff' as well as application tool 'meld'.
+
 18. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
 	a. Consider both a long term and short-term solutions. 
+Short-term solution is to solve any existing issues and understand how to use the software
+Long-term solution is to understand the source code and make changes as needed in the operation and performance improvement.
+
+
 19. What concerns do you had supporting legacy operating systems? (If any)
+There are not enough tools available to do the supporting work.
+
+
 20. Tell us about a project you worked on that you found to be interesting or unusual. 
+In doing the HazMat placard detection software, I can have the possibility to develop several solutions, find out which one gives the best performance
+and implement this best technology onto the production software. I can also comission this software at the customer's production hardware and solve
+performance issues by adjusting the parameters in real time to make the software perform at the best capacity.
