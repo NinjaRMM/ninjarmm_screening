@@ -1,15 +1,14 @@
 /*
 
 NINJARMM Code Review
- 
-Please review the below code. 
-We do not expect you to execute this code, but you are welcome to try. 
 
-Make any code updates that you see fit (If any). 
+Please review the below code.
+We do not expect you to execute this code, but you are welcome to try.
+
+Make any code updates that you see fit (If any).
 Comments are encouraged.
 
 */
-
 
 struct ThirdPartyAVSoftware
 {
@@ -21,20 +20,22 @@ struct ThirdPartyAVSoftware
     std::wstring ProductState;
 };
 
-bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftware>& thirdPartyAVSoftwareMap)
+/* Is there a reason to return a map here? Consider using unordered_map */
+bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftware> &thirdPartyAVSoftwareMap)
 {
     HRESULT hr = S_OK;
-    IWscProduct* PtrProduct = nullptr;
-    IWSCProductList* PtrProductList = nullptr;
+    IWscProduct *PtrProduct = nullptr;
+    IWSCProductList *PtrProductList = nullptr;
     BSTR PtrVal = nullptr;
     LONG ProductCount = 0;
     WSC_SECURITY_PRODUCT_STATE ProductState;
     WSC_SECURITY_SIGNATURE_STATUS ProductStatus;
 
+    /* versionNumber unused */
     std::wstring displayName, versionNumber, state, timestamp;
     std::string definitionState;
 
-    hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&PtrProductList));
+    hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID *>(&PtrProductList));
     if (FAILED(hr))
     {
         std::cout << "Failed to create WSCProductList object. ";
@@ -44,6 +45,8 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
     hr = PtrProductList->Initialize(WSC_SECURITY_PROVIDER_ANTIVIRUS);
     if (FAILED(hr))
     {
+        /* Release PtrProductList here */
+        // PtrProductList->Release();
         std::cout << "Failed to query antivirus product list. ";
         return false;
     }
@@ -51,15 +54,18 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
     hr = PtrProductList->get_Count(&ProductCount);
     if (FAILED(hr))
     {
+        /* Release PtrProductList here */
         std::cout << "Failed to query product count.";
         return false;
     }
 
+    /* Down conversion from LONG to uin32_t. ProductCount is of LONG type */
     for (uint32_t i = 0; i < ProductCount; i++)
     {
         hr = PtrProductList->get_Item(i, &PtrProduct);
         if (FAILED(hr))
         {
+            /* Consider adding the i value in the log print to aid debugging*/
             std::cout << "Failed to query AV product.";
             continue;
         }
@@ -73,10 +79,12 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         }
 
         displayName = std::wstring(PtrVal, SysStringLen(PtrVal));
+        /* free memory pointed by PtrVal here */
 
         hr = PtrProduct->get_ProductState(&ProductState);
         if (FAILED(hr))
         {
+            /* Release PtrProduct resource here */
             std::cout << "Failed to query AV product state.";
             continue;
         }
@@ -97,6 +105,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         hr = PtrProduct->get_SignatureStatus(&ProductStatus);
         if (FAILED(hr))
         {
+            /* Release PtrProduct resource here */
             std::cout << "Failed to query AV product definition state.";
             continue;
         }
@@ -106,6 +115,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         hr = PtrProduct->get_ProductStateTimestamp(&PtrVal);
         if (FAILED(hr))
         {
+            /* Release PtrProduct resource here */
             std::cout << "Failed to query AV product definition state.";
             continue;
         }
@@ -116,13 +126,18 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         thirdPartyAVSoftware.Name = displayName;
         thirdPartyAVSoftware.DefinitionStatus = definitionState;
         thirdPartyAVSoftware.DefinitionUpdateTime = timestamp;
+        /* state being assigned to Description. Verify if this is intentional  */
         thirdPartyAVSoftware.Description = state;
         thirdPartyAVSoftware.ProductState = state;
+        /* Set a default value for Version if the actual value cannot be obtained */
         thirdPartyAVSoftwareMap[thirdPartyAVSoftware.Name] = thirdPartyAVSoftware;
 
         PtrProduct->Release();
     }
 
+    /* Release PtrProductList here */
+
+    /* Consider using ternary operator to one-line this */
     if (thirdPartyAVSoftwareMap.size() == 0)
     {
         return false;

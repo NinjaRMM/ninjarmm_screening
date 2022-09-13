@@ -1,30 +1,93 @@
 1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
+The following containers are available is STL: 
+stack: allows push/pop operations in LIFO order. call stack.
+queue: allows push/pop operations in FIFO order. implement BFS for trees and graphs.
+priority_queue: provides heap functionality. allows O(1) time complexity to find the max/min element depending on the ordering function defined on the container.
+array: contiguous block of memory of static size, allow random access of elements
+vector: contiguous block of memory that can be resized by growing the number of elements it contains. allows random access of items.
+deque: non-contiguous block of memory, can be resized, allows random access of elements. performance can be worse than vectors for insertions and deletions not at beginning or end.
+list: doubly linked list. non-contiguous nodes linked to each other by 'prev' and 'next' pointers.
+forward_list: singly linked list. non-contiguous nodes linked to each other by 'next' pointers.
+set: collection of ordered unique elements, implemented as a balanced binary search tree. Find operation is guaranteed to be O(log(n)) time complexity
+map: collection of ordered unique key-value pairs, implemented as a balanced binary search tree. Find operation is guaranteed to be O(log(n)) time complexity.
+unordered_set: unordered unique elements, implemented as a hashset. Find operation has O(1) amortized time complexity
+unordered_map: kep value pairs with unique keys, implemented as hashmap. Multiple keys with the same hash value may be stored in the linked list. Find operation has O(1) amortized time complexity. 
+
 2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
+Quick sort: Has O(n*lon(n)) time complexity. An element is chosen as pivot and other elements less than the pivot and greater that the pivot are moved in the memory. The pivot is then placed in its final position in memory and other pivot is chosen to repeat the operations till the entire array is sorted. Used for sorting large data sets that can fit in memory.
+Merge sort: Has O(n*lon(n)) time complexity. The array is recursively broken down it just has a single element. The individual elements and the arrays formed by joining them are merged according to the ordering function. This sort may need extra memory for implementation. Used for sorting large data sets that may not fit in memory and intermediate results have to stored in files and merged. 
+Insertion sort: Has O(n^2) time complexity. Less overhead for smaller arrays. On each iteration the min or max element in the array (or sub-array) is inserted into its final position.
+Bubble sort: Has O(n^2) time complexity. Less overhead for smaller arrays. Adjacent elements are compared according to the ordering function and swapped.
+
 3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
+Virtual destructor is required in base classes so that the instances of the derived classes get destructed properly. If the base class destructor is not virtual and we try to polymorphically delete the base class pointer, the derived class destructor will not get called and will lead to unexpected behavior.
+
 4. Explain the keyword: static. What does it mean in each context?
-5. When are static member variables initialized? 
+Static members/variables exist for the lifetime of the translation unit scope (namespace/class/function/source file). They are initialized only once when the scope is entered. The static members in a class (single copy) are shared by all instances of the class.
+Static methods can be used without instantiating the class. non-static members cannot be used in the static method of a class.
+The linker limits the usage of static functions and variables names source file they are defined in.
+
+5. When are static member variables initialized?
+Before any methods of the class can be invoked (and possibly when the main method starts execution).
+
 6. What is the difference between R-Values and L-Values?
+lvalues are memory units that have an identifier, like variable names. rvalues are memory units containing literals or intermediate results of operations. Rvalues can be moved with move semantics. Lvalues need to converted to rvalues before moving.
+
+
 7. Is this code safe? If so why? If not why?
 	std::string foo()
 	{
 		std::string something = "avalue";
 		return something;
 	}
-	
 	Bonus: What would most compilers do with this code?
+It is safe. the rvalue "avalue" is assigned to lvalue variable something and then converted to rvalue to be returned from the function. Compilers would eliminate the intermediate lvalue construction and return the rvalue directly (and could probably inline the function).
+
 8. Why would you use new rather than malloc when allocating an object? Likewise, what's the difference between free and delete?
+new is type-safe and calls the constructor of the object unlike malloc. delete call the destructor of the object.
+
 9. Explain the purpose of std::move, and std::forward. 
+std::move converts the lvalue to rvalue.
+std::forward retrieves the original value category for a rvalue reference parameter.
+
 10. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
+Synchronization primitives like mutexes, semaphores are used to share resources. A mutex is required to avoid race conditions for both shared integer value and user defined types' concurrent modifications.
+
 11. What are the some of the principles of object-oriented programming?
+Encapsulation
+Data hiding
+Polymorphism
+
 12. Explain inheritance vs composition vs aggregation?
+Inheritance: is-a relationship, properties are inherited from a base class. e.g., Car is a vehicle
+Composition: part-of relationship, ownership resides with the containing object. e.g., Engine is part of car
+Aggregation: has-a relationship, ownership doesn't reside in containing object. e.g., Parking lot has cars
+
 13. Should you always initialize variables? 
+Local variables have to be initialized before using them.
+
 14. What concept(s) in C++ would you use to manage resources automatically?
 	a. How important are these concepts? 	
 	b. What tools are you familiar with for tracking resource allocations? 
+Resources like mutexes, files, network/database connections can be managed automatically by RAII concept.
+This is particularly useful to avoid deadlock, holding stale connections, dangling pointers when exceptions are thrown from the code.
+
 15. What security concerns have you come across in the past and how have you addressed them?
+Null pointer access and buffer overflows. Added validation checks/asserts around parameters that contain pointers and buffer sizes. Also, whenever possible, used containers from STL.
+
 16. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
-17. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
+IDE (visual studio profiler, debugger), gdb, unit tests, Valgrind
+
+17. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.  
+Unit tests, code reviews, integration test, CI/CD frameworks
+
 18. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
 	a. Consider both a long term and short-term solutions. 
+Read the code to understand the input combinations the code can receive and the how the results from that code would be used downstream. Talk to others that have worked on that code before and check previous commits. After making the change, get it code reviewed by at least a couple of team members that know the code. Gradually release the change to control the blast radius.
+In the long term, start maintaining unit tests that have good coverage on at least main parts of the code base. Run the unit tests as part of the build process and have a gating condition for unit test failure (and coverage%) as part of the CI/CD. 
+
 19. What concerns do you had supporting legacy operating systems? (If any)
+Documentation could be low. If multiple people of worked on the code base there could different styles/patterns and duplicate/dead code paths.
+
 20. Tell us about a project you worked on that you found to be interesting or unusual. 
+Designed and implemented a microservice on AWS cloud platform that receives signals from external sources. There was a need to persist the data and provide REST APIs to interested clients and publish realtime notifications to a topics that interested clients can subscribe to. It was an opportunity for me to learn cloud based services, scaling and security models.
