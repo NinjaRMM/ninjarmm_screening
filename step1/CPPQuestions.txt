@@ -1,30 +1,232 @@
 1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
+
+	There are sequence, associative, unordered associative, and adapters for sequential containers.
+		A) Sequence containers include array, vector, deque, forward_list and list, they can be accessed sequentially, ordered collection in which every element has a certain position.
+		
+			1) Array containers are static and contiguous. Random access (constant). Not as commonly used as vector, but sometimes useful for wrapping basic C arrays. Static (fixed) size limits/prevents usage with container adapters.
+			2) Vector containers are dynamic and contiguous. Random access (constant). Commonly used, goto container, useful for known indexes. Insertions and deletions are costly (linear), except from the end/back (constant). A string implementation could be a vector.
+			3) Deque containers are double-ended queues. Random access (constant). Large minimal memory size cost. Fast (constant) insert/removal at front and back, otherwise linear. Commonly used with stack and queue container adapters.
+			4) Forward_list containers are single linked lists. Not (fast) random access. Fast insertion and removal of elements. Can only iterate in forward direction.
+			5) List containers are double link lists. Not (fast) random access. Fast (constant) insertion and removal of elements. Can iterate in forward or reverse direction.
+			
+		B) Associative containers include set, map, multiset, multimap, they are sorted and quickly searched, sorted collections in which the position of an element depends on it's key due to a certain sorting criterion.
+		
+			1) Set containers are a collection of unique sorted keys. Generally implemented as a red-black tree. Searches, insertions and deletions are log.
+			2) Map containers are a collection of key-value pairs, keys are sorted and unique. Generally implemented as a red-black tree. Searches, insertions and deletions are log.
+			3) Multiset containers are a collection of sorted keys. Same as set container except duplicate keys allowed. Possible implementation is a set and a list of duplicate counts.
+			4) Multimap containers are a collection of key-value pairs, keys are sorted. Same as a map except it allows duplicate keys. Possible implementation is a map and a list of duplicate counts.
+			
+		C) Unordered associative containers include unordered_set, unordered_map, unordered_multiset, and unordered_multimap, they are unsorted but hashed, quickly searched, unordered collection in which the position of an element doesn't matter.
+		
+			1) Unordered_set are a collection of unique hashed keys. Search, insertion and removal are fast (constant). Similiar to set but elements not stored ordered.
+			2) Unordered_map are a collection of key-value pairs, keys are unique and hashed. Search, insertion and removal are fast (constant). Similiar to map but elements not stored ordered.
+			3) Unordered_multiset are a collection of hashed keys. Duplicate keys are allowed. Search, insertion and removal are fast (constant). Similiar to multiset but elements not stored ordered.
+			4) Unordered_multimap are a collection of key-value pairs, keys are hashed. Duplicate keys are allowed. Search, insertion and removal are fast (constant). Similiar to multimap but elements not stored ordered.
+			
+		D) Container adapters include stack, queue and priority_queue, they provide a different interface for sequential containers.
+		
+			1) Stack adapter provides a stack (LIFO). Generally use a deque or vector as implementation.
+			2) Queue adapter provides a queue (FIFO). Generally use a deque as implementation.
+			3) Priority_queue adapter provides a priority queue. Maintains sorted element storage. Generally use a vector or deque as implementation.
+	
+	
 2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
-3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
+
+	1) Bubble sort - Method: exchanging, stable. Simple, small code size. Limited real world use because of 			inefficiency, only good for small lists. Best case is linear O(n), worst is exponential O(n^2). Memory usage is low O(1). Use it for small lists where memory is tight.
+	
+	2) Insertion sort - Method: insertion, stable. Good for small lists and/or mostly sorted data. Best case is linear O(n), worst is exponential O(n^2). Memory usage is low O(1).
+	
+	3) Quicksort - Method: partioning, not stable. Good for unsorted data, but mostly sorted data actually slows the algorithm. Best case is O(n log n), worst case is exponential (O(n^2)). Memory usage is O(log n). It's the C/C++ programmer default sort because available in CRT library.
+
+3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly.
+
+	Virtual destructors are useful when deleting pointers to base classes (polymorphism). If the destructors weren't virtual then only the base classes destructor will get called, instead of chaining destructor calls from the most derived to the base.
+	Important cleanup in the derived class destructor won't happen, possibly causing orphaned resources.
+	
 4. Explain the keyword: static. What does it mean in each context?
+
+	1) Static variable/object in a function: storage is allocated for the lifetime of program. Initialized on first call to function. Cleaned up after containing module's (exe, dll)  main function returns.
+	
+	int foo()
+	{
+		static int bar = 0;	//only called first time
+		return ++bar;
+	}
+	
+	2) Static variable in a class: storage is allocated for the lifetime of program. Initialized once before module's main function entered. Cleanup after module's main function returns.
+	
+	foo.h
+	class foo
+	{
+	public: //methods
+		//static function
+		static int GetBar() const	{return bar;}	//callable via foo::GetBar() without an object instance
+		
+	protected:	//data
+		//static class variable
+		static int bar;
+	};
+	
+	foo.cpp
+	int foo::bar = 0;	//initialized once 
+	
+	3) Static function in a class: does not depend on an object of the class. Kind of using the class name as a namespace. Poor man's namespace. Invokable without an object instance.
+	
+	See #2 example above (GetBar()).
+
 5. When are static member variables initialized? 
+
+	Basically, before the code's module's main function is called.
+	
+	start process
+		|
+		|- init CRT
+		|
+		|- load dll's
+		|		|
+		|		|- call DllMainCRTStartup()
+		|					|
+		|					|- init CRT
+		|					|- init dll's static data 	(a)	dll's static data first
+		|					|- call DllMain()
+		|
+		|- init process's static data					(b)	exe's static data after dll's
+		|
+		|- call WinMain()
+		|
+		|- deinit process's static data					(c) reverse order, exe's static data
+		|	
+		|- unload dll's (deinit's dll's static data)	(d) dll's static data
+
 6. What is the difference between R-Values and L-Values?
+
+	An L-Value persists beyond a single expression, an R-Value is a temporary value that does not presist beyond the expression that uses it. An L-Value has an identifiable memory location, and R-Value does not have an identifiable memory location.
+	
+	example:
+	int var = 12;	//var is an L-Value, 12 is an R-Value
+	
 7. Is this code safe? If so why? If not why?
 	std::string foo()
 	{
-		std::string something = "avalue";
+		std::string something = "avalue";	//NRVO - named return value optimization, named variable
 		return something;
 	}
 	
+	std::string foo2()
+	{
+		return std::string("avalue");	//RVO - return value optimization, temporary variable
+	}
+	
+	Yes, it's safe because of return by value but not as efficient as it could be. Something ctor called and return string temporary copy ctor called and then an assignment operator probably called to store the returned string.
+	
 	Bonus: What would most compilers do with this code?
+	
+	assuming: std::string s = foo();
+	
+	An optimizing compiler would eliminate the construction of the named variable (something) std::string on the stack and directly use the return var's memory location. (NRVO)
+	
+	assuming std::string s = foo2();
+	
+	An optimizing compiler would eliminate the construction of the temporary variable std::string on the stack and directly use the return var's memory location. (RVO)
+	
+	An optimizing compiler may be more likely to do the optimization if foo() was inline.
+	
 8. Why would you use new rather than malloc when allocating an object? Likewise, what's the difference between free and delete?
+
+	The new operator does more than just allocate storage (like malloc), it also calls the object's constructor.
+	The delete operator calls the object's destructor before deallocating storage (free).
+	
 9. Explain the purpose of std::move, and std::forward. 
+
+	Helper template functions to be used with move constructors and move assignment operators.
+	Move constructors and move assignment operators are an optimization to provide the option to take over resources instead of deep copying of resources. The template function std::move() converts the lvalue reference to an xvalue which converts to an rvalue reference. The template function std::forward() converts lvalues to lvalues or rvalues depending on the template param type.
+
+
 10. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
+
+	Thread safe access to resources requires thread synchronization, in other words, protect your data.
+	Typically, one would use a mutex to protect access to a data variable. The first thread would acquire the mutex and all other threads trying to acquire the mutex would block until the first thread releases the mutex.
+	
+	In the special case of integers, you can use atomic funtions to safely modify them. Note: if the cpu doesn't support atomic operations, the compiler will fall back to a mutex based implementation.
+	User defined types would use a mutex based implementation.
+
 11. What are the some of the principles of object-oriented programming?
+
+	Encapsulation, abstraction, inheritance and polymorphism are the main principles of OOP.
+	
+	1) Encapsulation: hide data implementation by restricting access. Implement this by putting data in protected or private sections and make public accessor methods.
+	
+	2)Abstraction: expresses the intent of the class rather than the implementation. Implement this with an abstract class or interface class.
+	
+	3) Inheritance: expresses "is-a" relationship between 2 classes. Derived class will inherit everything in the base class.
+	
+	4) Polymorphism: allows using objects via ptrs to their base class. Using virtual methods allows code that works on a superclass and any of it's subclasses.
+	
 12. Explain inheritance vs composition vs aggregation?
+
+	1) Inheritance: Describes a new class based on an existing class. Describes "is-a" relationship.
+	
+	2) Aggregation: Describes a class that contains instances of other classes. Describes "has-a" relationship. The contained objects can belong to multiple other objects. Generally pointers to the child objects are used.
+	
+	3) Composition: Describes a class that contains instances of other classes. Describes "has-a" relationship. Similiar to, but stricter than aggregation, the contained object is only part of an object and cannot belong to another object of the same type.
+
+
 13. Should you always initialize variables? 
+
+	Yes, please. 
+	Many issues of debug builds working correctly but release builds breaking because debug builds will initialize all data to 0 but release builds do not, using whatever values were already present, causing weird issues like bool var's that are both true and false.
+	
 14. What concept(s) in C++ would you use to manage resources automatically?
+
+	1) Resource acquisition is initialization (RAII)
+	2) Use raw pointers in interfaces to denote single objects, not arrays.
+	3) Use raw pointers as non-owning.
+	4) Use raw reference as non-owning.
+	5) Prefer scoped objects to hold resources, avoid using heap.
+	6) Avoid non-const global variables.
+	
 	a. How important are these concepts? 	
+	Critically important, should also endeavor to be consistent. Knowing who's the owner of a pointer prevents double deletes and orphan pointers (memory leaks).
+	
 	b. What tools are you familiar with for tracking resource allocations? 
+	
+	I've used many different memory allocation tracking tools like BoundsChecker, Visual Leak Detector. For non-memory allocation tracking, I've usually resorted to debug build custom lists of pointers to resources that can be dumped to the log when needed.
+	
 15. What security concerns have you come across in the past and how have you addressed them?
+
+	I haven't had to deal with most common security issues, like authentication or code-injection because a lot of my development have been standalone games (no need for authentication) or secured back office apps. Although, for one military application, the user interface presented to the user had to be limited depending on the role of the user. This required wrapping all ui controls and show/hide them depending on the users role.
+
 16. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
-17. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
+	Consistent coding style and indention, making it easy to breakpoint on important code (), using version control, using the resource management concepts form #14 above.
+	
+17. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.
+	Some are the same as #16 above, like consistent coding style and indention, not putting multiple expression on one line of code. Some people seem to think putting everything on one line of code will make it execute faster, but it just makes maintenance a nightmare.
+	
 18. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
-	a. Consider both a long term and short-term solutions. 
+	a. Consider both a long term and short-term solutions.
+	
+	Short term, I would try to find the affected code and set a breakpoint, get it to hit and step through the code.
+	
+	Long term, I would create important class inheritance and ownership charts to figure out relationships and then start setting breakpoints and step through code to verify my findings. Then make an informal plan to make my modifications.
+	
 19. What concerns do you had supporting legacy operating systems? (If any)
-20. Tell us about a project you worked on that you found to be interesting or unusual. 
+
+	1) Maintenance is expensive
+	2) Data silos, hard to transfer data to other systems.
+	3) Hard to integrate with older systems.
+	4) Security issues, older systems are probably not getting security updates.
+	
+20. Tell us about a project you worked on that you found to be interesting or unusual.
+ 
+	Well, most of the projects I've worked on have been interesting in some way or another.
+	For instance: 
+		a) I worked on command and control systems for the navy.
+		b) I wrote video games for dos, win3x, win32.
+		c) I designed an Oracle based online real money casino system.
+		d) I ported and improved a speech recognition engine to Linux, while also porting from C to C++, and created a test bed app.
+		e) I wrote a real money (Nevada) web based race book for home users and kiosks.
+		f) I worked on UPS battery enterprise and desktop apps.
+		g) I integrated an existing air force tactical air control party (TACP) close support system with a 3rd party mapping system (FalconView).
+		h) I built the controlling app (System Manager) for a land based Link-16 system for Finland.
+		i) I wrote and maintained test applications to interface to, field and ship expensive lasers for the army,
+		j) I wrote a (Indie) cross platform, cross play, networked, multiplayer arcade game for windows, Linux and android (eventually ios and osx when I get an imac to build it).

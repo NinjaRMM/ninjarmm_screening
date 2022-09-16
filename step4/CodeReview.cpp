@@ -23,6 +23,10 @@ struct ThirdPartyAVSoftware
 
 bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftware>& thirdPartyAVSoftwareMap)
 {
+	//assuming below is called outside of function
+	//HRESULT hr2 = CoInitializeEx(NULL,COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+	//if (!SUCCEEDED(hr2)) {return false;}
+	
     HRESULT hr = S_OK;
     IWscProduct* PtrProduct = nullptr;
     IWSCProductList* PtrProductList = nullptr;
@@ -73,6 +77,8 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         }
 
         displayName = std::wstring(PtrVal, SysStringLen(PtrVal));
+		
+		SysFreeString(PtrVal);//mrp - free storage after using BSTR
 
         hr = PtrProduct->get_ProductState(&ProductState);
         if (FAILED(hr))
@@ -122,6 +128,11 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
 
         PtrProduct->Release();
     }
+	
+	PtrProductList->Release();	//mrp - release interface after using it
+	
+	//assuming below is called outside of function
+	//CoUninitialize();	//cleanup COM
 
     if (thirdPartyAVSoftwareMap.size() == 0)
     {
