@@ -1,30 +1,458 @@
+Since all this information is available in hundreds of books, and blogs on the internet, I understand/guess that, what you really want is for me to explain, in my own words, every topic based on my own personal experience. I will try to explain the different topics in simple words.
+
+--
+
 1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
+
+    Sequence containers:
+
+     - array: [C++11] Fixed size, consecutive memory container. Was introduced to avoid C arrays. They are better because you can access the pointer and the size with only one parameter. Random access is fast. Insert/delete elements is not possible.
+     https://cplusplus.com/reference/array/array/
+
+     - vector: Dynamic size, consecutive memory container. Is the sequence container that should be used by default. Random access is fast. Insert/delete elements is slow.
+     https://cplusplus.com/reference/vector/vector/
+
+     - deque: Double-ended queue. Some sorting algorithms use it. Is the data structure of choice when most insertions and deletions take place at the beginning or at the end of the sequence. Access, insert, and remove the first and last elements is fast. Random access can be slow. Random insert and delete can be slow but faster that std::vector.
+     https://cplusplus.com/reference/deque/deque/
+
+     - forward_list: [C++11] Single linked list. It was added because some algorithms do not need to maintain a link to the prior element because they traverse the elements forward. Random access can be slow. Random insert and delete can be slow but faster that std::vector.
+     https://cplusplus.com/reference/forward_list/forward_list/
+
+     - list: Double linked list. Random access can be slow. Random insert and delete can be slow but faster that std::vector.
+     https://cplusplus.com/reference/list/list/
+
+    Associative containers:
+
+     - set: It stores unique elements following a specific order. It is useful when you want to guarantee that there will be no duplicates.
+     https://cplusplus.com/reference/set/set/
+
+     - multiset: It stores elements following a specific order. Unlike set, the same element can be inserted multiple times. I have never used this container. Random access, insertion and deletion have equivalent cost.
+     https://cplusplus.com/reference/set/multiset/
+
+     - map: It stores elements formed by a combination of a key and value, following a specific order. It is a great fit for quickly looking up values by key. Since unordered_map I do not use this container anymore.
+     https://cplusplus.com/reference/map/map/
+
+     - multimap: It stores elements formed by a combination of a key and value, following a specific order. Unlike map, the same key can be inserted multiple times with different associated values. I have never used this container.
+     https://cplusplus.com/reference/map/multimap/
+
+    Unordered associative containers:
+
+     - unordered_set: [C++11] It stores unique elements in no particular order. It uses a hash function to emplace values in buckets. It claims to be faster than std::set.
+     When I need better performance, I prefer to use robin_hood::unordered_set (https://github.com/martinus/robin-hood-hashing).
+     https://cplusplus.com/reference/unordered_set/unordered_set/
+
+     - unordered_multiset: [C++11] It stores elements in no particular order. It uses a hash function to emplace values in buckets. Unlike unordered_set, the same element can be inserted multiple times. I have never used this container. It claims to be faster than std::multiset.
+     https://cplusplus.com/reference/unordered_set/unordered_multiset/
+
+     - unordered_map: [C++11] It stores elements formed by a combination of a key and value, in no particular order. It uses a hash function to emplace values in buckets. It claims to be faster than std::map. In fact, since C++11 I do not use std::map anymore.
+     When I need better performance, I prefer to use robin_hood::unordered_map (https://github.com/martinus/robin-hood-hashing).
+     https://cplusplus.com/reference/unordered_map/unordered_map/
+
+     - unordered_multimap: [C++11] It stores elements formed by a combination of a key and value, in no particular order. Unlike unordered_map, the same key can be inserted multiple times with different associated values. It uses a hash function to emplace values in buckets. I have never used this container.
+     I have never used this container. It claims to be faster than std::multimap.
+     https://cplusplus.com/reference/unordered_map/unordered_multimap/
+
+    [Bonus]
+
+    Container adaptors:
+     - stack: Last In, First Out (LIFO). Very useful for some algorithms when you need to access elements in that way (evaluation of arithmetic expressions, backtracking, reverse data, ...). It is usually implemented with a deque.
+     https://cplusplus.com/reference/stack/stack/
+
+     - queue: First In, First Out (FIFO). Very useful for some algorithms when you need to access elements in that way (level order tree traversal, log system, ...). It is usually implemented with a deque.
+     https://cplusplus.com/reference/queue/queue/
+
+     - priority_queue: Very useful for some algorithms when you need to access to the best, or worst, element continuosly (path search, Dijkstra, Prim, ...). It is usually implemented with a vector.
+     https://cplusplus.com/reference/queue/priority_queue/
+
+    https://en.cppreference.com/w/cpp/container
+    https://www.geeksforgeeks.org/containers-cpp-stl/
+
 2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
-3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
+
+    - RadixSort:
+
+        It is easy to implement, not in place (it needs a secondary buffer for sorting), and stable sorting algorithm. The way it sorts is a little bit tricky making it difficult to use with complex data, where you need to customize the algorithm for each case. As far as I know, it can be only applied to elements of the same size. I used it sometimes because is the fastest algorithm I know.
+
+        The average case is O(w n) where w is the number of keys needed.
+
+        There is an implementation in the sort folder.
+
+        Some more information:
+        https://en.wikipedia.org/wiki/Radix_sort
+
+    - QuickSort:
+
+        It is easy to implement, in place (does not need an extra buffer), not stable (can change the relative order in each call), and recursive sorting algorithm. I have used it in the past a lot because the average performance is really good (if you don't care about instability (in most cases)).
+
+        There are a lot of variants of this algorithm.
+
+        It works by selecting a pivot (the more critical part) and partitioning the elements into two subarrays. Then they are sorted again recursively.
+        For selecting a pivot there are several approaches (middle element, median element, a median of 3, ...).
+
+        Best case performance   O(n log n)
+        Average performance     O(n log n)
+        Worst case performance  O(n^2)
+
+        There is an implementation in the sort folder.
+
+        Some more information:
+        https://en.wikipedia.org/wiki/Quicksort
+
+    [Classic Algorithms]
+
+    - InsertionSort:
+
+        It is easy to implement, in place (does not need an extra buffer), and stable (does not change the relative order) sorting algorithm. I have used it in the past when I have had few items to sort, as, in this case, it used to be more efficient than old C qsort(...). Also, the fact that it is stable has helped me reduce z-fighting when I have had, for instance, to sort triangles on a transparent mesh.
+
+        The best case is when the elements are already sorted [O(n)]. Usually, this is what happens in a mesh during several consecutive frames.
+
+        The worst case is when the elements are sorted in reverse order [O(n^2)].
+
+        The best case is    O(n)   comparisons, O(1)   swaps.
+        The average is      O(n^2) comparisons, O(n^2) swaps.
+        The worst case is   O(n^2) comparisons, O(n^2) swaps.
+
+        There is an implementation in the sort folder.
+
+        Some more information:
+        https://en.wikipedia.org/wiki/Insertion_sort
+
+    - BubbleSort:
+
+        It is easy to implement, in place (does not need an extra buffer), and stable (does not change the relative order) sorting algorithm.
+        I have never used this algorithm in practice, I only studied it a long time ago at university.
+
+        The best case is   O(n)   comparisons, O(1)   swaps.
+        The average is     O(n^2) comparisons, O(n^2) swaps.
+        The worst case is  O(n^2) comparisons, O(n^2) swaps.
+
+        There is an implementation in the sort folder.
+
+        Some more information:
+        https://en.wikipedia.org/wiki/Bubble_sort
+
+    - SelectionSort:
+
+        It is easy to implement, in place (does not need an extra buffer) sorting algorithm.
+        I have never used this algorithm in practice, I only studied it a long time ago at university.
+
+        The best case is    O(n^2) comparisons, O(1) swaps.
+        The average case is O(n^2) comparisons, O(n) swaps.
+        The worst case is   O(n^2) comparisons, O(n) swaps.
+
+        There is an implementation in the sort folder.
+
+        Some more information:
+        https://en.wikipedia.org/wiki/Selection_sort
+
+    [Bonus]
+
+    - ShellSort:
+
+        It is easy to implement, in place (does not need an extra buffer) and not stable (can change the relative order in each call).
+        I have never used this algorithm in practice, I only studied it a long time ago at university.
+
+        It claims to be faster than the other classic algorithms (Bubble, Insertion, Selection), maybe in older hardware it was true, but nowadays it is complicated to say.
+
+        The average case is O(n log n).
+        The worst case is O(n^2).
+
+        There is an implementation in the sort folder.
+
+        Some more information:
+        https://en.wikipedia.org/wiki/Shellsort
+
+3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly.
+
+    Virtual destructors ensure that the destructors of derived classes can be called in case we have an instance of the derived class stored in a pointer to the base class.
+
+    It is easier to understand this with an example:
+
+    #include <cstdio>
+
+    struct Base {
+        Base()  { printf("Base Constructor Called\n"); }
+        ~Base() { printf("Base Destructor called\n");  }    // Note: It is not virtual!
+    };
+
+    struct Derived: public Base {
+        Derived()  { printf("Derived Constructor Called\n"); }
+        ~Derived() { printf("Derived Destructor called\n");  }
+    };
+
+    int main() {
+        Base *base = new Derived();
+        delete base;
+    }
+
+    Output:
+    > Base Constructor Called
+    > Derived Constructor Called
+    > Base Destructor called
+
+    Note that the Derived destructor is not called becasue ~Base is not virtual.
+
+    This usually happens when we need to store an array of different objects with a common base class.
+
 4. Explain the keyword: static. What does it mean in each context?
-5. When are static member variables initialized? 
+
+    Static has different use cases:
+
+    - Global static variable or function in a c/cpp file:
+
+        Ensures that the variable or function is only visible inside this code file.
+
+    - Static variable of a class/struct:
+
+        Ensures that there is only one instance of this variable shared by all instances of the class/struct.
+
+    - Static member function of a class/struct:
+
+        Tells the user that no instance is required to run this method (if public). This implies that the function cannot use any non-static variable or member function of the class/struct.
+
+        struct Foo {
+            static size_t counter() {
+                return count++;
+            }
+            inline static size_t count = 0; // Since C++17
+        };
+
+        printf("%zu\n", Foo::counter());    // 0
+        printf("%zu\n", Foo::counter());    // 1
+
+    - Local static variable inside a function:
+
+        Is like a global variable but local to the function. The variable is initialized the first time the program execution passes through its definition, and keeps its value in the successive calls.
+
+        size_t counter() {
+            static size_t count = 0;
+            return count++;
+        }
+
+        printf("%zu\n", counter());     // 0
+        printf("%zu\n", counter());     // 1
+
+5. When are static member variables initialized?
+
+    Simple answer:
+
+    The space required for global and static variables is reserved and initialized to zero on program load, then they are initialized at runtime the first time program execution passes through its definition.
+
+    Since C++11 static initialization is guaranteed to be thread-safe.
+
+    Some more detailed information:
+
+      - Global static variables are initialized before main but the order is implementation-defined, so you can not trust the initialization order. This could be a problem if a static variable depends on the value of another static variable on initialization, producing the 'Static Initialization Order Fiasco'. C++20 introduces constinit to avoid this problem because constinit guarantees that a variable with static storage duration is initialized at compile time.
+      If the user does not specify an initial value static variables are initialized to 0.
+
+      - Local static variable inside a function is initialized the first time it is accessed (first time program execution passes through its definition).
+
+      - Static variable of a class/struct is initialized the first time the class is accessed (first time program execution passes through its definition).
+
+    There is an example main5.cpp to demonstrate access order initialization.
+
+    There are two more examples main5a.cpp and main5b.cpp in the src folder to demonstrate access order initialization. As we call RegisterComponent in a different order their ids are different in different programs.
+
 6. What is the difference between R-Values and L-Values?
+
+    The simple answer is:
+    L-Value is everything that can appear on the left side of an assignment while R-values cannot.
+
+    It is easier to understand it with some examples:
+      std::string str = "Hello"; // 'str' is an L-Value, "hello" is an R-Value. It is not possible to write: "hello" = str;
+      int answer = 42;           // 'answer' is an L-Value, '42' is an R-Value. It is not possible to write: 42 = answer;
+      int d = answer + answer;   // 'd' is an L-value, 'answer + answer' creates a temporary that is a R-Value. It is not possible to write: (answer + answer) = d;
+      std::string str = s"Hello " + s"world";   // after the operator '+' a temporary is created to contain "Hello world", this temporary is also an R-value.
+
 7. Is this code safe? If so why? If not why?
-	std::string foo()
-	{
-		std::string something = "avalue";
-		return something;
-	}
-	
-	Bonus: What would most compilers do with this code?
+    std::string foo()
+    {
+        std::string something = "avalue";
+        return something;
+    }
+
+    Yes. There is no problem returning an std::string. Perhaps a performance penalty in some cases depending on the compiler, since up to two copies of the std::string could be made.
+
+    Bonus: What would most compilers do with this code?
+
+    auto str = foo();
+
+    Most compilers would do a (Return Value Optimization), omiting the copies of the return value and assigning directly "avalue" to str, in the prior example.
+
+    More info here:
+      - https://en.wikipedia.org/wiki/Copy_elision#Return_value_optimization
+      - https://en.cppreference.com/w/cpp/language/copy_elision
+
 8. Why would you use new rather than malloc when allocating an object? Likewise, what's the difference between free and delete?
-9. Explain the purpose of std::move, and std::forward. 
-10. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
+
+    New calls the object constructor, malloc no.
+    New returns a fully typed pointer, malloc returns (void *) and we have to cast it.
+    There is also a specialized version of new to handle arrays: "new OBJ[elements]".
+
+    Delete calls de object destructor, free no.
+    There is also a specialized version of delete to handle arrays: "delete [] OBJ".
+
+9. Explain the purpose of std::move, and std::forward.
+
+    atd::move: Cast the argument to an R-Value reference. Indicates that the object passed to it may have its resources transferred.
+
+    std::forward: Returns the argument maintaining its value category and cv-qualifiers (const and volatile). Useful for generic code.
+
+    Example: Look at move_forward.cpp
+
+10. How do you share resources safely between threads? How would you share an integer value vs user defined type?
+
+    a. Using synchronization primitives (mutex, atomic, semaphores, ...)
+
+    b. For integers using atomic is better and faster, for complex types using mutexes would be the solution.
+
+    Example: Look at shareResources.cpp
+
 11. What are the some of the principles of object-oriented programming?
+
+    Trying to keep it simple:
+
+    - Encapsulation: It is the mechanism of hiding data (variables) by restricting user access. To do this, variables are kept private (or protected), then public (or protected) methods are usually added to allow accessing or modifying these variables directly or indirectly.
+
+    - Abstraction: It is used to hide implementation details exposing a high-level interface.
+
+    - Inheritance: It is used to be able to reuse the common logic, and data, and extract the concrete logic of each element.
+
+    - Polymorphism: Gives a way to use a class exactly like its parent due to a common interface that we can reimplement.
+
+    In summary:
+    - Encapsulation is more related to data while abstraction is more related to code. Although both allow us to hide the details.
+
+    - Inheritance allows us to inherit all the properties and behaviors of the base class while polymorphism allows us to specialize these behaviors.
+
+    It is easier to understand these four topics with an example. Look (Enemy, Orc and Troll) at oopPrinciples.cpp
+
 12. Explain inheritance vs composition vs aggregation?
-13. Should you always initialize variables? 
+
+    - Inheritance: With inheritance, the derived class gets all the data and members from its base class.
+    There are three ways to do it in C++: public, protected and private inheritance. In all cases, the derived class gains access to all the public and protected data and members but the access from the derived class changes.
+     - public: The access continues as is.
+     - protected: The access become protected.
+     - private: The access become private.
+    In UML is described with an arrow.
+    Inheritance describes an "is-a" relationship: Orc is an Enemy (in the prior example [oopPrinciples.cpp]).
+
+    - Composition: With composition, the main class contains and creates another class, controlling its life cycle. The contained class cannot exist independently of the container.
+    In UML is described with a black diamond.
+    Composition describes a "has-a" relationship. For instance, an Orc has a Head. The Head is part of the Orc.
+
+    - Aggregation: With aggregation, a parent class contains a reference to another class, but something external has somehow passed it on, and the parent class does not control its life cycle. The contained class can exist independently of the container.
+    In UML is described with a white diamond.
+    Aggregation also describes a "has-a" relationship. For instance, an Orc has a Weapon but is not a Weapon and the Weapon is not a part of the Orc.
+
+    It is easier to understand with an example. Look at ica_versus.cpp
+
+    Choosing between them is a matter of style and context. As always, it depends on each case.
+    There are some mantras out there but I have never been a blind follower of them (inheritance is Evil, favor composition over inheritance).
+   
+    For instance, in my old Game engine, I use inheritance for the different kinds of renderables (sprites, meshes, texts), composition for materials, and aggregation for the font of the texts.
+
+    In any case, lately, I'm using ECS when possible for these things.
+
+13. Should you always initialize variables?
+
+    The short answer is yes.
+
+    But sometimes it depends.
+    For instance, imagine a big mesh with thousands of positions, normals, ... and several linear algebra structs/classes like vectors, matrices, or colors. We don't want to waste time initializing their components when created, or while doing some calculations on them.
+    Another example, an array. If you are going to call a function to fill it, you don't want to waste time filling it with 0s, or whatever other value.
+
 14. What concept(s) in C++ would you use to manage resources automatically?
-	a. How important are these concepts? 	
-	b. What tools are you familiar with for tracking resource allocations? 
+
+    As a basic rule, be sure to release resources (memory, files, sockets, metexes, ...) at least in the destructor (if you are the owner).
+    We can initialize the resource acquisition either in the constructor (like std::lock_guard) or by calling methods afterwards (std::string, std::vector, ...). To release them, we can implement a method, but we must be sure to release the resources in the destructor.
+    In order to manage resources correctly, special attention must be paid to the copy constructor and the assignment operator of the holder class.
+
+    - Resource Acquisition Is Initialization (RAII):
+    Nowadays this is an standard technique to manage resources. It involves acquiring resources during the creation of the object and releasing them during the destruction of the object.
+
+    - Smart pointers: They ensure that the object they hold is automatically released.
+      - std::unique_ptr<T>: Ensures only one instance of the object. It is not copyable.
+      - std::shared_ptr<T>: Allows sharing the object they hold. Includes a reference counter, when this counter reaches zero, the object is released.
+
+    - Scoped variables: Try to keep the variable scopes tight if possible.
+
+    a. How important are these concepts?
+
+        The code becomes easier to manage, and it is harder to forget to release a resource because they are released automatically.
+
+    b. What tools are you familiar with for tracking resource allocations?
+
+        Mostly for memory:
+        - Paul Nettle's MMGR: https://www.paulnettle.com/ (used a lot of times. Sadly, does not work on modern compilers.)
+        - Electric fence (deprecated) I used it sometimes at university.
+        - Duma Library: https://duma.sourceforge.io/ (evolution of Electric Fence) (used several times. It slows a lot the program.)
+        - Microsoft CRT Debugging: https://docs.microsoft.com/en-us/visualstudio/debugger/finding-memory-leaks-using-the-crt-library?view=vs-2022 (used sometimes)
+        - Visual Leak Detector: https://kinddragon.github.io/vld/ (I used it at GameHouse to find some leaks in the game engine)
+        - Adress Sanitizer (Clang?/VC++?): I don't like it because it shows a lot of false positives.
+        - Valgrind Tool Suite (used only a couple of times to try it. The program becomes really slow using it. It only worked on Unix when I tried. If it worked on windows I would have used it more.)
+
 15. What security concerns have you come across in the past and how have you addressed them?
+
+    - SQL Injection: Do not try to fix user input just reject it if you find anything suspicious.
+    - Beware of the user input.
+    - Use hashes instead of crypt/decrypt passwords.
+    - Try to set the limits of buffers/arrays when fill them with data (For instance, using snprintf/vsnprintf instead of sprintf/vsprintf, strn* intead of str*, etc).
+    - Similar to the previous point, try to receive the size of a buffer/array whenever a buffer/array is received.
+    - Always check if a (smart)pointer/file/socket/... is valid before using it.
+
 16. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
-17. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
-18. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
-	a. Consider both a long term and short-term solutions. 
+
+    A good IDE. I really love Visual Studio.
+    A good debugger. Things like Edit and Continue are very helpful if available. Breakpoints with counters or break after n hits, Being able to move the IP is also very useful when trying to find a bug. Also watches, memory inspector, etc.
+    A good git client (SourceTree, GitKraken, ...) to be able to see branches and history easily.
+    A good diff/merge tool (WinMerge, KDiff3, DiffMerge, ...).
+    Well explained tasks definitions.
+    Refactoring tools like: Extract method from selection, renaming, ...
+
+17. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.
+
+    A good version control system (Git, ...) with good descriptions on commits with links to task descriptions.
+    A good CI/CD system to warn you if something has stopped compiling on some platform does not pass a certain test, etc.
+    A good test suite to tell you if something has broken after a change.
+    Code Review / Pull Requests / Pair Programming (more than one person looks at every commit).
+    Homogeneous code, style guide, etc.
+    Documentation.
+
+18. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution.
+    a. Consider both a long term and short-term solutions.
+
+    I would try to make as few changes as possible to the existing codebase, encapsulating/isolating my changes as best as possible to keep them out of the way of the rest of the legacy code.
+
+    If feasible, I would create a test to check only my code.
+
+    If I had to change something in the codebase, I would create a test to check the behavior before and after my changes.
+
+    In the long term, it's hard to say.
+    If the product is core to the company, the code is decoupled to some extent, and we are going to have to maintain it for a long time, I would suggest starting by understanding the behavior of the different blocks, documenting them, and testing them. If any block is going to require a lot of changes, I would value the option of redoing it from scratch vs. keeping it.
+
 19. What concerns do you had supporting legacy operating systems? (If any)
-20. Tell us about a project you worked on that you found to be interesting or unusual. 
+
+    It depends on how old those operating systems are, and their families:
+
+     - Windows: Usually is not a big deal to support older versions. Just be careful with the API, but we have macros to deal with it (mostly). Normally Microsoft maintains backward compatibility and does not usually make very radical changes.
+
+     - Linux: Usually is not a big deal to support older versions. Just be careful with the API.
+
+     - MacOS X: It can be problematic, as Apple often makes radical changes or removes libraries when updating its operating systems. I'm usually afraid to upgrade MacOS X.
+
+     - Android: It can be very painful trying to maintain compatibility with older versions of this operating system.
+
+     - iOS: Probably something between Android and MacOS.
+
+    For older / not maintained operating systems (Windows 3.1, MS-Dos, Amiga/OS, ...) it could be a challenge.
+
+20. Tell us about a project you worked on that you found to be interesting or unusual.
+
+    Very unusual...
+
+    A long time ago, I made a program for Comodore Amiga that created a RAM disk, always in the same memory area, then copied into it, the assembler editor, and the debugger. Then I captured the system reset vectors, so that they would point to my program. This way I would create/copy/work on my files in RAM, and not have to continually save my changes to the slow floppy, and if I did something wrong, and the computer hung up (the infamous Guru Meditation), I simply rebooted the system, and could continue working, as everything was still in place.
+
+    A long time ago I made an MS-DOS extension that, once loaded (autoexec.bat), allowed any program to use 4 GB segments, accessing memory in a linear fashion.
+
+    In 2009, I quit my job to create a video game studio with a friend/workmate/university classmate. We looked for the options available at that time to create multiplatform videogames, and as there was nothing we liked, we implemented a videogame engine, a physics engine, and an audio engine in C++. It worked on Windows, Linux, MacOS X, iOS and for a while on Android, but seeing that nobody paid for Android games, we soon stopped supporting this OS. Besides, when we did it, the NDK didn't allow us to do many things (For instance, I had to implement basic things like std::vector for Android, trying to mimic the standard behavior).
