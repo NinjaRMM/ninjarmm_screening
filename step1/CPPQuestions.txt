@@ -1,9 +1,67 @@
 1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
+	- Array: Fixed size, container uses consecutive memory.  Good fast container that can be used to store values if you know the exactly how many values you want to store.  Cannot be expanded after creation.
+	- Vector: Dynamic sized array.  Effectively an array that can dynamically grow or contract.  Vectors use contiguous storage locations for their elements but require reallocation to a new position in memory as they grow to account for more items.  Good choice for storing data that does not have a fixed amount of values.
+	- Deque: Double-ended queue, sequence container that can be dynamically expanded or contracted from either end.  Functionality similar to vectors but allow for insertion and deletion at either end of the sequene versus only at the end.  Effectively the same as vectors but are a better choice when working with very large amounts of data as they grow more efficiently than vectors.
+	- Forward_List: Container that allows for constant time insert and erase operation anywhere within the sequence.  These are implemented as singly-linked lists and thus each element can be stored in different and unreleated storage locations.  This container only keeps a link to the next item in the list.  Since forward_list generally perform better when it comes to inserting, extracting and moving elements when the position is already known a good use case for this library is when performing a sorting algorithm.
+	- List: Doubly-linked list, similar to the singly-linked list but allows for iteration in both directions.  Similar implementation to forward_list's but contains a link to both the previous and next item in the list.  Similar use case to forward_list's.
+	- Map: Stores elements formed by a combination of a key value and a mapped value.  A map stores elements following a specific order and are always sorted by its keys following a strict weak ordering policy.  General use case would be for storing a set of data that you would want to have a direct lookup for such as associating an ID number with a user.
+	- Multimap: Similar concept to a map but multiple elements can be associated with the same key.  Multimap's also store elements in a specific order using a strict weak ording criterion as a map does.  A general use case for a multimap is when you are storing data the represents a graph as you can store the main node as the key and all its children as the mapped values.
+	- Queue: Container adaptor designer to operate in first-in-first-out context.  Generally is implemented using the standard container deque behind the seens.  Great for use in algorithms that are doing level order tree traversal or when implementing a bulk send command functionality.
+	- Priority_Queue: Container adaptor specifically designed such that its first element is always the greatest of the elements it contains accoring to a strict weak ordering criterion.  The default implementation of a priority_queue under the hood utilizes the standard vector library.  Useful when a algorithm requires accessing either the greatest or lowest valued element.
+	- Set: Stores unique elements in a specific order.  Once an element has been inserted into the set it cannot be modified since elements are always const.  They however can be freely added and removed and are sorted in a strict weak ordering criterion.  Great for storing data when you want to ensure all values are unique.
+	- Multiset: Similar to a set but allows for multiple elements to have the same values.  Has the same limitation of not being able to modify a value once inserted into the multiset as they are all const.  A multiset could generally be used in place of map if you have a system that you want to keep track of how many times an action has been done or how many of a specific data type is being saved.
+	- Stack: Container adaptore specifically designed to operate in a last-in first-out context.  Generally implemented using the standard container deque under the hood. Very useful in bracktracking algorithms or when reversing data.
+	- Unordered_Map: Effectively the same as a Map but does not sort the keys in a particular order.  Very similar use case to a Map that doesn't require any ordering of the key values and woud like to improve performance since unordered_maps have a faster access time than a Map does.
+	- Unordered_Multimap: Effectively the same as a Multimap but does not sort the keys in a particular order.  Very similar use case to a Multimap that doesn't require any ordering of its keys.  Generally faster that a Multimap.
+	- Unordered_Set: Effectively the same as a set but does not perform any odering of keys.  Each value must still be unique similar to a Set.  Similar use case to the set but is generally faster than a Set so should be used for performance if sorting of the keys is not required.
+	- Unordered_Multiset: Effectively the same as a multiset but does not perform any ordering of keys.  Values do not have to be unique similar to a Multiset.  Similar use case to the multiset.
+
 2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
+	Sorting algorithms are used to rearrange a given array or list of elements according to a comparison operator on the elements.  The comparison operator is used to determine the new order of the elements.
+	- Bubble Sort:
+		Simplest of the sorting algorithms that works by repeatedly swapping the adjacent emelents if they do not meet the ordering criteria.
+		Average and worst case time complexity is O(n^2)
+		Best case time complexity is O(n)
+		
+	- Quick Sort:
+		Divid and conquer algorithm.  Picks an element as a pivot and partitions the given array around the picked pivot.  Different versions of this algorithm pick the pivot point in different ways.  Some always pick the first element where some will pick a random element.
+		Once a pivot is selected the smaller parts of the remaining values are moved to the left side of the pivot while the larger are moved to the right.  This is then recursively repeated until all items are sorted.
+		Worst case time complexity is O(n^2)
+		Average case time complexity is O(n*logn)
+		Best case time complexity is O(n*logn)
+	- Merge Sort:
+		Another algorithm based on the divide and conquer paradigm.  This is a recursive algorithm that coninuously splits the array in half until it cannot be further devided.  Once the array can no longer be split in half the values are compared and sorted on either left, lesser value, or the right, greater value.
+		This sorting is done all the way back up the recursive stack to result in a sorted arrary.
+		Worst, Average and Best time complexity is O(n*logn)
+		
 3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
+	A virtual destructor is used to free up the memory space allocated by the derived class object or instance while deleting instances of the derived class using a base class pointer object.
+	A base or parent class destructor use the virtual keyword that ensures both base and derived class destructors will be called at run time.  However it calls the derived class first then the base class to release the space occupied by both destructors.
+	When used incorrectly this can easily create a memory leak as if a Derived class is created as if it was a Base class and then the destructor is called only the Base class destructor is actually done leaving the drived class.
+	
 4. Explain the keyword: static. What does it mean in each context?
+	Static variables in a function - 
+		When a variable is declared as static, space for it gets allocated for the lifetime of the program.
+		Even if a function is called multiple times, space for the static variable is allocated only once and the value of the variable in the precious call gets carried through the next function call.
+		
+	Static variables in a class - 
+		As the variables declared as static are initialized only once as they are allocated space in seperate static storage.
+		Static variables in a class are shared by the objects.  Static variables within a class cannot be initialized using constructors.
+		
+	Class objects as static - 
+		Just like variables, objects also when declared as static have a scope for the lifetime of the program.
+		
+	Static functions in a class -
+		Just like static data members or static variables inside the class, static member functions also do no depend on object of class.
+		Static member functions are allowed to access only the static data memebers or other static member functions, they cannot access non-static data memebers or member functions fo the class.
+		
 5. When are static member variables initialized? 
+	Static member variables must be declared before the program starts and are initialized upon program start.
+	
 6. What is the difference between R-Values and L-Values?
+	L-values are something that points to a specific memory location.  In general L-Values are longer lived since they exist as variables.
+	R-values are something that don't point anywhere.  In general R-Values are temporary and short lived.
+	
 7. Is this code safe? If so why? If not why?
 	std::string foo()
 	{
@@ -11,20 +69,144 @@
 		return something;
 	}
 	
+	Yes this code is safe.  There is no problem with returning the std::string as it is declared with a value as part of its creation.  
+	
 	Bonus: What would most compilers do with this code?
+	
+	Most c++ compilers would do a Return value optimization on this code.
+	
 8. Why would you use new rather than malloc when allocating an object? Likewise, what's the difference between free and delete?
+	Both new and malloc are essentially the same as they both allocate memory for N blocks at run time.  Malloc however was used originally in the stdlib.h in C.
+	New is an operator whereas malloc() is a library function.
+	New allocates memory and calls the constructor for object initialization.  Malloc however only allocates memory but does not call the constructor.
+	New's return type is the exact data type whereas malloc() returns void *.
+	New is also faster than malloc() because an operator is always faster than a function.
+	
 9. Explain the purpose of std::move, and std::forward. 
+	std::move casts the object as an R-Value reference.  This indicates that the value of the object should not be used afterwards, but you can still assign a new value and continue using it.
+	std::forward has a single use and that is to cast a templated function parameter to the value category (L-Value or R-Value) the caller used to pass it.  This allows R-Value arguments to be passed on as R-Values and L-Value arguments to be passed as L-Values.
+	
 10. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
+	The use of synchronization primitives such as a mutex, atomic or semaphore will allow you to safely share resources between threads.
+	Shared integer resources between threads is best done with an atomic where complex types it is best to use a mutex.
+	
 11. What are the some of the principles of object-oriented programming?
+	OOP principles has 4 main pillars
+	- Abstraction
+	- Encapsulation
+	- Inheritance
+	- Polymorphism
+	
 12. Explain inheritance vs composition vs aggregation?
+	- Inheritance: In inheritance the derived class will get access to all the memeber functions and variables from its base class as long as they are listed as either public or protected.  Private functions of the base class can still not be accessed by the derived class.
+	For Example:
+	class Foo 
+	{
+		public:
+			void insertData();
+			bool done();
+			
+		protected:
+			void readData();
+			
+		private:
+			void deleteData();
+	}
+	
+	class Bar : public Foo 
+	{
+		public:
+			void getData()
+			{
+				//since Bar has the base class Foo inherited it can call the insertData() function from Foo
+				insertData();
+			}
+	}
+	
+	- Composition: Composition is when a main class creates another class.  The main class then owns and is responsible for the created classes lifetime.
+	class Foo
+	{
+		//Foo is responsible for the Bar class
+		private Bar bar = new Bar();
+	}
+	- Aggregation: Aggregation is when a parent class contains a reference to another class.  The parent class is borrowing another class from someone else.  When the parent class dies the borrowed class may live one.
+	class Foo
+	{
+		private Bar bar;
+		Foo(Bar bar)
+		{
+			this.bar = bar;
+		}
+	}
+	
 13. Should you always initialize variables? 
+	Technically you don't have to but the compiler will give a warning.  It is however a more desired coding practice to always initialize variables upon creation.
+	
 14. What concept(s) in C++ would you use to manage resources automatically?
+	A general resource that should be utilized is ensuring you release all of a classes resources within the destructor of that class.  This will ensure that when the class is destroyed all it's resources go with it.
+	This is however not fully automatic as you need to add the release calls to the destructor yourself.  The Resource Acquisition Is Initialization standard is an example of doing this and is generally the go to technique in this day and age.
+	
+	Another tool at your disposal if using C++11 and above are smart pointers.  These have built in garbage collections depending on the pointer being used.
+	- std::unique_ptr ensures there is only one instance of the object and will delete itself if it goes out of scope.
+	- std::shared_ptr allows mutliple objects to own that pointer and will delete itself if no objects own the pointer any longer.
+	- std::weak_ptr allows for multiple objects to own that pointer similar to a shared_ptr but can be deleted at anytime by any object owning that pointer.
+	
 	a. How important are these concepts? 	
+		The code becomes easier to manage and it is much easier to protect against unwanted issues such as memory leaks or dangling pointers.
+		
 	b. What tools are you familiar with for tracking resource allocations? 
+		In all the projects I have worked on memcheck by valgrind has been the most commonly used tool to check code for proper resource allocation.
+		There are many more tools that can be found online some of which are the following:
+		- GCEasy
+		- Eclipse MAT
+		- BoundsChecker
+		- Visual Studio Profiler
+		- GCViewer
+		- C++ Memory Validator
+	
 15. What security concerns have you come across in the past and how have you addressed them?
+	- Always beware of user input.
+	- Check bounds before adding data into an object of a fixed size.
+	- Always ensure you check your pointers exist and are not null.
+	- Always try to read in the exact size of a buffer
+	- Always ensure you are using the correct network protocols when code is access databases or message brokers.
+	
 16. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
+	- Use an IDE that you personally are comfortable with, personally use Eclipse or Qt for most of my work.
+	- Make sure you are following a projects git workflow as to keep the history consistent and help with merging.
+	- Keep in mind a teams coding format and standards to ensure all the code is universially readable and following to correct variable naming schemes
+	- Find a debugger you are comfortable using and if not available ensure you are including useful and accurate log messages to use for debugging.
+	- Some sort of task management tool is always recommended, my teams use Jira for this and it is extremely helpful in tracking your own progress as well and keep track of engineers under your teams work without having to always ask them.
+	
 17. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
+	- Make sure you are using a version control system of some sort, I prefer Git but some teams and companies use different platforms.
+	- Have a CI/CD system in place to warn you if something has stopped working or a recent code change has broken a part of the code early in the development cycle.
+	- Utilize a good merging tool, my teams use GitLab for all our version control and it comes with a good merging tool built in that is easy to use and annotate in.
+	- Always perform code reviews, even for the most senior of engineers, and include more than one person on those reviews.  Always good to have more than one pair of eyes on a review and be sure to include junior engineers as they can be a great learning experience to see how an older engineer may go about doing a feature.
+	- Have well defined tasks that describe, to the best of their ability, the requirements and scope of that task.
+	- Make sure you develop unit and component tests for all code features no matter how big or small.
+	
 18. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
+	Ideally I'd like to seek out someone who originally worked on that code to at least be a point of reference when the inveitable question comes up.
+	If there is no one with experience on this legacy code I would try and make as small of changes as I possibly could and incrementally test those changes.
+	This process may take longer but will ensure you are not breaking items you are not aware over. 
 	a. Consider both a long term and short-term solutions. 
+		Short-term solutions would be small incremental changes that I stated above.
+		Long-term solutions would be to start implementing testing suites for the pieces of code that you are working on and document your findings and changes. 
+		This will slowly build up to having the entire legacy code base, or at least most of it, updated with testing suites and documentation.  This would be a very long-term goal though.
+		
 19. What concerns do you had supporting legacy operating systems? (If any)
+	It depends on the scenario on how much concern there would be supporting legacy operating systems.
+	
+	In most scenarios it means you would need to be careful with you OS calls and API's that you are using as they may be different from current version.
+	OS capabilities could also be lacking from what you are used to working with and would require either a creative alternative or a complete redesign of how you want to approach a problem.
+	
+	The biggest concern that comes to maind is being able to keep up with security standards for older operating systems.
+	Depending on the environment where they are being used if they can no longer maintain proper security patches they may be deemed a risk and require replacement which means rehosting entire code bases to other operating systems.
+	
 20. Tell us about a project you worked on that you found to be interesting or unusual. 
+	An interesting project that I have worked on recently was to explore how we could implement a very detailed and processing heavy network surveying application over an intermittent comms, ie inconsistent connection to the server.
+	This system also needed to operate in a low SWAP that could have a wide range of varying hardware cabilities.
+	The final solution that we were able to come up with was a microservices system that will be able to dynamically spin up interfaces to hardware as it becomes available to keep the system as low resource usage as possible.
+	The system will also contain a built in management service that will act in place of a users input when comms are down between the user and the system itself.  It's main goal is to be fully self sufficient and fault tolerant while providing constant data results when comms are available.
+	
