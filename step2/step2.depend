@@ -1,0 +1,34 @@
+# depslib dependency file v1.0
+1664220013 source:/home/martin/Documents/ninjaone/step2/src/linux/_linux_info.cpp
+	"_linux_info.h"
+	"system_info.h"
+	<stdio.h>
+	<stdlib.h>
+
+1664217465 /home/martin/Documents/ninjaone/step2/include/linux/_linux_info.h
+
+1664218833 /home/martin/Documents/ninjaone/step2/include/system_info.h
+	<string>
+
+1664224141 source:/home/martin/Documents/ninjaone/step2/src/linux/_linux_patches.cpp
+	"patch_info.h"
+	"_linux_patches.h"
+	<stdio.h>
+	<stdlib.h>
+	<iostream>
+	<errno.h>
+	<string.h>
+
+1664224047 /home/martin/Documents/ninjaone/step2/include/patch_info.h
+	<string>
+
+1664219572 /home/martin/Documents/ninjaone/step2/include/linux/_linux_patches.h
+	<vector>
+
+1664224047 source:/home/martin/Documents/ninjaone/step2/src/main.cpp
+	<iostream>
+	<system_info.h>
+	<patch_info.h>
+	<_linux_info.h>
+	<_linux_patches.h>
+

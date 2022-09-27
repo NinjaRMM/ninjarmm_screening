@@ -1,30 +1,115 @@
 1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
+	a:- array.- container that encapsulates fixed size arrays. Similar usage than ansi C static arrays but based in templates. If you know the size of the array prior to compilation this is your container.
+	b:- vector.-  A vector is a sequence of elements of a given type. The elements are stored contiguously in memory. You only can add data to the end of the container. We can use it to read CSV file and save every record in a struct.
+	c:- list.- doubly-linked list. it´s used for sequences where we want to insert and delete elements without moving other elements. We can use it to some UI editable list.
+	d:- forward_list.- singly-linked list.- A forward_list differs from a (doubly-linked) list by only allowing forward iteration.
+	e:- map.- It´s as an associative array or a dictionary. it´s useful when you have a list of data associated  to a key. We can use it for example to  manage the days of week tasks to do by a person. The week day is the key (monday, friday, etc).
+	f:- unordered_map.- Unordered map is similar to map but the elements are not sorted in any particular order. Search, insertion, and removal of elements have average constant-time complexity.
+	g:- set.- it´s useful to store unique elements following a specific order. we can use it like a vector but when we need ensure unique elements.
+	h:- unordered_set.- They are containters that store unique elements in no particular order, and which allow for fast retrieval of individual elements based on their value.
+	i:- queue.- FIFO queue (first-in first-out).- We can use it to manage a number ticket system in a grocery store.
+	j:- deque.- Double-ended queue. Double-ended queues are sequence containers with dynamic sizes that can be expanded or contracted on both ends. We can use it for a web browsers use it to implement backward and forward navigation of visited web pages.
+
 2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
+		1.- Selection Sort.- We can use it When the list is small and when memory space is limited because it makes the minimum possible number of swaps during sorting.
+		2.- Insertion Sort.- We can use it if the data is nearly sorted or when the list is small.
+		3:- Quicksort.- It´s the most used algorithm to sort. It´s recommended for medium size datasets with vector containers.
+		4:- Mergesort.- It´s fast in the case of a linked list. For larger data is more efficient than Quicksort.
+
 3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
+		We need virtual destructor when you use class inheritance to ensure all destructors are called and in the correct order. Not taking care of this can produce memory leaks and other unitializated  resources problems.
 4. Explain the keyword: static. What does it mean in each context?
+	a:- Ansi C compatibility
+		1.- Static variable in functions.- Shared but private. Only visible inside the function.
+		2.- Static function.- Function that has a scope that is limited to its object file (used in plain C like private method if a module could be thought like a class)
+		3.- Static global variable.- shared variable only in the object file (module). It can be used like a private variable for module.
+	b- Pure c++
+		1.- Static member Variable in class.- Typical way to share data in a class used for many OOP programming languages like c# or Java.
+		2.- Static Methods in class.- It is a member function that is used to access only static data members. It cannot access non-static data members not even call non-static member functions. A static member function shares the single copy of the member function to any number of the class instances. It´s quite common in modern languages like c# or Java to use global/shared/static methods.
+		3.- Static Class Objects.- Shared but private. Only visible inside the function.
+
 5. When are static member variables initialized? 
+	static member variables are variables with static storage duration must be initialized once before the program starts and destroyed after execution terminates:
+		Static initialization*.- If possible, initial values for static variables are evaluated during compilation and burned into the data section of the executable. This is called constant initialization. In an ideal world all static variables are const-initialized. they are data in the data segment of the object file.
+		Dynamic initialization*.- After static initialization, dynamic initialization takes place. Dynamic initialization happens at runtime for variables that can't be evaluated at compile time.  Variables are initialized every time the executable is run and not just once during compilation dynamic initialization. They are saved in the BSS segment of the object file.
+
 6. What is the difference between R-Values and L-Values?
+	a.- An lvalue always has a defined region of storage, so you can take its address.
+	b.- An rvalue is an expression that is not an lvalue. Examples of rvalues include literals, the results of most operators, and function calls that return nonreferences. An rvalue does not necessarily have any storage associated with it. From my point of view the rvalues exist to allow c++ move heavy data of class instances.
+
 7. Is this code safe? If so why? If not why?
 	std::string foo()
 	{
 		std::string something = "avalue";
 		return something;
 	}
-	
+		I think is safe because don´t returns a reference. If you want return a reference is unsafe because have access to a death stack pointer.
 	Bonus: What would most compilers do with this code?
+		Here the compiler use the return value optimization (RVO). It is a compiler optimization that involves eliminating the temporary object created to automatically move the the return class instance. In the example only 2 		operations are executed:
+			a:- create string instance
+			b:- move the instance to the return value.
 8. Why would you use new rather than malloc when allocating an object? Likewise, what's the difference between free and delete?
+		1.- Malloc,Realloc and Free are the memory routines from Ansi C. They are compatible in c++ compiler. Malloc only require memory for the operation system and return the pointer. Not more.
+		2.- New and delete and the memory operators for c++. They seem similar to ansi c routines but 'new' calls classes constructors and throw exception if we don´t have enought memory. We can define either our own memory allocator.
 9. Explain the purpose of std::move, and std::forward. 
+	a: std::move: it casts its argument to an rvalue reference, thereby saying that its argument will not be used again and therefore may be moved. in other words, indicates that resources can be "stolen" from this object.
+	b: It´s used to cast a templated function parameter of type forwarding reference (Universal reference 'T&&') to the value category (lvalue or rvalue) used by the caller to pass it. This allows rvalue arguments to be passed on as rvalues, and lvalues to be passed on as lvalues. This scheme is known as perfect forwarding.
+
 10. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
+		a:- To share an integer value need use an atomic operation (interlock exchange of integral types).
+		b:- To share user defined types we need use lock ( critical sections , mutexes, etc). We need indicate the start of the lock and the end.
+
 11. What are the some of the principles of object-oriented programming?
+		a.- Abstraction aims to hide complexity from users and show them only relevant information. we can have total abstraction with interfaces (not exist in c++ the work but we emulate it) or partial abstraction with abstract classes.
+		b.- Encapsulation helps with data security, allowing you to protect the data stored in a class from global access. We don´t have properties like c# but we can use get and set method to emulate it. All fields are private for default.
+		c.- Inheritance makes it possible to create a child class that inherits the fields and methods of the parent class. We have Multi-level inheritance and multiple inheritance. Improves code reusability.
+		d.- Polymorphism refers to the ability to perform a certain action in different ways. Static polymorphism is implemented by method overloading and dynamic polymorphism is implemented by method overriding.
+
 12. Explain inheritance vs composition vs aggregation?
+		a.- Inheritance is an (is a) relationship between 2 objects. Composition and aggregation are a 'has a' relationship (association). Associative relations are used like class atributtes.
+		b.- In aggregation child can exist independently of the parent. It´s is a weak Association.
+		c.- In composition we have strong lifecycle dependency between the two objects. Composition is a special type of Aggregation.
+
+
 13. Should you always initialize variables? 
+		Basic types like double, int, float, char, raw pointers, etc. you must initialize. In general class instances you don´t need initialize, but you need take care in the constructor for then basic types explain in the first sentence.
 14. What concept(s) in C++ would you use to manage resources automatically?
-	a. How important are these concepts? 	
+		
+		a.- RAII.- RAII guarantees that the resource is available to any function that may access the object.  It also guarantees that all resources are released when the lifetime of their controlling object ends, in reverse order of acquisition.
+		b.- Smart pointers templates. Based in templates and RAII allow make easy memory management. We have 3 main smart pointer in c++ (unique_ptr,shared_ptr, weak_pr).
+	a. How important are these concepts? 
+		Allow avoid memory leaks in general for dynamic memory and also guarantees that all resources are released.
 	b. What tools are you familiar with for tracking resource allocations? 
+		Debugging macros in visual studio for windows. It allow me review all memory leaks with the line a module when occurs.
+		Valgrind and similar tools.
 15. What security concerns have you come across in the past and how have you addressed them?
+		a.- In wood plc i needed signing all my EXE file to avoid problems with antivirus.
+		b.- When i don´t need administrator privileges for my applications i try to install the apps in user folders.
+		c:- windows COM interfaces in legacy code sometimes was a problems because you need be an administrator and in these days few users has high privilegies. I try to remove COM depedencies.
+		d:- in software using socket communication to share data many times we have problems with the ports, because now in many companies only the ports 80 and 443 are open. I try to adapt to HTTP comunications.
+
 16. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
+		a:-Create requirements document to study the job to be done.
+		b:-Create development documentation using UML software and word processor.
+		c:-Apply software patterns
+		d.-Integrate automatic snippets with my common code.
+		e.-Code autocompletation
+		f:- Create test to validate your job. Work with TDD pattern if the project allow us.
+		
 17. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
+		a:- Automatic refactoring tools and automatic references review with "Whole Tomato" and similar tools.
+		b:- Static code analysis.
+		c:- Doxygen for automatic code documentation
+		d:- Prepare project for build automation using CMake or similar.
+		e:- Integrate a package manager to create and share all your native binaries (conan for example).
+		f:- Prepare the project for Devops.
 18. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
 	a. Consider both a long term and short-term solutions. 
+		a.- In short-term i try to understand the code and prepare the basic test for the task assigned to me.
+		b.- In long term i try to prepare test for the necessary cases.
 19. What concerns do you had supporting legacy operating systems? (If any)
+		a.- ABI Compatibility.- Compiled object code are not compatible. Many times, we only need a recompilation for the target operating system.
+		a.- API Compatibility.- the SDK is different for different operating systems versions. We need to use macros to every operating system not compatible. therefore, we need add more code.
 20. Tell us about a project you worked on that you found to be interesting or unusual. 
+		a.- I was the main developer for a complete suite to solve all kind of industrial boilers. The most insteresting part here was the way to manage different related problem in a integrated way.
+		b.- I was the main developer for a GIS tool. The most interesting part here was the way to manage big amounts of memory objects. We need to avoid little memory allocations using buffers to increase general the perfomance. We work here like a native database created by us.
