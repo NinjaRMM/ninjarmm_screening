@@ -31,3 +31,8 @@
 *.out
 *.app
 step2/~$quirements.docx
+/.vs/ninjarmm_screening/FileContentIndex
+/.vs/ninjarmm_screening/v17
+/.vs/ProjectSettings.json
+/.vs/slnx.sqlite
+/.vs/VSWorkspaceState.json

@@ -1,30 +1,359 @@
-1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
-2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
-3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
+1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each. 
+
+
+/*-------------------------------------------------------------------------------------------------------------*/ 
+
+DNV 2022->  The C++ standard library categorizes containers into four types:
+                              
+               1.1 -  Sequence containers
+  			-----------------------------------
+ 
+                The first type is the sequence container, used for data structures that store entities of a similar type in a linear order.
+ 
+                Types of sequence containers:
+
+                1.1.a - Array ---  a static contiguous "safe" C-like array
+                1.1.b - Vector  --- for dynamic contiguous array stores,  or in other words "a sequence container that encapsulates dynamic-sized arrays.". Not ordered by default.
+                1.1.c - List  -- represents a doubly-linked list, is not memory-continuous. Its time for adding and deleting elements is O(1), but looking for a specific element is O(n). Unordered container.
+				1.1.d - Forward_list: Singly-linked list
+                1.1.e – Deque:  a  Not sorted double-ended queue, where elements can be added to the front or back of the queue.
+
+                1.2 - Sequence container adapters.
+                -----------------------------------------------
+
+                Container adapters are a special type of container class.  They are not full container classes on their own, but wrappers around other container types.
+                 1.2.a - Stack:  provides an LIFO  (Last In - First Out) data structure
+                1.2.b . Queue: provides a FIFO (First in, first out) data structure
+                1.2.c - Priority_queue:  its first element is always the greatest of the elements it contains, according to some strict weak ordering condition. 
+ 
+                1.3 - Associative containers.
+             ----------------------------------------
+ 
+                Associative containers provide sorted data structures that provide a fast lookup (O(log n) time) using keys.
+ 
+                With unique keys:
+                1.3.a - Set: is a collection of unique keys, sorted by keys
+                1.3.b - Map: is a collection of key-value pairs, sorted by keys
+                set and map are typically implemented using red-black trees.
+ 
+                With multiple entries for the same key:
+                1.3.c - Multiset - Almost the same as std::set, but with repeatable elements.
+                1.3.d.- Multimap - Almost the same as std::map, but allows pairs with the same keys.
+
+                 Special case: bitset - used to store bits. General purpose - store some flags' values.
+ 
+
+                1.4 - Unordered associative containers.
+              -------------------------------------------------------
+ 
+                Unordered associative containers provide unsorted data structures that can be accessed using a hash.
+                Access times are O(n) in the worst-case, but much faster than linear time for most operations.
+                With unique keys
+                1.4.a - Unordered set is a collection of keys, hashed by keys
+                1.4.b - Unordered_map is a collection of key-value pairs, hashed by keys
+               
+                With multiple entires for the same key:
+                1.4.c - Unordered_multiset is a collection of keys, hashed by keys
+                1.4.d. - Unordered_multimap is a collection of key-value pairs, hashed by keys
+ 
+
+/*-------------------------------------------------------------------------------------------------------------*/ 
+               
+ 
+ 
+2. What are some sorting algorithms, list at least 3?
+What are their differences and give use cases for each.
+
+/*-------------------------------------------------------------------------------------------------------------*/ 
+
+DNV 2022 ->
+ 
+2.a Insertion sort:
+
+PRO: fastest for small inputs
+CON: quadratic for most large inputs
+ 
+
+2.b QuickSort:
+
+PRO: fast for most inputs
+CON: cache-friendly
+CON: the simplest version has a quadratic worst case
+CON: the guaranteed-n-log n version has a much worse performance in practice
+CON: the randomized version is only O(n log n) with a high probability, not certainly
+
+2.c - HeapSort:
+
+PRO: guaranteed O(n log n)
+PRO: works in place, i.e., with O(1) extra memory
+CON: almost always runs in Theta(n log n), even if the input is sorted
+CON: worse practical performance than QuickSort
+ 
+Note: Internally, the STL  uses a mix. The implementation  uses an  hybrid of QuickSort, HeapSort and InsertionSort.
+By default, it uses QuickSort but if QuickSort is doing unfair partitioning and taking more than N*logN time,
+it switches to HeapSort and when the array size becomes really small, it switches to InsertionSort.
+
+/*-------------------------------------------------------------------------------------------------------------*/ 
+ 
+3. What is the purpose of virtual destructors?
+What types of issues can arise if not used correctly.
+ 
+/*-------------------------------------------------------------------------------------------------------------*/ 
+ 
+DNV 2022 ->
+A virtual function allows derived classes to replace the implementation provided by the base class.
+The compiler makes sure the replacement is always called whenever the object in question is actually
+of the derived class, even if the object is accessed by a base pointer rather than a derived pointer.
+This allows algorithms in the base class to be replaced in the derived class, even if users don't know
+about the derived class.
+
+The derived class can either fully replace ("override") the base class member function,
+or the derived class can partially replace ("augment") the base class member function.
+
+Whenever the class has at least one virtual function, you must define a virtual dtor. If your base class 
+destructor is NOT virtual, then only the base class object will get deleted.
+/*-------------------------------------------------------------------------------------------------------------*/ 
+ 
+ 
+ 
 4. Explain the keyword: static. What does it mean in each context?
-5. When are static member variables initialized? 
+
+/*-------------------------------------------------------------------------------------------------------------*/ 
+
+DNV 2022 -> 
+  In C++ static keyword is used to declare variables and functions in global scope,
+
+                namespace scope, and class scope.  Static duration means that the object or variable
+                is allocated when the program starts and is deallocated when the program ends.
+                External linkage means that the name of the variable is visible from outside the file where the
+                variable is declared. On the other hand, internal linkage means that the name isn't visible outside  the file where the variable is declared.
+                By default, an object or variable that is defined in the global namespace has a static duration
+                and external linkage.
+ 
+/*-------------------------------------------------------------------------------------------------------------*/ 
+
+
+5. When are static member variables initialized?
+
+/*-------------------------------------------------------------------------------------------------------------*/ 
+
+DNV  2022 ->
+ 
+They're initialized before the program starts (i.e. before main is entered).
+ 
+ /*-------------------------------------------------------------------------------------------------------------*/ 
+
+ 
 6. What is the difference between R-Values and L-Values?
+
+/*-------------------------------------------------------------------------------------------------------------*/ 
+
+DNV  2022 ->   An lvalue refers to an object that persists beyond a single expression. An rvalue is a
+temporary value that does not persist beyond the expression that uses it
+ 
+ /*-------------------------------------------------------------------------------------------------------------*/ 
+
+
 7. Is this code safe? If so why? If not why?
-	std::string foo()
-	{
-		std::string something = "avalue";
-		return something;
-	}
-	
-	Bonus: What would most compilers do with this code?
-8. Why would you use new rather than malloc when allocating an object? Likewise, what's the difference between free and delete?
-9. Explain the purpose of std::move, and std::forward. 
-10. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
+std::string foo()
+                {
+                               std::string something = "avalue";
+                               return something;
+                }
+
+/*-------------------------------------------------------------------------------------------------------------*/ 
+                DNV 2022 -> Yes safe, but not optimized.
+/*-------------------------------------------------------------------------------------------------------------*/ 
+               
+               
+                Bonus: What would most compilers do with this code?
+ /*-------------------------------------------------------------------------------------------------------------*/ 
+
+                DNV 2022 -> Usually the compiler will optimize this code, using the
+               move constructor (part of std::string class) and
+                 providing faster function execution time.The object is not copied to a different
+                location, on function return  no copying has occurred
+/*-------------------------------------------------------------------------------------------------------------*/ 
+                  
+                     
+ 
+8. Why would you use new rather than malloc when allocating an object?
+Likewise, what's the difference between free and delete?
+ 
+ /*-------------------------------------------------------------------------------------------------------------*/ 
+
+                DNV 2022-> The distinction is that the new operator allocates memory and  
+                 calls the ctor of the object and delete calls the destructor then deallocates the memory.
+                Malloc/free only allocates and releases raw memory (memory blocks).
+               The global new and delete can be overridden, malloc/free cannot
+
+/*-------------------------------------------------------------------------------------------------------------*/ 
+
+
+9. Explain the purpose of std::move, and std::forward.
+ 
+ /*-------------------------------------------------------------------------------------------------------------*/ 
+
+                DNV  2022->  std::move defined in  header <utility> of the  STL,
+                allows  the efficient transfer of resources from one object to  another.
+    It's kind of "converter" between ways the compiler considers an expression's value.
+It changes an expression from being an lvalue (such as a named variable) to being an xvalue.
+  after std::move() is used  the compiler can have another object own it instead.
+ 
+  std::forward, also defined in <utility> is used to forward an argument, for returning
+ an rvalue reference to arg if arg is not an lvalue reference. If arg is an lvalue reference,
+ the function returns arg without modifying its type.
+ 
+ /*-------------------------------------------------------------------------------------------------------------*/ 
+
+
+
+10. How do you share resources safely between threads?
+How would you co?
+
+/*-------------------------------------------------------------------------------------------------------------*/ 
+
+
+DNV 2022 -> By the use of a  synchronization mechanism  like mutex for keeping away data races,
+A mutex is a synchronization mechanism and stands for mutual exclusion.Before you enter a critical section
+ (the set of sub-operations that need to be atomically executed), 
+ a thread locks the mutex if the mutex is not already locked otherwise it waits, 
+ until the mutex becomes lockable again.
+  This way, we are sure that only the thread that successfully acquired the mutex can operate on 
+  the critical section of the code and modify the critical data.
+/*-------------------------------------------------------------------------------------------------------------*/ 
+
+
+
+
 11. What are the some of the principles of object-oriented programming?
+ 
+ /*-------------------------------------------------------------------------------------------------------------*/ 
+
+DNV  2022 ->
+--------------------
+ 
+11.a – Encapsulation:  Encapsulation is accomplished when each object maintains a private state, inside a class.
+                 Other objects can not access this state directly, instead, they can only invoke a list of public functions.
+                The object manages its own state via these functions and no other class can alter it unless explicitly allowed.
+                 In order to communicate with the object, you will need to utilize the methods provided.
+ 11.b – Abstraction:  Abstraction is an extension of encapsulation. It is the process of selecting data from a larger pool
+                  to show only the relevant details to the object.
+ 11.c – Inheritance:   Inheritance is the ability of one object to acquire some/all properties of another object.
+                  With inheritance, reusability is a major advantage. You can reuse the fields and methods of the existing class.
+11.d – Polymorphism:  Polymorphism gives us a way to use a class exactly like its parent so there is no confusion with mixing types. This being said, each child sub-class keeps its own functions/methods as they are.
+
+  /*-------------------------------------------------------------------------------------------------------------*/ 
+         
+ 
 12. Explain inheritance vs composition vs aggregation?
-13. Should you always initialize variables? 
+
+/*-------------------------------------------------------------------------------------------------------------*/ 
+
+DNV  2022 ->
+Inheritance is the methodology of creating a new class using the properties  and methods of an existing class
+while composition is a special type of aggregation that implies ownership. Composition is in contrast to inheritance, it enables the creation of complex types by combining objects (components) of other types, rather than inheriting from a base or parent class.The primary difference between aggregation and composition is that aggregation implicit a relationship where the child can exist independently of the parent. On the other hand, composition insinuates a relationship where the child cannot exist independent of the parent.
+ /*-------------------------------------------------------------------------------------------------------------*/ 
+
+13. Should you always initialize variables?
+
+/*-------------------------------------------------------------------------------------------------------------*/ 
+
+DNV 2022 ->
+ 
+A variable must always be initialized before use. Normally, the compiler gives a warning if a variable is undefined.
+ 
+ /*-------------------------------------------------------------------------------------------------------------*/ 
+
+ 
 14. What concept(s) in C++ would you use to manage resources automatically?
-	a. How important are these concepts? 	
-	b. What tools are you familiar with for tracking resource allocations? 
+                a. How important are these concepts?
+
+/*-------------------------------------------------------------------------------------------------------------*/ 
+
+DNV  2022->
+ 
+14.a - Resource Acquisition Is Initialization (RAII) , a resource must be acquired before it is used (allocated heap memory, file, locked mutex, disk space,etc.)
+ to the lifetime of an object. Resource allocation (or acquisition) is done during object creation (specifically initialization),
+ by the constructor, while resource deallocation (release) is done during object destruction (specifically finalization), by the destructor. 
+So, resource acquisition must succeed for initialization to succeed. Related ith ths concept we  we have the Smart pointers, 
+that  are used to make sure that an object is deleted if it is no longer used (referenced).Smart pointers are defined in the std namespace in the <memory> header file.   In most cases, when you initialize a raw pointer or resource handle to point to an actual resource, pass the pointer to a smart pointer immediately.
+ 
+/*-------------------------------------------------------------------------------------------------------------*/ 
+
+
+
+                b. What tools are you familiar with for tracking resource allocations?
+
+/*-------------------------------------------------------------------------------------------------------------*/ 
+
+DNV 2022 ->
+Basically memory leak detection/Management Tools: WinDbg , Dr. Memory,
+Leak Detector for Visual Studio,  Visual Studio Profiler Windows Leak Detector._
+/*-------------------------------------------------------------------------------------------------------------*/ 
+    
+               
 15. What security concerns have you come across in the past and how have you addressed them?
-16. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
-17. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
-18. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
-	a. Consider both a long term and short-term solutions. 
+
+/*-------------------------------------------------------------------------------------------------------------*/ 
+DNV 2022-> 
+Bassicaly, Pointer initialization and Incorrect type conversion.  Plus buffer overflow and format string vulnerability. 
+Using smart pointers, warning compiler levels, and code profilers.
+/*-------------------------------------------------------------------------------------------------------------*/ 
+
+ 
+ 
+16. Name some tools and/or techniques that you personally find to be the most helpful
+surrounding development.
+
+/*-------------------------------------------------------------------------------------------------------------*/ 
+
+DNV  2022-> In  Windows environment, all the SystemInternals Suite tools, Also the use of debuggers and profiling tools, like Cppcheck. Unit testing should always be a must.  
+/*-------------------------------------------------------------------------------------------------------------*/ 
+               
+ 
+17. Name some tools and/or techniques that you personally find to be the most helpful
+surrounding code maintenance.  
+ 
+/*-------------------------------------------------------------------------------------------------------------*/ 
+
+
+DNV 2022-> Maintenance techniques:
+
+Corrective maintenance − Here errors that come up after on-site implementation are fixed. The errors may be pointed out by the users themselves.
+Preventive maintenance − Modifications done to avoid errors in future are called preventive maintenance.
+Adaptive maintenance − Changes in the working environment sometimes require modifications in the software. This is called adaptive maintenance. For example, if government education policy changes, corresponding changes have to be made in student result processing module of school management software.
+Perfective maintenance − Changes done in the existing software to incorporate new requirements from the client is called perfective maintenance. Aim here is to be always be up-to-date with the latest technology.
+
+Tools:  Static analyzer, Data flow analyzer , Dependency analyzer.-
+/*-------------------------------------------------------------------------------------------------------------*/ 
+  
+
+18. Scenario: You are dealing with legacy code containing no test suites
+nor documented requirements, and are required to make a change.
+Describe your expected process for how you may approach the solution.
+                a. Consider both a long term and short-term solutions.
+
+/*-------------------------------------------------------------------------------------------------------------*/ 
+
+DNV  2022 -> Approach the system pragmatically and slowly improve it. In legacy code is important to always make sure that the system keeps on doing what it does, after changes are made. 
+In a more long term scenario is a good practice trying to refactor and writing unit tests. 
+/*-------------------------------------------------------------------------------------------------------------*/ 
+
 19. What concerns do you had supporting legacy operating systems? (If any)
-20. Tell us about a project you worked on that you found to be interesting or unusual. 
+ 
+
+/*-------------------------------------------------------------------------------------------------------------*/ 
+DNV 2022 -> NO concerns if you can reproduce the supporting legacy operating systems environment
+/*-------------------------------------------------------------------------------------------------------------*/ 
+ 
+ 
+ 
+20. Tell us about a project you worked on that you found to be interesting or unusual.
+ 
+
+/*-------------------------------------------------------------------------------------------------------------*/ 
+DNV 2022 -> In my current position , overloading all primitive types  to trace all the operation in a non volatile  memory
+/*-------------------------------------------------------------------------------------------------------------*/ 
+      
+

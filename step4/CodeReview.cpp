@@ -1,25 +1,23 @@
-/*
 
-NINJARMM Code Review
+//DNV-2022-09-30 Must include this headers  
+#include <iostream>
+#include <string>
+#include <map>
+#include <iwscapi.h> //DNV-2022-09-30  https://learn.microsoft.com/en-us/windows/win32/api/iwscapi/nn-iwscapi-iwscproduct
+#include <wscapi.h>  //DNV-2022-09-30  https://learn.microsoft.com/en-us/windows/win32/api/wscapi/ne-wscapi-wsc_security_provider
+#include <string>
  
-Please review the below code. 
-We do not expect you to execute this code, but you are welcome to try. 
-
-Make any code updates that you see fit (If any). 
-Comments are encouraged.
-
-*/
-
 
 struct ThirdPartyAVSoftware
 {
-    std::wstring Name;
+   // std::wstring Name;  //DNV-2022-09-30  Do not repeat, Use as the key in the [Key , value ] pair
     std::wstring Description;
     std::wstring DefinitionUpdateTime;
-    std::string DefinitionStatus;
+    std::string DefinitionStatus;   
     std::wstring Version;
     std::wstring ProductState;
 };
+
 
 bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftware>& thirdPartyAVSoftwareMap)
 {
@@ -33,6 +31,18 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
 
     std::wstring displayName, versionNumber, state, timestamp;
     std::string definitionState;
+
+
+    //DNV-2022-09-30  Must Initialize the COM library 
+
+    HRESULT hrCoInit = CoInitialize(NULL);
+   
+    if (FAILED(hrCoInit))
+    {
+        std::cout << "Failed to Initialize COM";
+        return false;
+     }
+    //END DNV-2022-09-30 
 
     hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&PtrProductList));
     if (FAILED(hr))
@@ -55,7 +65,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         return false;
     }
 
-    for (uint32_t i = 0; i < ProductCount; i++)
+    for (uint32_t i = 0; i < (ULONG)ProductCount; i++) // DNV 09-30-2022 No warning C4018: '<': signed/unsigned mismatch 
     {
         hr = PtrProductList->get_Item(i, &PtrProduct);
         if (FAILED(hr))
@@ -113,12 +123,14 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         SysFreeString(PtrVal);
 
         ThirdPartyAVSoftware thirdPartyAVSoftware;
-        thirdPartyAVSoftware.Name = displayName;
+      //  thirdPartyAVSoftware.Name = displayName;
+        
         thirdPartyAVSoftware.DefinitionStatus = definitionState;
         thirdPartyAVSoftware.DefinitionUpdateTime = timestamp;
         thirdPartyAVSoftware.Description = state;
         thirdPartyAVSoftware.ProductState = state;
-        thirdPartyAVSoftwareMap[thirdPartyAVSoftware.Name] = thirdPartyAVSoftware;
+
+        thirdPartyAVSoftwareMap[displayName] = thirdPartyAVSoftware; //DNV 2022-09-30 
 
         PtrProduct->Release();
     }
@@ -129,3 +141,45 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
     }
     return true;
 }
+
+
+
+ 
+
+int main()
+{
+    //DNV-2022-09-30   Show Info 
+
+
+    std::cout << " Step 4 \n";
+
+     
+    std::map<std::wstring, ThirdPartyAVSoftware> myThirdPartyAVSoftwareMap;
+    if (queryWindowsForAVSoftwareDataWSC(myThirdPartyAVSoftwareMap))
+    {
+
+        std::cout << "-- AV Software Installed -- " << "\n";
+
+         
+        for (const auto& p : myThirdPartyAVSoftwareMap) {
+
+            std::wcout << L"Name: " << p.first  << L" - Description: " << p.second.Description
+                << L" - DefinitionUpdateTime: " << p.second.DefinitionUpdateTime;
+            std::cout << " - DefinitionStatus: " << p.second.DefinitionStatus;
+           // std::wcout << L" - Version: " << p.second.Version  // DNV 2022-09-30 No version number
+            std::wcout  << L" - ProductState: " << p.second.ProductState     << L" \n";
+           
+         }
+         
+    }
+    else
+    {
+        std::cout << " Not AV Software found !" << "\n";
+
+    }
+
+
+
+    getchar();
+}
+ 
