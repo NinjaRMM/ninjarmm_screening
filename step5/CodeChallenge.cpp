@@ -37,7 +37,7 @@ OBJ_STR objStr;
 //The third integer param is optional so it's declared as a default param
 //Inside the function is some existing code that needs to exist, but not relevant to this exercise. 
 template <typename T, typename U>
-T checkIfPositive(const U& u, const int& param1, const int& param2, int param3 = 0)
+T checkIfPositive(const U& u, const int& param1, const int& param2, int param3, int& total)
 {
 
     // Assume there's already some existing code in here, some business logic that we are not interested in this exercise. 
@@ -47,7 +47,19 @@ T checkIfPositive(const U& u, const int& param1, const int& param2, int param3 =
 
     */
 
+    // We don't need to modify this function, and we could simply create another (overload) with the total param, and make the sum there.
+    // But it's important to know whether param3 is modified in the previous business logic block (since param3 is not const), that would affect the result getResult vs total. They may differ.
+    // If that's the case, then we have to turn this function into the one with the total param and create another like this that simply discards total, for compatibility.
+    total = param1 + param2 + param3;
+
     return u.getResult(param1, param2, param3);
+}
+
+template <typename T, typename U>
+T checkIfPositive(const U& u, const int& param1, const int& param2, int param3 = 0)
+{
+    int total;
+    return checkIfPositive(u, param1, param2, param3, total);
 }
 
 //<<<<<<<< END OF EDITABLE SECTION OF CODE <<<<<<<<<<<
@@ -78,7 +90,7 @@ int main()
     //How are you going to solve this problem? 
     //You can only change the code inside the EDITABLE SECTION OF CODE
     //Hint, the following calls should now be valid moving forward:
-    /*
+
     int total = 0;
 
     iResult = checkIfPositive<int, OBJ_INT>(objInt, 1, 2);
@@ -98,7 +110,6 @@ int main()
 
     sResult = checkIfPositive<std::string, OBJ_STR>(objStr, 1, 2, 3, total); //<-- Total is output param
     std::cout << sResult << " " << total << std::endl;
-    */
 
     return 0;
 

@@ -1,30 +1,193 @@
 1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
+
+  There are three different types of containers in the standard library:
+  - sequence containers,
+  - associative containers,
+  - unordered associative containers.
+  And container adapters.
+
+  Sequence containers implement data structures which can be accessed sequentially. They are:
+  - array: contiguous fixed size arrays, storage allocation is on the stack memory.
+  - vector: contiguous dynamic size arrays, storage allocation is on the heap memory.
+  - deque: double-ended queue, allows fast insertion and deletion at both its beginning and its end. Elements are not stored contiguously, but rather with a sequence of individually allocated fixed-size arrays.
+  - forward_list: singly-linked list, supports fast insertion and removal of elements from anywhere in the container. More space efficient compared to std::list when bidirectional iteration is not needed.
+  - list: doubly-linked list, supports constant time insertion and removal of elements from anywhere in the container, bidirectional iteration capability.
+
+  Associative containers implement sorted data structures that can be quickly searched. They are:
+  - set: contains a sorted set of unique objects. Sorting is done on insertion. Search, removal, and insertion operations have logarithmic complexity.
+  - map: contains key-value pairs with unique keys. Sorting is done on insertion. Search, removal, and insertion operations have logarithmic complexity.
+  - multiset: contains a sorted set of objects. Unlike set, multiple keys with equivalent values are allowed. Search, insertion, and removal operations have logarithmic complexity.
+  - multimap: contains a sorted list of key-value pairs, while permitting multiple entries with the same key. Search, insertion, and removal operations have logarithmic complexity.
+
+  Unordered associative containers implement unsorted (hashed) data structures that can be quickly searched. They are:
+  - unordered_set: collection of unique keys, hashed by keys. Elements are organized into buckets. Search, insertion, and removal have average constant-time complexity.
+  - unordered_map: collection of key-value pairs, hashed by keys, keys are unique. Elements are organized into buckets. Search, insertion, and removal have average constant-time complexity.
+  - unordered_multiset: collection of keys, hashed by keys, contains set of possibly non-unique objects. Elements are organized into buckets. Search, insertion, and removal have average constant-time complexity.
+  - unordered_multimap: collection of key-value pairs, hashed by keys. Supports equivalent keys (may contain multiple copies of each key value). Elements are organized into buckets. Search, insertion, and removal have average constant-time complexity.
+
+  While sequence containers are usually used when the traversal of the container is a common operation and fast random access is advantageous,
+  the associative containers are mostly used when data needs to be ordered automatically on insertion, thus providing a way to access elements with O(log n) complexity.
+  The unordered associative containers, are commonly used for fast access time (O(1) amortized, O(n) worst-case complexity), and are great for large sets of data.
+
+  Additionally, there are container adaptors, which are, basically, different interfaces for sequential containers:
+  - stack: gives the functionality of a stack, specifically, a LIFO (last-in, first-out) data structure.
+  - queue: gives the functionality of a queue - specifically, a FIFO (first-in, first-out) data structure.
+  - priority_queue: provides constant time lookup of the largest (by default) element, at the expense of logarithmic insertion and extraction.
+
+
 2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
+
+  Two of the simplest sorts are insertion sort and selection sort, both of which are efficient on small data, due to low overhead, but not efficient on large data.
+  Insertion sort is generally faster than selection sort in practice, due to fewer comparisons and good performance on almost-sorted data, and thus is preferred in practice,
+  but selection sort uses fewer writes, and thus is used when write performance is a limiting factor.
+  
+  - Insertion sort: is a simple sorting algorithm that is relatively efficient for small lists and mostly sorted lists, and is often used as part of more sophisticated algorithms.
+  It works by taking elements from the list one by one and inserting them in their correct position into a new sorted list.
+
+  Practical general sorting algorithms are almost always based on an algorithm with average time complexity (and generally worst-case complexity) O(n log n),
+  of which the most common are heapsort, merge sort, and quicksort. Each has advantages and drawbacks, with the most significant being that simple implementation of merge sort uses O(n) additional space,
+  and simple implementation of quicksort has O(n2) worst-case complexity. These problems can be solved or ameliorated at the cost of a more complex algorithm.
+  
+  - Merge sort: Merge sort takes advantage of the ease of merging already sorted lists into a new sorted list.
+  It starts by comparing every two elements (i.e., 1 with 2, then 3 with 4...) and swapping them if the first should come after the second.
+  It then merges each of the resulting lists of two into lists of four, then merges those lists of four, and so on; until at last two lists are merged into the final sorted list.
+
+  Distribution sort refers to any sorting algorithm where data is distributed from their input to multiple intermediate structures which are then gathered and placed on the output.
+  Distribution sorting algorithms can be used on a single processor, or they can be a distributed algorithm, where individual subsets are separately sorted on different processors, then combined. 
+
+  - Radix sort: Radix sort is an algorithm that sorts numbers by processing individual digits. n numbers consisting of k digits each are sorted in O(n · k) time.
+  Radix sort can process digits of each number either starting from the least significant digit (LSD) or starting from the most significant digit (MSD).
+  The LSD algorithm first sorts the list by the least significant digit while preserving their relative order using a stable sort.
+  Then it sorts them by the next digit, and so on from the least significant to the most significant, ending up with a sorted list.
+
+
 3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
+  Virtual destructors allow for objects of a derived class to be deleted from a base class type pointer.
+  Not using virtual destructors correctly can cause all sorts of issues, most commonly, memory leaks.
+  But also, in case logical code is executed in the destructors, can cause issues like other types resource leaks (file, DB session), dead lock (RAII), etc.
+
 4. Explain the keyword: static. What does it mean in each context?
+  static can be used for declaration of a variable that is initialized only once in the lifetime of the program.
+  static function declaration limits the scope of that function to only the translation unit where it's declared.
+  static variable declaration limits the scope of that variable to only the translation unit (global scope), function (local scope) or block scope where it's declared.
+  static variable/function declaration within a class declares a variable/function that can be accessed without needing an instance of that class.
+
 5. When are static member variables initialized? 
+  Static member variables are initialized before the execution of the main function, with respect to the loading of translation units.
+
 6. What is the difference between R-Values and L-Values?
+  L-Value is an expression that yields an object reference. An lvalue always has a defined region of storage, so we can take its address.
+  R-Value is a value or expression, without a specific memory location. In general, it's a temporary and short lived value, it refers to the data itself rather than a location.
+
 7. Is this code safe? If so why? If not why?
 	std::string foo()
 	{
 		std::string something = "avalue";
 		return something;
 	}
+
+  Yes, there is nothing wrong with this code.
+  The local instance of the string is returned by copy or copy-elision (C++11) to the caller of the function.
 	
 	Bonus: What would most compilers do with this code?
+  Most compilers would perform copy-elision as mandated by C++11 standard.
+  That is to say, it omits copy and move constructors, resulting in zero-copy pass-by-value semantics.
+
 8. Why would you use new rather than malloc when allocating an object? Likewise, what's the difference between free and delete?
+  `new` was introduced in C++ to create and initialize objects with dynamic storage duration.
+  Differently from `malloc`, `new` not only allocates the storage, but also constructs the object in the allocated space.
+  In the same way, `delete` calls the destructors of the object and deallocates the memory, while `free` only deallocates the memory used.
+
 9. Explain the purpose of std::move, and std::forward. 
+  std::move produces an rvalue reference type, which is used to indicated that an object may be moved from one instance to another.  
+  This allows for efficient transfer of resources between objects, e.g.: move memory pointer, rather than coping entire data.
+  std::forward is used for "perfect forwarding" of template parameters. It can forward lvalues or rvalues parameters from one function to another without
+  chaging the value category (lvalue/rvalue), and without causing copy constructor/operator to be called when forwarding the object.
+
 10. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
+  Resource sharing between threads should be done with read/write synchronization mechanisms.
+  In general, for primitive types, it best to share data, like integer values, using std::atomic* which can in some cases leverage processor support (compare and swap instructions) and produce faster execution (lock-free).
+  For other complex types and user defined types, std::mutex can be used (better along with std::lock_guard) to lock the resource explicitly while it's being used.
+
 11. What are the some of the principles of object-oriented programming?
+  Abstraction lets us selectively focus on the high-level and abstract way the low-level details.
+  Inheritance is about code reuse. Ability of one object to acquire some/all properties of another object.
+  Encapsulation keeps state private so that we can better enforce business rules, protect model invariants, and develop a single source of truth for related data and logic.
+  Polymorphism provides the ability for us to design for dynamic runtime behavior, easy extensibility, and substitutability.
+
 12. Explain inheritance vs composition vs aggregation?
+  Inheritance describes an "is-a" relationship. It lets us describe a new class based on an existing class (parent class).
+  The derived object acquires some/all properties of the parent object.
+  A lion is an animal. Such a relationship is easily expressed using inheritance, where Animal is the parent class and Lion is the child. 
+  Composition describes a "has-a" relationship. It means means one object is contained in another object.
+  For example, a Car has an Engine, can be coded as two classes, where Car contains Engine as member variable.
+  Aggregation also describes a "has-a" relationship, but the difference to composition is in "strictness" of the relationship.
+  In aggregation, all objects have their own life cycle, and the base class is not responsible for creating or destroying the aggregated class.
+  For example, a Car can have Passengers, but if all the passengers get out of a car, it will still function smoothly.
+
 13. Should you always initialize variables? 
+  Yes, it is generally a good practice and avoids bugs like undefined behavior.
+
 14. What concept(s) in C++ would you use to manage resources automatically?
-	a. How important are these concepts? 	
-	b. What tools are you familiar with for tracking resource allocations? 
+  RAII (Resource Acquisition Is Initialization) is a technique which binds the life cycle of a resource that must be acquired before use
+  (allocated heap memory, thread of execution, open socket, open file, locked mutex, disk space, database connection—anything that exists in limited supply)
+  to the lifetime of an object.
+  e.g. std::lock_guard, std::fstream, smart pointers, etc.
+
+	a. How important are these concepts?
+    Very important as they prevent resource leaks which can cause malfunction of the program.
+
+	b. What tools are you familiar with for tracking resource allocations?
+    I have used mostly Valgrind, ASAN and UBSAN for detecting memory leaks and other kinds of memory usage issues.
+
 15. What security concerns have you come across in the past and how have you addressed them?
+  Since I worked in development of network operating system, that are security concerns like, regarding
+  unauthorized access the equipment through management interfaces and system firewall configurations.
+  In a software development perspective, I had to deal with the protection of firmware through encryption, to protect against cloning.
+
 16. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
-17. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
+  I have used the following tools professionally in development, and I think they are really important for producing high-quality software.
+  - GoogleTest/Mock for unit-tests in C++.
+  - Clang-format for formatting code according to a defined style.
+  - Clang-tidy for C++ static code analysis.
+  - ASAN, UBSAN and TSAN for address, undefined-behavior and thread sanitizers, respectively.
+  - Robot Framework for writing descriptive integration tests.
+  - A LSP for coding assistance, eg. ccls, clangd, intellisense.
+  Additionally, I find my self very productive in a Linux environment, with zsh shell, dwm tile window manager, vim editor, for high performance workflow.
+  Utility Libraries for C++: fmt, spdlog, boost, GSL, Abseil, etc.
+  Agile methodology: Scrum.
+  Programming techniques: C++ Core Guidelines, ECS (Entity-component-system).
+
+17. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.
+  TDD (Test-driven-development) in a virtualized system for easily executing unit and regression tests.
+  Modularization of system components, each component can be its own repository, with its documentation, release and commit tree.
+  Doxygen for generating documentation from comments in C++ files.
+  Jenkins for setting up continuos integration, in order to run integration tests periodically.
+  Weekly, sanity and smoke test infrastructure can help prevent bugs and reduce need for code maintenance.
+
 18. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
-	a. Consider both a long term and short-term solutions. 
+	a. Consider both a long term and short-term solutions.
+  
+  - Get more details on the requirements with project manager, and document it.
+  - Try to discuss the code with developers that have already worked in the codebase, in order to speed up resolution of initial problems.
+  - Walk through the code and comments (if any) to get an overview of the relation between different portions of the codebase.
+  - Run a static analysis tool for examining the code before making changes.
+  - Divide the required changes into smaller ones, in order to do code-review in smaller chunks.
+
+  Additionally, for long term solution:
+  - Write a minimal set of tests to create a regression-proof environment where we can make changes to the code base safely.
+  - Refactor any portion of code that is critical for the new changes and that will speed up process for future changes.
+
 19. What concerns do you had supporting legacy operating systems? (If any)
+  Security: legacy operating systems can have security breaches which are unexpected or were not patched if support was abandoned.
+  Incompatibility: new software may not integrate well with legacy system because of missing features, patches or dependencies.
+
 20. Tell us about a project you worked on that you found to be interesting or unusual. 
+  I worked on the development of DmOS, a network operating system based on Linux.
+  The interesting thing about this project is that it was a complete re-write of the legacy codebase, but with a much higher software quality standard than before.
+  The architecture was redesigned from the ground up, following many modern techniques of software development.
+  The admirable thing in this project for me was both the high-quality standard and asynchronous complexity of the designed architecture.
+  Modern tools and techniques started to be used, like Scrum, Jenkins, Rally, TDD, GoogleTest/Mock, Doxygen, Valgrind, ASAN, Robot, Gerrit, automatic tests.
+  The system components were made as modules, each versioned in hundreds of repositories, with capability of running in standalone fashion in containers, individually tested.
+  Each component would run as a system process, rather than as a thread, in order to avoid any change of dead locks and memory corruption. Also, designed with High-Availability in mind.
+  The project is an example of high-quality software develop.

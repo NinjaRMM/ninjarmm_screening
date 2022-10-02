@@ -10,6 +10,10 @@ Comments are encouraged.
 
 */
 
+// #include <map>
+// #include <string>
+// #include <iostream>
+// #include <iwscapi.h>
 
 struct ThirdPartyAVSoftware
 {
@@ -77,7 +81,11 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         hr = PtrProduct->get_ProductState(&ProductState);
         if (FAILED(hr))
         {
+            // Consider adding more debug info here and in ther other messages,
+            // may add i variable, and possibly other info retrieved so far
+            // Also consider sending error messages to cerr instead.
             std::cout << "Failed to query AV product state.";
+            PtrProduct->Release();  // release after use
             continue;
         }
 
@@ -98,6 +106,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         if (FAILED(hr))
         {
             std::cout << "Failed to query AV product definition state.";
+            PtrProduct->Release();  // release after use
             continue;
         }
 
@@ -107,6 +116,8 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         if (FAILED(hr))
         {
             std::cout << "Failed to query AV product definition state.";
+            SysFreeString(PtrVal);  // free before next iteration
+            PtrProduct->Release();  // release after use
             continue;
         }
         timestamp = std::wstring(PtrVal, SysStringLen(PtrVal));
@@ -116,13 +127,18 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         thirdPartyAVSoftware.Name = displayName;
         thirdPartyAVSoftware.DefinitionStatus = definitionState;
         thirdPartyAVSoftware.DefinitionUpdateTime = timestamp;
-        thirdPartyAVSoftware.Description = state;
+        thirdPartyAVSoftware.Description = state;  // assigning state to description, is this intended?
         thirdPartyAVSoftware.ProductState = state;
+        // version assignment missing, please check how to retrieve info, versionInfo variable was not used
         thirdPartyAVSoftwareMap[thirdPartyAVSoftware.Name] = thirdPartyAVSoftware;
 
         PtrProduct->Release();
     }
 
+    // probably should call release for PtrProductList here too, please check
+    PtrProductList->Release();
+
+    // clean code tip: return !thirdPartyAVSoftwareMap.empty();
     if (thirdPartyAVSoftwareMap.size() == 0)
     {
         return false;
