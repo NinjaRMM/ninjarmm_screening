@@ -6,6 +6,11 @@ Please review the below code.
 We do expect you to execute this code. 
 
 This file contains the 'main' function. Program execution begins and ends there.
+
+	I tried to develop two solutions.
+	Solution 1, finds the result but i think its not the best way.
+	Solution 2, i did not finish the solution
+
 */
 
 #include <iostream>

@@ -1,30 +1,890 @@
 1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
+	
+	The different types of containers available in the standard library can be divided into three categories and are presented below:
+		
+		-> Sequence containers: implement data structures which can be accessed sequentially. 		   
+		   Examples: array, vector, deque, forward_list and list.
+		   Use case: In step 4 Challenge, we have this struct: ThirdPartyAVSoftware
+		   We can use a vector of type ThirdPartyAVSoftware where each position of this vector is an object from this struct,
+		   then i can use modifiers like clear() to clear the contents, insert() to insert elements push_back to add an element to the end and others.
+
+			#include <iostream>
+			#include <vector>
+ 
+			struct ThirdPartyAVSoftware
+			{
+			    std::wstring Name;
+			    std::wstring Description;
+			    std::wstring DefinitionUpdateTime;
+			    std::string DefinitionStatus;
+			    std::wstring Version;
+			    std::wstring ProductState;
+			};
+
+			int main()
+			{
+			    // Create a vector containing ThirdPartyAVSoftware
+			    std::vector<ThirdPartyAVSoftware> thirdPartyAVSoftwareList;
+				
+				ThirdPartyAVSoftware thirdPartyAVSoftware;
+				thirdPartyAVSoftware.Name = "Avast";
+				thirdPartyAVSoftware.DefinitionStatus = "out of date";
+				thirdPartyAVSoftware.DefinitionUpdateTime = "2022-09-26 03:14:07";
+				thirdPartyAVSoftware.Description = "Third Party AV Software";
+				thirdPartyAVSoftware.ProductState = "Expired";				
+
+			    // Add one more object to vector
+			    thirdPartyAVSoftwareList.push_back(thirdPartyAVSoftware);			    
+			 
+			    // Print out just the 'name' of each object in the vector
+			    std::cout << "thirdPartyAVSoftware = { ";
+			    for (ThirdPartyAVSoftware n : thirdPartyAVSoftwareList) {
+			        std::cout << n.Name << ", ";
+			    }
+			    std::cout << "}; \n";
+			}
+
+		-> Associative containers: implement sorted data structures that can be quickly searched which complexity in worst case is O(log n).
+		   Examples: set, map, multiset, multimap. 
+		   Use case: In step 4 Challenge, we have this struct: ThirdPartyAVSoftware and we have this function queryWindowsForAVSoftwareDataWSC which return false if there is no 
+		   data inside this map std::map<std::wstring, ThirdPartyAVSoftware>& thirdPartyAVSoftwareMap or true if there is some data.
+		   We can use this map where the key of each position of this map is a string and the value is an object of type ThirdPartyAVSoftware
+		   then i can use modifiers like erase() to erase elements, clear() to clear the contents and others.
+
+		    #include <iostream>
+			#include <map>
+			#include <string>
+			#include <string_view>
+ 
+			struct ThirdPartyAVSoftware
+			{
+			    std::wstring Name;
+			    std::wstring Description;
+			    std::wstring DefinitionUpdateTime;
+			    std::string DefinitionStatus;
+			    std::wstring Version;
+			    std::wstring ProductState;
+			};
+
+			void print_map(std::string_view comment, const std::map<std::string, int>& thirdPartyAVSoftwareMap)
+			{
+			    std::cout << comment ;
+			    // iterate using C++17 facilities
+			    for (const auto& [key, value] : thirdPartyAVSoftwareMap) {
+			        std::cout << '[' << key << "] = " << value << "; ";
+			    }
+			// C++11 alternative:
+			//  for (const auto& n : m) {
+			//      std::cout << n.first << " = " << n.second << "; ";
+			//  }
+			// C++98 alternative
+			//  for (std::map<std::string, int>::const_iterator it = m.begin(); it != m.end(); it++) {
+			//      std::cout << it->first << " = " << it->second << "; ";
+			//  }
+			    std::cout << '\n';
+			}
+
+			int main()
+			{
+			    // Create a map (wstring, ThirdPartyAVSoftware) 			    
+				std::map<std::wstring, ThirdPartyAVSoftware> thirdPartyAVSoftwareMap;
+			 				
+				ThirdPartyAVSoftware thirdPartyAVSoftware;
+				thirdPartyAVSoftware.Name = "Avast";
+				thirdPartyAVSoftware.DefinitionStatus = "out of date";
+				thirdPartyAVSoftware.DefinitionUpdateTime = "2022-09-26 03:14:07";
+				thirdPartyAVSoftware.Description = "Third Party AV Software";
+				thirdPartyAVSoftware.ProductState = "Expired";	
+				
+				//Insert an element in the map
+				thirdPartyAVSoftwareMap[thirdPartyAVSoftware.Name] = thirdPartyAVSoftware;
+
+			    print_map("1) Initial map: ", thirdPartyAVSoftwareMap); 
+			 
+			    m.erase("Avast");
+			    print_map("5) After erase: ", thirdPartyAVSoftwareMap);		 
+			}
+
+		-> unordered associative containers: implement unsorted data structures that can be quickly searched which complexity is O(1) amortized (when its considered remote probability to increase the size
+			of the data structure where is necessary movement all the elements which complexity can result in O(n)).
+           Examples: unordered_set, unordered_map, unordered_multiset, unordered_multimap.     
+		   Use case: In step 4 Challenge, we have this struct: ThirdPartyAVSoftware and we have this function queryWindowsForAVSoftwareDataWSC which return false if there is no 
+		   data inside this map std::map<std::wstring, ThirdPartyAVSoftware>& thirdPartyAVSoftwareMap or true if there is some data.
+		   We can use an unordered_map if is not necessary to sort keys. The key of each position of this unordered_map is a string and the value is an object of type ThirdPartyAVSoftware
+		   then i can use modifiers like erase() to erase elements, clear() to clear the contents and others.
+
+		    #include <iostream>
+			#include <string>
+			#include <unordered_map>
+			 
+			struct ThirdPartyAVSoftware
+			{
+			    std::wstring Name;
+			    std::wstring Description;
+			    std::wstring DefinitionUpdateTime;
+			    std::string DefinitionStatus;
+			    std::wstring Version;
+			    std::wstring ProductState;
+			};
+
+			int main()
+			{
+			   // Create an unordered_map (wstring, ThirdPartyAVSoftware) 				   
+			    std::unordered_map<std::wstring, ThirdPartyAVSoftware> thirdPartyAVSoftwareUnorderedMap 
+
+				ThirdPartyAVSoftware thirdPartyAVSoftware;
+				thirdPartyAVSoftware.Name = "Avast";
+				thirdPartyAVSoftware.DefinitionStatus = "out of date";
+				thirdPartyAVSoftware.DefinitionUpdateTime = "2022-09-26 03:14:07";
+				thirdPartyAVSoftware.Description = "Third Party AV Software";
+				thirdPartyAVSoftware.ProductState = "Expired";	
+				
+				//Insert an element in the map
+				thirdPartyAVSoftwareUnorderedMap[thirdPartyAVSoftware.Name] = thirdPartyAVSoftware;
+
+
+			    // Helper lambda function to print key-value pairs
+			    auto print_key_value = [](const auto& key, const auto& value) {
+			        std::cout << "Key:[" << key << "] Value:[" << value << "]\n";
+			    };
+			 
+			    std::cout << "Iterate and print key-value pairs of unordered_map, being\n"
+			                 "explicit with their types:\n";
+			    for( const std::pair<const std::string, std::string>& n : thirdPartyAVSoftwareUnorderedMap ) {
+			        print_key_value(n.first, n.second);
+			    }
+			 
+			    std::cout << "\nIterate and print key-value pairs using C++17 structured binding:\n";
+			    for( const auto& [key, value] : u ) {
+			        print_key_value(key, value);
+			    }
+			}
+
+	References to answer this question: ( https://en.cppreference.com/w/cpp/container and https://algorithmtutor.com/Analysis-of-Algorithm/Amortized-Analysis-of-Algorithms/)
+
 2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
+
+	We can cite some sorting algorithms such as:
+		-> Heap Sort;
+		-> Merge Sort;
+		-> Quick Sort;
+		
+		These algorithms are in class of sorting algorithms O(n*log n) time complexity.
+
+		Heap Sort is the slowest of this class of sorting algorithms but unlike merge and quick sort it does not require massive recursion or multiple arrays to work. 
+		Merge Sort is slightly faster than the heap sort for larger sets, but it requires twice the memory of the heap sort because of the second array.
+		Quick Sort is an in-place, divide-and-conquer, massively recursive sot. It can be said as the faster version of the merge sort, but the efficiency of the algorithm 
+		impacted by which element is chosen as the pivot point. The worst-case efficienvy of the quick sort is O(n^2).
+
+		Time Complexities of this class of sorting algorithms:
+		Algorithm				Best Case				Average Case				Worst Case
+		Heap Sort			Big-Omega(n*log(n))		  Big-Theta(n*log(n))			O(n*log(n))
+		Merge Sort			Big-Omega(n*log(n))		  Big-Theta(n*log(n))			O(n*log(n))
+		Quick Sort			Big-Omega(n*log(n))		  Big-Theta(n*log(n))			  O(n^2)
+
+		Use cases:
+		-> Heap Sort: Can be used to deal with priority queues in Spanning Tree (Prims's algorithm) and Huffman encoding os data compression;
+
+		// C++ program for implementation of Heap Sort
+		#include <iostream>
+		using namespace std;
+		 
+		// To heapify a subtree rooted with node i which is
+		// an index in arr[]. n is size of heap
+		void heapify(int arr[], int n, int i)
+		{
+		    int largest = i; // Initialize largest as root
+		    int l = 2 * i + 1; // left = 2*i + 1
+		    int r = 2 * i + 2; // right = 2*i + 2
+		 
+		    // If left child is larger than root
+		    if (l < n && arr[l] > arr[largest])
+		        largest = l;
+		 
+		    // If right child is larger than largest so far
+		    if (r < n && arr[r] > arr[largest])
+		        largest = r;
+		 
+		    // If largest is not root
+		    if (largest != i) {
+		        swap(arr[i], arr[largest]);
+		 
+		        // Recursively heapify the affected sub-tree
+		        heapify(arr, n, largest);
+		    }
+		}
+		 
+		// main function to do heap sort
+		void heapSort(int arr[], int n)
+		{
+		    // Build heap (rearrange array)
+		    for (int i = n / 2 - 1; i >= 0; i--)
+		        heapify(arr, n, i);
+		 
+		    // One by one extract an element from heap
+		    for (int i = n - 1; i >= 0; i--) {
+		        // Move current root to end
+		        swap(arr[0], arr[i]);
+		 
+		        // call max heapify on the reduced heap
+		        heapify(arr, i, 0);
+		    }
+		}
+		 
+		/* A utility function to print array of size n */
+		void printArray(int arr[], int n)
+		{
+		    for (int i = 0; i < n; ++i)
+		        cout << arr[i] << " ";
+		    cout << "\n";
+		}
+		 
+		// Driver program
+		int main()
+		{
+		    int arr[] = { 12, 11, 13, 5, 6, 7 };
+		    int n = sizeof(arr) / sizeof(arr[0]);
+		 
+		    heapSort(arr, n);
+		 
+		    cout << "Sorted array is \n";
+		    printArray(arr, n);
+		}
+
+		-> Merge Sort: Can be used to count the number of inversions in the list and to sort linked lists;
+
+		// C++ program for Merge Sort
+		#include <iostream>
+		using namespace std;
+		 
+		// Merges two subarrays of array[].
+		// First subarray is arr[begin..mid]
+		// Second subarray is arr[mid+1..end]
+		void merge(int array[], int const left, int const mid,
+		           int const right)
+		{
+		    auto const subArrayOne = mid - left + 1;
+		    auto const subArrayTwo = right - mid;
+		 
+		    // Create temp arrays
+		    auto *leftArray = new int[subArrayOne],
+		         *rightArray = new int[subArrayTwo];
+		 
+		    // Copy data to temp arrays leftArray[] and rightArray[]
+		    for (auto i = 0; i < subArrayOne; i++)
+		        leftArray[i] = array[left + i];
+		    for (auto j = 0; j < subArrayTwo; j++)
+		        rightArray[j] = array[mid + 1 + j];
+		 
+		    auto indexOfSubArrayOne
+		        = 0, // Initial index of first sub-array
+		        indexOfSubArrayTwo
+		        = 0; // Initial index of second sub-array
+		    int indexOfMergedArray
+		        = left; // Initial index of merged array
+		 
+		    // Merge the temp arrays back into array[left..right]
+		    while (indexOfSubArrayOne < subArrayOne
+		           && indexOfSubArrayTwo < subArrayTwo) {
+		        if (leftArray[indexOfSubArrayOne]
+		            <= rightArray[indexOfSubArrayTwo]) {
+		            array[indexOfMergedArray]
+		                = leftArray[indexOfSubArrayOne];
+		            indexOfSubArrayOne++;
+		        }
+		        else {
+		            array[indexOfMergedArray]
+		                = rightArray[indexOfSubArrayTwo];
+		            indexOfSubArrayTwo++;
+		        }
+		        indexOfMergedArray++;
+		    }
+		    // Copy the remaining elements of
+		    // left[], if there are any
+		    while (indexOfSubArrayOne < subArrayOne) {
+		        array[indexOfMergedArray]
+		            = leftArray[indexOfSubArrayOne];
+		        indexOfSubArrayOne++;
+		        indexOfMergedArray++;
+		    }
+		    // Copy the remaining elements of
+		    // right[], if there are any
+		    while (indexOfSubArrayTwo < subArrayTwo) {
+		        array[indexOfMergedArray]
+		            = rightArray[indexOfSubArrayTwo];
+		        indexOfSubArrayTwo++;
+		        indexOfMergedArray++;
+		    }
+		    delete[] leftArray;
+		    delete[] rightArray;
+		}
+		 
+		// begin is for left index and end is
+		// right index of the sub-array
+		// of arr to be sorted */
+		void mergeSort(int array[], int const begin, int const end)
+		{
+		    if (begin >= end)
+		        return; // Returns recursively
+		 
+		    auto mid = begin + (end - begin) / 2;
+		    mergeSort(array, begin, mid);
+		    mergeSort(array, mid + 1, end);
+		    merge(array, begin, mid, end);
+		}
+		 
+		// UTILITY FUNCTIONS
+		// Function to print an array
+		void printArray(int A[], int size)
+		{
+		    for (auto i = 0; i < size; i++)
+		        cout << A[i] << " ";
+		}
+		 
+		// Driver code
+		int main()
+		{
+		    int arr[] = { 12, 11, 13, 5, 6, 7 };
+		    auto arr_size = sizeof(arr) / sizeof(arr[0]);
+		 
+		    cout << "Given array is \n";
+		    printArray(arr, arr_size);
+		 
+		    mergeSort(arr, 0, arr_size - 1);
+		 
+		    cout << "\nSorted array is \n";
+		    printArray(arr, arr_size);
+		    return 0;
+		}
+
+
+		-> Quick Sort: Can be used to sort accounts/profiles by name or any given ID, sorting transactions by time or locations, sorting files by name or date of creation.
+
+		// C++ Implementation of the Quick Sort Algorithm.
+		#include <iostream>
+		using namespace std;
+		 
+		int partition(int arr[], int start, int end)
+		{
+		 
+		    int pivot = arr[start];
+		 
+		    int count = 0;
+		    for (int i = start + 1; i <= end; i++) {
+		        if (arr[i] <= pivot)
+		            count++;
+		    }
+		 
+		    // Giving pivot element its correct position
+		    int pivotIndex = start + count;
+		    swap(arr[pivotIndex], arr[start]);
+		 
+		    // Sorting left and right parts of the pivot element
+		    int i = start, j = end;
+		 
+		    while (i < pivotIndex && j > pivotIndex) {
+		 
+		        while (arr[i] <= pivot) {
+		            i++;
+		        }
+		 
+		        while (arr[j] > pivot) {
+		            j--;
+		        }
+		 
+		        if (i < pivotIndex && j > pivotIndex) {
+		            swap(arr[i++], arr[j--]);
+		        }
+		    }
+		 
+		    return pivotIndex;
+		}
+		 
+		void quickSort(int arr[], int start, int end)
+		{
+		 
+		    // base case
+		    if (start >= end)
+		        return;
+		 
+		    // partitioning the array
+		    int p = partition(arr, start, end);
+		 
+		    // Sorting the left part
+		    quickSort(arr, start, p - 1);
+		 
+		    // Sorting the right part
+		    quickSort(arr, p + 1, end);
+		}
+		 
+		int main()
+		{
+		 
+		    int arr[] = { 9, 3, 4, 2, 1, 8 };
+		    int n = 6;
+		 
+		    quickSort(arr, 0, n - 1);
+		 
+		    for (int i = 0; i < n; i++) {
+		        cout << arr[i] << " ";
+		    }
+		 
+		    return 0;
+		}
+		
+	References to answer this question: ( https://crackfaang.medium.com/sorting-algorithms-in-c-b0a601467dbf
+	http://www-cs-students.stanford.edu/~rashmi/projects/Sorting#:~:text=HeapSort%3A,because%20of%20the%20second%20array. 
+	https://www.geeksforgeeks.org/merge-sort/ https://www.geeksforgeeks.org/cpp-program-for-heap-sort/ https://www.geeksforgeeks.org/cpp-program-for-quicksort/)
+
 3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
+
+	The purpose of the destructor is to free the resources that the object may have acquired during its lifetime
+	when the destructor is virtual the class object will get deleted. Let's think for example in a situation where we have
+	a base class and a derived class, if we do not have a virtual destructor, just the base object will be deleted and we will have memory leak with the derived pointer,
+	but if we create virtual destructor to base and derived classes, all the objects (base and derived) will get deleted so there will not be memory leak for derived object.
+	If we do not have a virtual destructor we can have potential memory leak issues.
+
+	References to answer this question: ( https://en.cppreference.com/w/cpp/language/destructor https://www.geeksforgeeks.org/virtual-destructor/ )
+
 4. Explain the keyword: static. What does it mean in each context?
+	
+	The keyword static is used to give special characteristics to an element. Static elements are allocated storage only once in a program lifetime in static storage area.
+	And they have a scope till the program lifetime so instance is not required to access the static members.
+	Static keyword can be used with following:
+		-> Static variable in functions: Static variables when used inside function are initialized only once, and then they hold there value even through function calls.
+		
+		Example: In the example below if we use the variable 'count' as static variable the output will be: Output: 0 1 2 3 4
+		if we do not use the variable count as static variable the output will be: 0 0 0 0 0
+
+		void counter()
+		{
+			static int count=0;
+			cout << count++;
+		}
+
+		int main()
+		{
+			for(int i=0;i<5;i++)
+			{
+				counter();
+			}
+		}		
+
+		-> Static Class Objects: Objects declared static are allocated storage in static storage area, and have scope until the end of program.
+
+		Example: When we call the function f(), an instance obj of type Abc is created the constructor is called but the destructor is not called 
+		in the end of the scope "if" condition, because the object of the class was created with static keyword which has scope until the end of program.
+		Output: constructor END destructor
+		If the object of the class had not been created with static keyword, the destructor would had been called in the end of the scope "if" condition.
+		Output: constructor destructor END 
+
+		class Abc
+		{
+		    int i;
+		    public:
+		    Abc()
+		    {
+		        i=0;
+		        cout << "constructor";
+		    }
+		    virtual ~Abc()
+		    {
+		        cout << "destructor";
+		    }
+		};
+		
+		void f()
+		{
+		    static Abc obj;
+		}
+		
+		int main()
+		{
+		    int x=0;
+		    if(x==0)
+		    {
+		        f();
+		    }
+		    cout << "END";
+		}
+
+		-> Static member Variable in class: These members are shared by all the objects. Static data member has a single piece of storage, 
+		and is not available as separate copy with each object, like other non-static data members.  
+
+		Example: a static variable inside a class should be initialized explicitly by the user using the class name and scope resolution operator outside the class as shown below:
+		Output: 1
+
+		class X
+		{
+		    public:
+		    static int i;
+		    X()
+		    {
+		        // construtor
+		    };
+		};
+		
+		int X::i=1;
+		
+		int main()
+		{
+		    X obj;
+		    cout << obj.i;   // prints value of i
+		}
+
+		-> Static Methods in class: These functions work for the class as whole rather than for a particular object of a class.
+		
+		Example: The function is static then its more typical to call a static member function by itself, using class name and scope resolution :: operator.
+
+		class X
+		{
+		    public:
+		    static void f()
+		    {
+		        // statement
+		    }
+		};
+		
+		int main()
+		{
+		    X::f();   // calling member function directly with class name
+		}
+
+	References to answer this question: ( https://www.geeksforgeeks.org/static-keyword-cpp/ https://www.cprogramming.com/tutorial/statickeyword.html https://www.studytonight.com/cpp/static-keyword.php)
+
+
 5. When are static member variables initialized? 
+	
+	A static variable is initialized only once (since this is part of the declaration process) and will be initialized to 0 unless the programmer designates otherwise.
+	Subsequent invocations of the function in which a static variable resides will retain the last value of that variable.
+	
+	example: 
+
+	void my_function ( )
+	{
+		static short count = 1;
+		cout<<"this function has been called "<<count<<(count == 1 ? "time" : "times");
+		count++;
+		// more code
+	}
+
+	References to answer this question: (https://classes.mst.edu/compsci1570/staticvariables.htm#:~:text=A%20static%20variable%20is%20initialized,last%20value%20of%20that%20variable.)
+
+
 6. What is the difference between R-Values and L-Values?
+
+	L-Value is some thigs that point to a selected memory location, refers to a modifiable object in c++ that can be either left or right side of the assignment operator.
+	R-Value refers to a value stored at an address in the memory. It can appear only on the right-hand side of the assignment operator.
+	L-Value references can be assigned to Rvalue references but not vice versa.
+	Examples:
+	// Declaring the variable
+	int a{ 10 };
+	// Declaring reference to already created variable
+	int& b = a;
+
+	int x = 100; // 100 is an rvalue x is an lvalue.
+
+	Reference to answer this question: ( https://www.codingninjas.com/blog/2020/08/26/lvalue-and-rvalue-references-in-c/?amp )
+
 7. Is this code safe? If so why? If not why?
 	std::string foo()
 	{
 		std::string something = "avalue";
 		return something;
 	}
+
+	Yes, this code is safe. The string class is a safe alternative to using char* s to handle strings.
 	
 	Bonus: What would most compilers do with this code?
+
+	If we use this code, most compilers encounter the following error:
+
+	main.cpp:5:1: error: use of undeclared identifier 'std'
+	std::string foo()
+	^
+	main.cpp:7:3: error: use of undeclared identifier 'std'
+	                std::string something = "avalue";
+	                ^
+	main.cpp:14:3: error: use of undeclared identifier 'std'
+	  std::string r = foo();    
+	  ^
+	3 errors generated.
+
+	errors like these happen because the library is missing.
+
+	Another situation that show this code is safe its because we are not using using namespace std;
+	if we use this directive and we create a function or another thing who exists in std, the compiler is unable to
+	determine which version use. 
+	Example: We are using the directive "using namespace std;" and we created a function whose name is swap that exists in std,
+	then the compiler will show the following error: error: call of overloaded 'swap(int&, int&)' is ambiguous
+
+	Removing this directive "using namespace std;" and using std:: we can solute this problem.
+
+	#include <iostream>
+	using namespace std;
+	
+	// function for swapping numbers	
+	void swap (int& a, iot& b) {
+	  int temp = std::move(a);
+	  a = std::move(b);
+	  b = std::move(temp);	  
+	}
+	
+	int main() {
+	
+	  int a = 1;
+	  int b = 2;
+	
+	  swap(a, b);
+	
+	  return 0;
+	}
+
+	Reference to answer this question: ( https://www.cprogramming.com/tutorial/string.html )
+
+
 8. Why would you use new rather than malloc when allocating an object? Likewise, what's the difference between free and delete?
+	I use "new" rather than "malloc" because:
+		1. new allocates memory and calls constructor for object initialization. But malloc() allocates memory and does not call constructor.
+		2. return type of new is exact data type while malloc() returns void*.
+		3. new is faster than malloc() because an operator is faster than a function
+
+	Reference to answer this question: ( https://www.includehelp.com/cpp-tutorial/difference-between-new-and-malloc.aspx#:~:text=new%20allocates%20memory%20and%20calls,always%20faster%20than%20a%20function. )
+
+	The difference between free and delete are shown below:
+	1. free() is a C library function that can also be used in C++, while “delete” is a C++ keyword;
+	2. free() frees memory but doesn’t call Destructor of a class whereas “delete” frees the memory and also calls the Destructor of the class.
+	3. delete is faster than free() because an operator is faster than a function.
+	4. delete de-allocates the memory dynamically while free() destroys the memory at the runtime.
+
+	Reference to answer this question: ( https://www.includehelp.com/cpp-tutorial/difference-between-delete-and-free.aspx )
+	
+
 9. Explain the purpose of std::move, and std::forward. 
+
+	The purpose of std::move is indicate that an object may be "moved from", transforming an lvalue into an rvalue reference, allowing the efficient transfer of resources from source to another object.
+	std::move(a) - inform to compilator that value in 'a' may be "moved from" 'a'.
+	b = std::move(a) - the operation to move the element from a to b is done and the source 'a' doesn’t have the content after the move.
+	
+	The purpose of std::forward is to forward the argument to another function with the value category it had when passed to the calling function.
+	Forwards rvalues as rvalues and prohibits forwarding of rvalues as lvalues
+	
+	Reference to answer this question: ( https://www.cprogramming.com/c++11/rvalue-references-and-move-semantics-in-c++11.html https://en.cppreference.com/w/cpp/utility/move 
+										 https://www.inf.pucrs.br/~flash/lapro2ec/cppreference/w/cpp/utility/forward.html	)
+
+
 10. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
+
+	I can share resources safely between threads using some protection mechanism such as mutex. The std::lock_guard class template locks the supplied
+	mutex on construction and unlocks it on destruction, thus ensuring a locked mutex is always correctly unlocked.
+	
+	I would share an integer value safely between threads as follow:
+
+	int shared_data = 0;
+
+	std::mutex mtx;
+	
+	void function() {
+	
+		// the access to this function is mutually exclusive
+		std::lock_guard<std::mutex> guard(mtx);
+		shared_data++;
+		
+	}
+	
+	int main() {
+		std::thread t1(function);
+		std::thread t2(function);
+		t1.join();
+		t2.join();
+		std::cout << shared_data << std::endl;
+	}
+
+	output: 2
+
+	I would share an user defined type safely between threads as follow:
+
+	struct ThirdPartyAVSoftware
+	{
+		std::wstring Name;
+		std::wstring Description;
+		std::wstring DefinitionUpdateTime;
+		std::string DefinitionStatus;
+		std::wstring Version;
+		std::wstring ProductState;
+	};
+	
+	std::mutex mtx;
+	
+	void function() {
+	
+		// the access to this function is mutually exclusive
+		std::lock_guard<std::mutex> guard(mtx);
+	
+		std::wstring displayName, versionNumber, state, timestamp;
+		std::string definitionState;
+	
+		// Create a vector containing ThirdPartyAVSoftware
+		std::vector<ThirdPartyAVSoftware> thirdPartyAVSoftwareList;
+	
+		ThirdPartyAVSoftware thirdPartyAVSoftware;
+		thirdPartyAVSoftware.Name = displayName;
+		thirdPartyAVSoftware.DefinitionStatus = definitionState;
+		thirdPartyAVSoftware.DefinitionUpdateTime = timestamp;
+		thirdPartyAVSoftware.Description = state;
+		thirdPartyAVSoftware.ProductState = state;
+	
+		// Add one more object to vector
+		thirdPartyAVSoftwareList.push_back(thirdPartyAVSoftware);	
+	}
+	
+	int main() {
+		std::thread t1(function);
+		std::thread t2(function);
+		t1.join();
+		t2.join();	
+	}
+
+	Reference to answer this question: (https://www.bogotobogo.com/cplusplus/C11/7_C11_Thread_Sharing_Memory.php)
+
 11. What are the some of the principles of object-oriented programming?
+
+	Some of the principles of object-oriented programming are:
+
+	-> Abstraction: helps in the data hiding process. It helps in displaying the essential features without showing the details or the functionality to the user.
+	It avoids unnecessary information or irrelevant details and shows only that specific part which the user wants to see.
+
+	Example: We can implement Abstraction in c++ using classes. A Class can decide which data member will be visible to the outside world and which is not.
+
+	-> Encapsulation: The wrapping up of data and functions together in a class, for example, is known as encapsulation. 
+	It can be achieved by making the data members scope private and the member function’s scope public to access these data members. 
+	Encapsulation makes the data non-accessible to the outside world.
+	
+	-> Inheritance: is the process in which two classes have an is-a relationship among each other and objects of one class acquire properties and features of the other class.
+	The class which inherits the features is known as the child class, and the class whose features it inherited is called the parent class. 	
+	Example: Bus, Car, Truck can be Derived Class of Vehicle Base Class
+
+	-> Polymorphism: It is a feature that provides a function or an operator with more than one definition. It can be implemented using function overloading, operator overload, function overriding, virtual function.
+	Example: We can write two methods with the same name having different parameters.
+
+	Reference to answer this question: ( https://www.simplilearn.com/tutorials/cpp-tutorial/oops-concepts-in-cpp )
+
 12. Explain inheritance vs composition vs aggregation?
+
+	Inheritance: a class directly acquires all the attributes and methods of another class or classes and then extends or specializes them.
+	Inheritance is an ‘is-a’ relationship between classes.
+	Example: A teacher is a person
+
+	class Person{
+		private:
+			string name;
+			char gender;
+	};
+
+	class Teacher: public Person{
+		private:
+			string designation;
+			double salary;
+	};
+
+	Aggregation: can be defined as the process of reusing a class in a form of association, they might live without each other.
+	aggregation means “HAS-A relationship.”
+	Example:
+
+	class Student
+	{
+		public:  
+		string Name;  
+		float ID;
+	};
+
+	class Details   
+	{    
+		private:  
+			Student* std;  
+		public:  
+			int stdclass;    
+			string section;   
+	};
+
+
+	Composition: a class contains one or more objects of other classes as private members to use the functionalities of other classes through their objects. Its a special kind of aggregation.
+	they might not live without each other
+	Composition is a ‘has-a’ relationship between classes.
+	Example:  a car has an engine
+
+	class Engine{  
+		private:
+			int horsepower;
+	};
+
+	class Car{  
+		private:
+			int model;
+			Engine obj;
+	};
+				
+    Reference to answer this question: ( https://www.educative.io/answers/what-is-the-difference-between-composition-and-inheritance https://www.educba.com/composition-vs-aggregation/ )
+
 13. Should you always initialize variables? 
+
+	A variable must always be initialized before use. Normally, the compiler gives a warning if a variable is undefined. It is then sufficient to take care of such cases. 
+
+	Reference to answer this question: ( https://www.doc.ic.ac.uk/lab/cplus/c%2B%2B.rules/chap11.html#:~:text=A%20variable%20must%20always%20be,the%20empty%20constructor%20is%20invoked )
+
 14. What concept(s) in C++ would you use to manage resources automatically?
+	We can use RAII (Resource Acquisition Is Initialization) concepts.
 	a. How important are these concepts? 	
+		These concepts are important because binds the life cycle of a resource that must be acquired before use (allocated heap memory, thread of execution, open socket, open file, 
+		locked mutex, disk space, database connection—anything that exists in limited supply) to the lifetime of an object.
 	b. What tools are you familiar with for tracking resource allocations? 
+	    	I already used GNU malloc and valgrind at linux environment
+
 15. What security concerns have you come across in the past and how have you addressed them?
+	Format string vulnerability, Zombie processes and Leak memory i addressed the most part of them using Standard Template Library (STL)
+	Most of the problems I had were from using solutions that didn't consider the best programming practices like, for example, using STL.
+
+
 16. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
+    SonarQube, Docker, AzureDevops 
+
 17. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
+	Code analysis tool like SonarQube, version control tool like Git, automated tests like Selenium.
+	Comment the code, Write code that can be easily modified, Write code that can be easily tested,
+	Remove unused code, Clearly track dependencies, Separate configuration from code.
+
+
 18. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
 	a. Consider both a long term and short-term solutions. 
+
+	I had a similar situation in my career when I joined a company where all the engineering time was gone and the challenge was to understand all the legacies.
+	Considering a long term, i have time to develop the following steps:	
+		1. Use some version control tool;
+		2. Look for any existing documentation such as text documents, figures, use cases, bug reports, emails, memos, meeting minutes;
+		3. Format the source code into something readable;
+		4. Get metrics to provide estimates of the time and effort needed to make improvements;
+		5. Know the source code and its dependencies;
+		6. Create documentation;
+		7. Refactoring, testing and continuous integration;
+		8. Develop the improvements;		
+		9. Use comparison tool.
+
+	Considering a short term solution, i can develop the following steps:
+		1. Use some version control tool;
+		2. Look for any existing documentation such as text documents, figures, use cases, bug reports, emails, memos, meeting minutes;				
+		3. Know the source code and its dependencies;
+		4. Create basic documentation;
+		5. Develop the improvements and test;
+
 19. What concerns do you had supporting legacy operating systems? (If any)
+
+	1. Compatibility: the legacy operating system can become incompatible with new systems or technologies.
+	2. Security: Lack of support, updates or maintenance, leads to creating patches that can end up causing security breaches.
+	3. Performance and producivity: Legacy systems become slower over time, decreasing performance, efficiency and productivity.
+	
+
 20. Tell us about a project you worked on that you found to be interesting or unusual. 
+
+	A project I worked on that I found very interesting to develop was install a farm of servers, configurate servers with wmware ESXI, create and manage virtual machines and use this farm of servers to develop 
+	a solution for monitoring technology assets. In this project I create a service in c that requests data from assets via modbus TCP/IP protocol and stores this data in a server database 
+	and monitoring technology assets via protocol SNMP using Zabbix and Grafana.

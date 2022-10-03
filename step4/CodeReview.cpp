@@ -8,6 +8,10 @@ We do not expect you to execute this code, but you are welcome to try.
 Make any code updates that you see fit (If any). 
 Comments are encouraged.
 
+	I could make some changes in this code such as:
+	1. Inset comments about the purpose of the method, type of parameters and returns;
+	2. I think its better use class than struct 
+
 */
 
 
