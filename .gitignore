@@ -31,3 +31,11 @@
 *.out
 *.app
 step2/~$quirements.docx
+
+
+#Compilation Artifacts
+out/
+
+#Configuration folders
+.vs/
+.vscode
