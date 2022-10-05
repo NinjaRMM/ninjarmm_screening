@@ -10,6 +10,14 @@ Comments are encouraged.
 
 */
 
+//Add Headers
+#include <string>
+#include <map>
+#include <windows.h>
+#include <iostream>
+#include <iwscapi.h>
+#include <atlbase.h>
+
 
 struct ThirdPartyAVSoftware
 {
@@ -24,16 +32,12 @@ struct ThirdPartyAVSoftware
 bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftware>& thirdPartyAVSoftwareMap)
 {
     HRESULT hr = S_OK;
-    IWscProduct* PtrProduct = nullptr;
+    IWscProduct* PtrProduct = nullptr; //This is not used until much later prefer to create your variables close to where they are used
     IWSCProductList* PtrProductList = nullptr;
     BSTR PtrVal = nullptr;
     LONG ProductCount = 0;
-    WSC_SECURITY_PRODUCT_STATE ProductState;
-    WSC_SECURITY_SIGNATURE_STATUS ProductStatus;
-
     std::wstring displayName, versionNumber, state, timestamp;
-    std::string definitionState;
-
+    
     hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&PtrProductList));
     if (FAILED(hr))
     {
@@ -45,16 +49,19 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
     if (FAILED(hr))
     {
         std::cout << "Failed to query antivirus product list. ";
+        //Here PtrProductList might get leaked 
         return false;
     }
 
     hr = PtrProductList->get_Count(&ProductCount);
     if (FAILED(hr))
     {
+        //Here PtrProductList might get leaked 
         std::cout << "Failed to query product count.";
         return false;
     }
 
+    //Keep loops short, better to separate this to its own function
     for (uint32_t i = 0; i < ProductCount; i++)
     {
         hr = PtrProductList->get_Item(i, &PtrProduct);
@@ -73,7 +80,8 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         }
 
         displayName = std::wstring(PtrVal, SysStringLen(PtrVal));
-
+        //Move declarations closer to usage
+        WSC_SECURITY_PRODUCT_STATE ProductState;
         hr = PtrProduct->get_ProductState(&ProductState);
         if (FAILED(hr))
         {
@@ -81,9 +89,10 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
             continue;
         }
 
+        //This should be a switch 
         if (ProductState == WSC_SECURITY_PRODUCT_STATE_ON)
         {
-            state = L"On";
+            state = L"On"; //Where is state defined, is it a global
         }
         else if (ProductState == WSC_SECURITY_PRODUCT_STATE_OFF)
         {
@@ -93,15 +102,15 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         {
             state = L"Expired";
         }
-
+        WSC_SECURITY_SIGNATURE_STATUS ProductStatus;
         hr = PtrProduct->get_SignatureStatus(&ProductStatus);
         if (FAILED(hr))
         {
             std::cout << "Failed to query AV product definition state.";
             continue;
         }
-
-        definitionState = (ProductStatus == WSC_SECURITY_PRODUCT_UP_TO_DATE) ? "UpToDate" : "OutOfDate";
+        //Define here
+        std::string definitionState = (ProductStatus == WSC_SECURITY_PRODUCT_UP_TO_DATE) ? "UpToDate" : "OutOfDate";
 
         hr = PtrProduct->get_ProductStateTimestamp(&PtrVal);
         if (FAILED(hr))
@@ -120,6 +129,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         thirdPartyAVSoftware.ProductState = state;
         thirdPartyAVSoftwareMap[thirdPartyAVSoftware.Name] = thirdPartyAVSoftware;
 
+        //what about when we skip this part of the loop, we need an object that can clean this up automatically
         PtrProduct->Release();
     }
 
