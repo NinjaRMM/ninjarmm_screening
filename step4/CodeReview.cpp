@@ -13,10 +13,16 @@ Comments are encouraged.
 //Add Headers
 #include <string>
 #include <map>
+#include <optional>
 #include <windows.h>
 #include <iostream>
 #include <iwscapi.h>
 #include <atlbase.h>
+
+#define OnErrorPrintAndExit(result, text, returnval) \
+    if(FAILED(result)) {std::cout << text <<std::endl; return (returnval);}
+#define OnErrorPrintAndContinue(result, text) \
+    if(FAILED(result)) {std::cout << text <<std::endl; continue;}
 
 
 struct ThirdPartyAVSoftware
@@ -29,108 +35,69 @@ struct ThirdPartyAVSoftware
     std::wstring ProductState;
 };
 
+
 bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftware>& thirdPartyAVSoftwareMap)
 {
     HRESULT hr = S_OK;
-    IWscProduct* PtrProduct = nullptr; //This is not used until much later prefer to create your variables close to where they are used
-    IWSCProductList* PtrProductList = nullptr;
-    BSTR PtrVal = nullptr;
-    LONG ProductCount = 0;
-    std::wstring displayName, versionNumber, state, timestamp;
-    
-    hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&PtrProductList));
-    if (FAILED(hr))
-    {
-        std::cout << "Failed to create WSCProductList object. ";
-        return false;
-    }
+    CComPtr<IWSCProductList> PtrProductList;
+    hr = PtrProductList.CoCreateInstance(__uuidof(WSCProductList),NULL, CLSCTX_INPROC_SERVER);
+    //Error handling is more than the main code, lets clean that
+    OnErrorPrintAndExit(hr, "Failed to create WSCProductList object.", false)
 
     hr = PtrProductList->Initialize(WSC_SECURITY_PROVIDER_ANTIVIRUS);
-    if (FAILED(hr))
-    {
-        std::cout << "Failed to query antivirus product list. ";
-        //Here PtrProductList might get leaked 
-        return false;
-    }
+    OnErrorPrintAndExit(hr, "Failed to query antivirus product list." , false )
 
+    LONG ProductCount = 0;
     hr = PtrProductList->get_Count(&ProductCount);
-    if (FAILED(hr))
-    {
-        //Here PtrProductList might get leaked 
-        std::cout << "Failed to query product count.";
-        return false;
-    }
+    OnErrorPrintAndExit(hr, "Failed to get the productCount" , false )
 
+    
     //Keep loops short, better to separate this to its own function
     for (uint32_t i = 0; i < ProductCount; i++)
     {
+        
+        CComPtr<IWscProduct> PtrProduct = nullptr;
         hr = PtrProductList->get_Item(i, &PtrProduct);
-        if (FAILED(hr))
-        {
-            std::cout << "Failed to query AV product.";
-            continue;
-        }
+        OnErrorPrintAndContinue(hr, "Failed to query AV product.");
+        
+        CComBSTR displayName = nullptr;
+        hr = PtrProduct->get_ProductName(&displayName);
+        OnErrorPrintAndContinue(hr, "Failed to query AV product name.");
 
-        hr = PtrProduct->get_ProductName(&PtrVal);
-        if (FAILED(hr))
-        {
-            PtrProduct->Release();
-            std::cout << "Failed to query AV product name.";
-            continue;
-        }
-
-        displayName = std::wstring(PtrVal, SysStringLen(PtrVal));
-        //Move declarations closer to usage
         WSC_SECURITY_PRODUCT_STATE ProductState;
         hr = PtrProduct->get_ProductState(&ProductState);
-        if (FAILED(hr))
-        {
-            std::cout << "Failed to query AV product state.";
-            continue;
-        }
+        OnErrorPrintAndContinue(hr, "Failed to query AV product state.");
 
-        //This should be a switch 
-        if (ProductState == WSC_SECURITY_PRODUCT_STATE_ON)
-        {
-            state = L"On"; //Where is state defined, is it a global
-        }
-        else if (ProductState == WSC_SECURITY_PRODUCT_STATE_OFF)
-        {
-            state = L"Off";
-        }
-        else
-        {
+        std::wstring state;
+        switch (ProductState) {
+        case WSC_SECURITY_PRODUCT_STATE_ON:  
+            state = L"On";  
+            break;
+        case WSC_SECURITY_PRODUCT_STATE_OFF:  
+            state = L"Off";  
+            break;
+        default:
             state = L"Expired";
         }
+
         WSC_SECURITY_SIGNATURE_STATUS ProductStatus;
         hr = PtrProduct->get_SignatureStatus(&ProductStatus);
-        if (FAILED(hr))
-        {
-            std::cout << "Failed to query AV product definition state.";
-            continue;
-        }
+        OnErrorPrintAndContinue(hr, "Failed to query AV product definition state.");
+        
         //Define here
         std::string definitionState = (ProductStatus == WSC_SECURITY_PRODUCT_UP_TO_DATE) ? "UpToDate" : "OutOfDate";
+        CComBSTR timestamp = nullptr;
+        hr = PtrProduct->get_ProductStateTimestamp(&timestamp);
+        OnErrorPrintAndContinue(hr, "Failed to query AV product definition state.");
 
-        hr = PtrProduct->get_ProductStateTimestamp(&PtrVal);
-        if (FAILED(hr))
-        {
-            std::cout << "Failed to query AV product definition state.";
-            continue;
-        }
-        timestamp = std::wstring(PtrVal, SysStringLen(PtrVal));
-        SysFreeString(PtrVal);
-
-        ThirdPartyAVSoftware thirdPartyAVSoftware;
-        thirdPartyAVSoftware.Name = displayName;
-        thirdPartyAVSoftware.DefinitionStatus = definitionState;
-        thirdPartyAVSoftware.DefinitionUpdateTime = timestamp;
-        thirdPartyAVSoftware.Description = state;
-        thirdPartyAVSoftware.ProductState = state;
+        ThirdPartyAVSoftware thirdPartyAVSoftware{
+            .Name = displayName,
+            .DefinitionStatus = definitionState,
+            .DefinitionUpdateTime = timestamp,
+            .Description = state,
+            .ProductState = state
+        };
         thirdPartyAVSoftwareMap[thirdPartyAVSoftware.Name] = thirdPartyAVSoftware;
-
-        //what about when we skip this part of the loop, we need an object that can clean this up automatically
-        PtrProduct->Release();
     }
 
     if (thirdPartyAVSoftwareMap.size() == 0)
