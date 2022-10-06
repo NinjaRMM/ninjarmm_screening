@@ -1,6 +1,6 @@
 
 Please write small program in C++ to do the following:
-	a. Query for installed OS patches
+	a. Query for installed OS patches and packages
 	b. Query for general system information 
 	c. Feel free to add any functionality you feel will showcase your abilities. 
 	
