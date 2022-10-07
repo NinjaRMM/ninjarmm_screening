@@ -31,3 +31,6 @@
 *.out
 *.app
 step2/~$quirements.docx
+# CLion
+.idea/
+build/

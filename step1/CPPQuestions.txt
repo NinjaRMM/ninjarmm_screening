@@ -1,30 +1,210 @@
-1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
-2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
-3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
-4. Explain the keyword: static. What does it mean in each context?
-5. When are static member variables initialized? 
-6. What is the difference between R-Values and L-Values?
-7. Is this code safe? If so why? If not why?
+:::: 1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
+
+The Standard Library has many containers, here I present some, but not all;
+
+- list
+- map
+- unordered_map
+- queue
+- set
+- unordered_set
+- vector
+
+Their differences are in the way they are implemented and its use cases
+
+For example, a vector is implemented as an array, while a list is implemented as a linked list
+A vector uses contiguous memory, while a list does not
+This means that a vector is faster to access, but slower to insert and delete elements
+A list is slower to access, but faster to insert and delete elements
+
+Talking about the use cases, a vector is a good choice when you need to access elements by index
+A vector should be the goto container for most cases
+In the case you need to insert and delete elements a lot, a list is better
+
+
+:::: 2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
+
+a. std::sort          -> based on quicksort
+b. std::stable_sort   -> based on merge sort
+c. std::partial_sort  -> based on heap sort
+
+Some use cases for each:
+
+a. When you need a fast sort, but don't need it to be stable
+b. When you need a good sort, and need it to be stable
+c. Can sort an interval instead of the entire container
+
+Stable meaning that the original order of elements is preserved
+
+
+:::: 3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly.
+
+Virtual destructors (Dtors) are used to ensure that the correct destructor is called when deleting
+a derived class object through a pointer to a base class
+
+Memory leaks, and undefined behavior can arise if not used correctly
+
+Slicing can also occur, which is when a derived class object is deleted through a pointer to a base
+class, and the derived class destructor is not called
+
+
+:::: 4. Explain the keyword: static. What does it mean in each context?
+
+The keyword static can be used in many contexts'
+
+a. linkage
+b. storage duration
+c. class/function scope
+d. member variable
+e. member function
+
+a. linkage in the context of function definition means that the function is only visible in the current translation unit
+b. storage duration means that a variable exists for the entire duration of the program
+c. class/function scope means that a variable is only visible in the class/function it is defined in
+d. member variable means that the variable is shared between all instances of the class
+e. member function means it does not have access to the object instance "this" pointer
+
+
+:::: 5. When are static member variables initialized?
+
+static member variables are initialized when the first instance of the class is created
+
+
+:::: 6. What is the difference between R-Values and L-Values?
+
+rvalues references are temporary values which you can't take the address of
+rvalue references can be moved from, but not copied from
+lvalues references are references that have a name, and you can take the address of
+
+
+:::: 7. Is this code safe? If so why? If not why?
 	std::string foo()
 	{
 		std::string something = "avalue";
 		return something;
 	}
-	
-	Bonus: What would most compilers do with this code?
-8. Why would you use new rather than malloc when allocating an object? Likewise, what's the difference between free and delete?
-9. Explain the purpose of std::move, and std::forward. 
-10. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
-11. What are the some of the principles of object-oriented programming?
-12. Explain inheritance vs composition vs aggregation?
-13. Should you always initialize variables? 
-14. What concept(s) in C++ would you use to manage resources automatically?
+
+	--> The code is safe, because the string is returned by value
+
+  :::: Bonus: What would most compilers do with this code?
+  NRVO (Named Return Value Optimization) can be applied, and the string is moved from
+
+
+:::: 8. Why would you use new rather than malloc when allocating an object? Likewise, what's the difference between free and delete?
+
+Because "malloc" does not call the constructor, while "new" does
+But most implementations of "malloc" guarantees that the allocated memory is aligned, while "new" does not
+The difference between "free" and "delete" is that "free" does not call the destructor, while "delete" does
+
+
+:::: 9. Explain the purpose of std::move, and std::forward.
+
+std::move is used to cast an lvalue to an rvalue
+std::move is used to move from an lvalue, instead of copying from it
+
+std::forward is used to cast an lvalue to an rvalue, but only if the argument is an lvalue
+std::forward is used to forward arguments to a function, without losing their type
+
+
+:::: 10. How do you share resources safely between threads? How would you share an integer value vs user defined type?
+
+To safely share resources between threads, you need to use a mutex
+Sharing an integer between threads can be achieved by using an "atomic_int", which is lock free
+To share a user defined type between threads, you need to use a mutex
+
+
+:::: 11. What are the some of the principles of object-oriented programming?
+
+a. Abstraction
+b. Encapsulation
+c. Inheritance
+d. Polymorphism
+
+
+:::: 12. Explain inheritance vs composition vs aggregation?
+
+inheritance is when a class inherits from another class
+inheritance is used to reuse code, and to create a hierarchy of classes
+inheritance is used to create a "is-a" relationship; Ex: a cat is an animal
+
+composition is when a class has a member variable of another class
+composition models a "has-a" relationship; Ex: a car has an engine
+
+aggregation is when a class has a member variable of another class
+aggregation is used when the lifetime of the member variable is not tied to the lifetime of the class instance
+aggregation also models a "has-a" relationship
+
+
+:::: 13. Should you always initialize variables?
+
+Yes, you should always initialize variables, because it is undefined behavior to use an uninitialized variable
+
+
+:::: 14. What concept(s) in C++ would you use to manage resources automatically?
 	a. How important are these concepts? 	
-	b. What tools are you familiar with for tracking resource allocations? 
-15. What security concerns have you come across in the past and how have you addressed them?
-16. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
-17. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
-18. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
+	b. What tools are you familiar with for tracking resource allocations?
+
+a. RAII (Resource Acquisition Is Initialization) is used to manage resources automatically
+a. RAII is very important, because it ensures that resources can always be freed in the class destructor
+a. RAII frees resources in the correct order
+a. RAII is used to ensure that resources are freed even if an exception is thrown
+
+b. I am familiar with the "std::unique_ptr" and "std::shared_ptr" smart pointers
+b. I am also familiar with the "std::lock_guard" class, which is used to lock a mutex
+b. I am also familiar with the "std::unique_lock" class, which is also used to lock a mutex
+b. I am also familiar with the "std::scoped_lock" class, which is used to lock multiple mutexes
+
+
+:::: 15. What security concerns have you come across in the past and how have you addressed them?
+
+Memory corruption and buffer overflows are security concerns
+
+- Variable initialization helps preventing memory corruption
+- Using "std::string" or "std::string_view" classes are safer than using "char*" arrays
+- Using "std::vector" or "std::array" classes are safer than using raw arrays that decay to pointers
+- Avoiding the use of "raw" pointer to arrays and doing pointer arithmetic
+
+
+:::: 16. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
+
+a. Debuggers
+b. IDEs
+c. Profilers
+d. Static analysis tools
+e. Unit testing frameworks
+
+
+:::: 17. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.
+
+a. Code abstractions
+b. Code refactoring
+
+
+:::: 18. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution.
 	a. Consider both a long term and short-term solutions. 
-19. What concerns do you had supporting legacy operating systems? (If any)
-20. Tell us about a project you worked on that you found to be interesting or unusual. 
+
+a. For a short term solution
+
+First I would map all classes, functions and macros with a tool like SourceTrail
+After that I would find all the places where the change is needed
+Then I would make the change, and test it manually
+And finally I would write a unit test for the code that I changed
+
+a. For a long term solution
+
+I would try to compile the code with a C++17/20 compiler to be able to make use of modern C++ features
+I would, progressively, refactor the code to make it more readable
+I would also, progressively, add unit tests to the code
+
+
+:::: 19. What concerns do you had supporting legacy operating systems? (If any)
+
+I don't have many concerns supporting legacy operating systems
+The only concern would be that the compiler might not support the latest C++ standard and it can't be upgraded
+This would freeze the code in a older compiler version, and it would be harder to refactor the code
+
+
+:::: 20. Tell us about a project you worked on that you found to be interesting or unusual.
+
+In the beginning of this year I was working in a Crypto Currency Exchange project and it was interesting
+because I was learning about the financial market
