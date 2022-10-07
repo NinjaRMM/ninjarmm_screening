@@ -9,7 +9,7 @@ Make any code updates that you see fit (If any).
 Comments are encouraged.
 
 */
-
+#include <atlbase.h>
 
 struct ThirdPartyAVSoftware
 {
@@ -24,17 +24,20 @@ struct ThirdPartyAVSoftware
 bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftware>& thirdPartyAVSoftwareMap)
 {
     HRESULT hr = S_OK;
-    IWscProduct* PtrProduct = nullptr;
-    IWSCProductList* PtrProductList = nullptr;
-    BSTR PtrVal = nullptr;
-    LONG ProductCount = 0;
-    WSC_SECURITY_PRODUCT_STATE ProductState;
-    WSC_SECURITY_SIGNATURE_STATUS ProductStatus;
+    
+    /** if you havent already done this ... initialize COM */
+    hr = CoInitializeEx(NULL, COINIT_MULTITHREADED);
+    if (FAILED(hr))
+    {
+      std::cout << "Failed to initialize COM.";
+      return false;
+    }
 
-    std::wstring displayName, versionNumber, state, timestamp;
-    std::string definitionState;
+    /** I moved all the variables down close to where they were used */
 
-    hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&PtrProductList));
+    /** Use smart pointers to deal with all the returns and continues without leaking ref counts (and objects) */
+    CComPtr<IWSCProductList> PtrProductList;
+    hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), &PtrProductList);
     if (FAILED(hr))
     {
         std::cout << "Failed to create WSCProductList object. ";
@@ -48,32 +51,45 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         return false;
     }
 
+    LONG ProductCount = 0;
     hr = PtrProductList->get_Count(&ProductCount);
     if (FAILED(hr))
     {
         std::cout << "Failed to query product count.";
         return false;
     }
-
-    for (uint32_t i = 0; i < ProductCount; i++)
+    
+    /** 
+     * so, we do not know the stae of the map on input so, i am assuming that this method will get all 
+     * the products. clear the map 
+     */
+    thirdPartyAVSoftwareMap.clear();  
+    
+    /** Changed to LONG to avoid type mismatch and possible compiler warning */
+    for (LONG i = 0; i < ProductCount; i++)
     {
+        /** use smart ptr */
+        CComPtr<IWscProduct> PtrProduct;
         hr = PtrProductList->get_Item(i, &PtrProduct);
         if (FAILED(hr))
         {
             std::cout << "Failed to query AV product.";
             continue;
         }
-
+        
+        /** use smart BSTR wrapper, dont wanna leak a bstr now when we continue or return */
+        CComBSTR PtrVal;
         hr = PtrProduct->get_ProductName(&PtrVal);
         if (FAILED(hr))
         {
-            PtrProduct->Release();
             std::cout << "Failed to query AV product name.";
             continue;
         }
+        std::wstring displayName = std::wstring(PtrVal, SysStringLen(PtrVal));
 
-        displayName = std::wstring(PtrVal, SysStringLen(PtrVal));
-
+	// added a default to Unknown they may add a state in future who knows
+	std::wstring state("Unknown");
+        WSC_SECURITY_PRODUCT_STATE ProductState;
         hr = PtrProduct->get_ProductState(&ProductState);
         if (FAILED(hr))
         {
@@ -81,7 +97,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
             continue;
         }
 
-        if (ProductState == WSC_SECURITY_PRODUCT_STATE_ON)
+	if (ProductState == WSC_SECURITY_PRODUCT_STATE_ON)
         {
             state = L"On";
         }
@@ -89,43 +105,53 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         {
             state = L"Off";
         }
-        else
+        /** you missed a state */
+        else if (ProductState == WSC_SECURITY_PRODUCT_STATE_SNOOZED)
+        {
+            state = L"Snoozed";
+        }
+        else if (ProductState == WSC_SECURITY_PRODUCT_STATE_EXPIRED)
         {
             state = L"Expired";
         }
 
+        WSC_SECURITY_SIGNATURE_STATUS ProductStatus;
         hr = PtrProduct->get_SignatureStatus(&ProductStatus);
         if (FAILED(hr))
         {
-            std::cout << "Failed to query AV product definition state.";
+            /** fixed error message, copy and paste kills peaches */
+            std::cout << "Failed to query AV product signature status.";
             continue;
         }
-
-        definitionState = (ProductStatus == WSC_SECURITY_PRODUCT_UP_TO_DATE) ? "UpToDate" : "OutOfDate";
+        std::string definitionStatus = (ProductStatus == WSC_SECURITY_PRODUCT_UP_TO_DATE) ? "UpToDate" : "OutOfDate";
 
         hr = PtrProduct->get_ProductStateTimestamp(&PtrVal);
         if (FAILED(hr))
         {
-            std::cout << "Failed to query AV product definition state.";
+            /** fixed error message, copy and paste kills peaches */        
+            std::cout << "Failed to query AV product state timestamp.";
             continue;
         }
-        timestamp = std::wstring(PtrVal, SysStringLen(PtrVal));
-        SysFreeString(PtrVal);
-
+        std::wstring timestamp = std::wstring(PtrVal, SysStringLen(PtrVal));
+ 
         ThirdPartyAVSoftware thirdPartyAVSoftware;
         thirdPartyAVSoftware.Name = displayName;
-        thirdPartyAVSoftware.DefinitionStatus = definitionState;
+        thirdPartyAVSoftware.DefinitionStatus = definitionStatus;
         thirdPartyAVSoftware.DefinitionUpdateTime = timestamp;
-        thirdPartyAVSoftware.Description = state;
+        /** 
+         * display name is probably better as a description instead of state .... 
+         * if you need a description .... the object doesnt expose a method to get one so ....
+         * you should probably remove the description if you cannot get a meaningful one 
+         * or i guess you could settle on display name 
+         */
+        thirdPartyAVSoftware.Description = displayName; 
         thirdPartyAVSoftware.ProductState = state;
         thirdPartyAVSoftwareMap[thirdPartyAVSoftware.Name] = thirdPartyAVSoftware;
+                
+        /** Removed the release WAY down here since with all those continues, you may not get here 
+            and we are now using smart pointers */
+   }
 
-        PtrProduct->Release();
-    }
-
-    if (thirdPartyAVSoftwareMap.size() == 0)
-    {
-        return false;
-    }
-    return true;
+   /** removed the if logic since map knows if its empty */
+   return !thirdPartyAVSoftwareMap.empty();
 }

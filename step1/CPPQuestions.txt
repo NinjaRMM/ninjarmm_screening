@@ -1,30 +1,458 @@
 1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
+	There are basically 4 different "sets" if you will of containers in C++:
+		a) Sequence containers
+			1. std::array:
+				Fixed length array.
+				Contiguous in memory values.
+				This one can't change in size. Its basically just an array.
+				Use wuen you need FAST index based access AND you know the size up front.
+				However, If you have too many items, dont use this ... use a vector.
+				Has a data() method you can use to get direct access to the pointer (just like normal arrays).
+			2. std::vector
+				Basically a dynamic array.
+				Can be resized.
+				Insertion anywhere other than the end CAN be a little slow since, well, you have to move items.
+				You can, however reserve size in the array up front to some reasonable amount so you can reduce non-stop allocations if you have a lot of insertions.
+				Use when you don't know the number of items up front and still need index based access to items.
+				Use if you happen to need contiguous items (since this is the only other container that guarantees that)
+				Can only EFFICIENTLY add items to the end.
+				You can add items to the beginning but ... well you gotta move stuff ... its slow.
+			3. std::deque
+				ALMOST a double ended vector. The only difference is items are not contiguous. (and you don't have a data() method .... big clue).
+				You can efficiently add and remove items from the front AND back.
+				Use when you need to add items to both ends.
+				This container is used as the basis for a number the "adaptor" containers (stack/queue).
+			4. std::forward_list
+				A singly linked list.
+				Items can efficiently be added to the END.
+				Iteration is in one direction (forward obviously).
+				No size method (you have to count them) so dont use if you needto constantly check the size of this guy.
+				No direct access by index (you have to iterate ... forward).
+				If you need a list of items and it doesn't need to be sorted AND you need fast insertion in the middle of the list.
+				You can insert FAST anywhere in the list (provided you have an iterator already) since it doesnt need to move items like vector.
+				Of course because of this .... items are not contiguous.
+			5. std::list
+				Same as forward list except its a doubly linked list and you can iterate in both directions.
+				Requires more memory ... each item has 2 pieces of data to reference the next and previous item.
+				No direct access by index (you have to iterate ... forward ... or backward).
+				Really only need this one if you want to iterate in both directions.
+		b) Ordered Associative containers
+			1. std::set
+				Stores unique elements (no duplicates) and maintains them in sorted order.
+				The items stored are ALSO the key in addition to being the value (unlike map).
+				You can replace the comparator to change the sort order ... the default is std::less.
+				Of course if you insert a LOT of items into a set it might be better to use a vector with reserved space and then sort with std::unique as it will be a lot faster.
+				Fast traversal.
+				Traversal is in SORT ORDER.
+			2. std::multiset
+				Same as set ... except you can store multiple items with same key. They will be grouped together.
+				Use upper_bound()/lower_bound() to get an iterator to the upper and lower bound gieven a key.
+				You can get all items matching a key with equal_range()
+				Traversal is in SORT ORDER.
+			3. std::map
+				Stores keys and items as a pair.
+				Stored value is not the key like set(s).
+				Stays sorted after all inserts.
+				Keys are unique.
+				Fast lookup (primary reason to use this guy).
+				Traversal is not as fast as unordered map as this guy usually uses a tree type structure as its implementation.
+				Traversal is in SORT ORDER.
+			4. std::multimap
+				Same as map but keys are not unique.
+				Mutliple items stored with same key.
+				Use upper_bound()/lower_bound() to get an iterator to the upper and lower bound gieven a key.
+				You can get all items matching a key with equal_range().
+				Fast lookup.
+				Traversal is not as fast as unordered multimap as this guy usually uses a tree type structure as its implementation.
+				Traversal is in SORT ORDER.
+		c) Unordered Associative containers
+			1. std::unordered_set
+				Same as set except items are not sorted.
+				Uses a hash table to maintain uniqueness.
+				Faster lookup than ordered set (hash table).
+				Slower for traversal.
+				Traversal is NOT in SORT ORDER.
+			2. std::unordered_multiset
+				Same as multiset except items are not sorted.
+				Uses a hash table to maintain uniqueness.
+				Faster lookup than ordered multiset (hash table).
+				Slower for traversal.
+				Traversal is NOT in SORT ORDER.
+			3. std::unordered_map
+				Same as map except items are not sorted.
+				Uses a hash table to maintain uniqueness.
+				Faster lookup than ordered map (hash table).
+				Slower for traversal.
+				Traversal is NOT in SORT ORDER.
+			4. std::unordered_multimap
+				Same as multimap except items are not sorted.
+				Uses a hash table to maintain uniqueness.
+				Faster lookup than ordered multimap (hash table).
+				Slower for traversal.
+				Traversal is NOT in SORT ORDER.
+		d) Containers that are really just adaptors around Sequences
+			1. std::stack:
+				LIFO queue (last in first out)
+				Uses a deque but "adapts" its interface allowing just push/pop.
+				Push to top ... pop from top.
+			2. std::queue:
+				FIFO (first in first out) queue.
+				Uses a deque but "adapts" its interface allowing just push/pop.
+				Push to back ... pop from front.
+			3. std::priority_queue:
+				Queue containing items in sorted order (using a comparator ... defaults to std::less).
+				The greatest item will be on the top of the queue and will be popped first.
+				If you want to change the order ... replace the default comparator (or change your items override of < ... hacky)
+
+
 2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
-3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
+  1) Binary sort: Usually done with an array or a binary try (AVL tree is one that maintains its balance).
+		Here you basically start in the middle of the array and if an item being inserted is greater than the
+		middle item you go to the middle of the higher half. If its lower you go to the middle of the bottom
+		half. You continue this until you have narrowed down where to insert the item. Then you insert it.
+		Binary trees do it differently and if you want to maintain search performance you have to keep them
+		balanced (multiple ways to do that ABL/Red-Black yada yada).
+		Good for large datasets where you are doing a lot of searching.
+		If you persist and load the dataset already sorted into memory (using an array based binary search is good for this)
+		can make loading it fast as well. Insertion and deletion of the array based variant will be slower if there
+		is a LARGE dataset.
+
+	2) Insertion sort: Start with an unsorted list. Start inserting items into the sorted list by comparing.
+		Can have worst case performance if the items are already sorted in the unsorted list.
+		Efficient for small datasets. If the dataset is large it will perform poorly.
+
+	3) Merge sort: Here you continually split the dataset into halves until you cannot split it
+	  any more (this is usually done recursively .... use data recursion and not the stack if the dataset is large)
+		then you merge the data smallest to largest sorting it as you go. Since you have already split it
+		down to the smallest sequence (1 or 0) each merge is trivial on the way back up the stack.
+		To make merge sort a little more efficient you could stop recursing when the items are a small size (not 1 or 0)
+		and use an insertion sort. This limits the amount of recursion.
+		Slower for small datasets. Does require more memory due to all the splitting.
+
+3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly.
+	If you want polymorphic behavior you must use virtual methods and inheritance.
+	If you derive one class from another you want objects of that class's resources released when
+	an object is destroyed. You declare the destructor virtual to ensure that the derived classes
+	destructor is called then the base class (that's the order BTW ... constructors are called base class first).
+	If you do NOT declare the destructor virtual if you have a POINTER to a BASE class
+	object on the heap and you delete it .... the derived class destructor will NOT get called potentially
+	leaking memory.
+	BTW this is not an issue if you declare the object on the stack in a scope and
+	its destroyed upon returning since the compiler KNOWS what type is created and destroyed
+	and will call the destructor(s) correctly regardless of them being virtual.
+	You however cannot guarantee your object is always created and destroyed on the stack (unless you
+	override the new operator (including the new[]) and make them private).
 4. Explain the keyword: static. What does it mean in each context?
-5. When are static member variables initialized? 
+	1) static class member variables
+		class A {
+			public:
+				A() {}
+				static int _x;
+		};
+
+		int A::_x = 0;
+
+		The variable is static with respect to the class i.e. it is not an instance variable
+		and is effectively like a global variable but has class scope.
+		It is initialized before the first instance of the class is created.
+		You can access it using the class as scope (i.e. A::x = 7; ) ... not the this pointer (i.e. an instance of A)
+	2) static functions in a compilation unit
+		The function is not accessible outside the compilation unit.
+	3) static methods in a class
+		The function is not an instance method and doesn't have access to the instance data
+		of a class unless you pass an instance of the class to it to it.
+		It can be called using the class as scope with out an instance of the classes
+
+		class A {
+			public:
+				A() : _y(0) {}
+
+				static void doit(A &a) {
+					_x = 7; // you can access static data directly
+					a._y = 9; // but you need an instance to access instance data.
+				}
+				static int _x;
+				int y;
+		};
+
+		// you can call this way
+		A b;
+		A::doit(b);
+
+		stat
+
+	4) static variable in a functions
+		int doit() {
+			static int x = 0;
+		  return x;
+		}
+
+		One copy of the variable for all calls of the function initialized before first call of the function.
+		Not initialized on subsequent calls
+
+5. When are static member variables initialized?
+	Before the first instance of the class are created
+
 6. What is the difference between R-Values and L-Values?
+	L-Values are usually the "left" value in an assignment
+	R-Values are the "right" value and may or may not have storage.
+	R-Values may also be temporary (like the temporary r value ... below when assigning the return value):
+
+ std::string get() {
+ 	 return std::string("TEST");
+ }
+
+ // there is a temporary R value created when the funtion returns the string by vlaue
+ // it disappears (gets destroyed) after the statement below
+ // I assume at some point we may talk about
+ // R values ... and move constructors or move assignment ... since
+ // std::string implements these. If it didnt you would incur an extra copy
+ // unless you get lucky and the compiler uses copy elision (implemented around 2005 by MSVC and other compilers)
+ // to remove the extra object copy
+ std::string str = get();
+
 7. Is this code safe? If so why? If not why?
 	std::string foo()
 	{
 		std::string something = "avalue";
 		return something;
 	}
-	
+
+	Its safe.
+	The string something is initialized with "avalue". (the string is COPIED when its assigned to something ... it doesnt just store the pointer ... that would be bad.....)
+	something is returned BY VALUE.
+	A temporary R-value is created.
+	Since std:string implements a move constructor the temporary value is MOVED into the final string when the call is assigned to some variable.
+
+	Now that said .... none of that would happen ..... lets move to the bonus.
+
+
 	Bonus: What would most compilers do with this code?
+	Your string would get initialized and the compiler would see that there is one path to a single return and use copy elision to constuct
+	the string in place in whatever varaible you assigned it to.
+	see: https://en.cppreference.com/w/cpp/language/copy_elision
+
+	So:
+	std::string a = foo();
+	would really just construct a in place with the value of something .... basically 1 constructor call.
+
 8. Why would you use new rather than malloc when allocating an object? Likewise, what's the difference between free and delete?
-9. Explain the purpose of std::move, and std::forward. 
-10. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
+  If you want the destructor to get called ... you would use new ... unless you are a bonehead. malloc would just allocate the memory you toold it to.
+	It would not initialize it ... call the contructors, etc.
+	Conversely ... delete would call the destructors ... free would not.
+	At the end of the day new may call malloc to get the memory ... and then call the constructors.
+	If you want to have fun we can talk about placement new .... another discussion.
+	Also ... dont free nullptr .... but deleting nullptr is just fine (its a noop)
+	Everyone still feels the need to freaking do this though:
+    if (ptr != nullptr)
+		  delete ptr;
+	ouch ... that just hurts.
+
+9. Explain the purpose of std::move, and std::forward.
+   If you look at std::move its really just a typecast to an rvalue reference of the type of the argument. (i.e type && )
+	 You could achieve the same thing (and I have shown this in C++ classes I give at NCR in my group)
+	 	static_cast<type&&>(sometype);
+	 Use it if you want to make sure he move assignment or move constructor gets called.
+	 NOTE: Unlike what some people think std::move() doesnt actually MOVE anything.
+	       It doesnt CALL the move assignment itself. The compiler does that because
+               it sees the type of the value being assigned is an R-value reference.
+
+	 std::forward essentially does the same thing. Its really a typecast. It converts an lvalue
+	 to an rvalue reference to pass to a function. You usually use it in templates where type deduction
+	 dedeuces the lvalue type and you want to forward it to another function as an rvlaue reference.
+
+   consider:
+	   template<class T>
+		 void doit(T &&t) {
+		    another_functon(std::forward<T>(t));
+		 }
+
+   Depending on what gets passed to doit() and what T is deduced to be std::forward guarantees that
+   when we pass t to another_function it is an rvalue reference .... or T&&.
+
+10. How do you share resources safely between threads? How would you share an integer value vs user defined type?
+	Well if you do not need to SHARE a value DON'T. If you don't need to observe changes to the value during the
+	threads execution and the object isn't large .. COPY it and avoid the synchronization and the context switches.
+	BUT IF YOU MUST:
+  	  You can share the int by passing a reference to it to the thread but put it in an std::atomic_int so you dont need to lock.
+
+	  If you must share other (non-atomic) resources you will need to synchronize access using a mutex.
+
+	  You could also allocate the object and push it into a FIFO queue and have the thread wait on a condition variable until signaled there is work to do ....
+	  but as you know that still involves a mutex around the "condition being evaluated" and the same mutex would likely be used to guard
+	  the queue ... since they aren't thread safe.
+
+	  SIDE NOTE: If you pass an int into the thread and want to pass it out and dont care about the value while the
+	    thread is running use a future and call get() and wait for the result.
+
 11. What are the some of the principles of object-oriented programming?
+    Well ... I like PIE.
+			Polymorphism:
+				Many behaviors. Basically this just means you have one
+				"interface" for lack of a better term and many behaviors for implementors of that interface.
+				How does C++ provide it? Virtual functions.
+			Inheritance: Allowing one class to inherit behavior from a "parent" class and then extend it.
+ 		                C++ uses classes and inheritance .....
+				class A {}
+				class B : public A {} // there is also protected, private, and virtual inheritance
+			Encapsulation:
+				The idea that you hide or "encapsulate" your data inside of classes or group
+				methods in classes that support the behavior you want.
+						class A {
+						public:
+							void honk() {}	// encapsulate the methods too.
+							void stop() {}
+						private:
+							int a;	// stick my data in here
+							int b;
+						}
+
 12. Explain inheritance vs composition vs aggregation?
-13. Should you always initialize variables? 
+			Inheritance = IS A
+				Inheritance means an object IS A type or some other object and can also extend it.
+				In c++ we derive or extend 1 object from another adding data and behaviors.
+			Aggregation: One object owns another object. The owners lifetime is always longer than the owned object
+				class A {
+				};
+				class B {
+				private:
+ 				  A a;
+				};
+			Composition: One object CONTAINS other objects This isn't always an exclusive ownership like Aggregation.
+				Think of a GUI toolkit. A window may have a lot of resources and children.
+				Some of those resources my not be "owned" by the window but shared resources
+				Consider:
+		 			class Window {
+					public:
+						Window(Font *f, Image *background);
+						void addChild(Window *child);
+					private:
+						std::vector<Window*> _children;
+						Font *_font;
+						Image *_background;
+					};
+
+				NOTE: you could use a builder pattern to "compose" or build windows.
+
+
+13. Should you always initialize variables?
+	Yes. Be explicit. Even if its an int and its value is initially 0.
+	In release mode the compiler will not be kind to you and fun bugs will ensue.
+
 14. What concept(s) in C++ would you use to manage resources automatically?
-	a. How important are these concepts? 	
-	b. What tools are you familiar with for tracking resource allocations? 
+  	I assume here you are talking about
+			1) RAII (Resource Acquisition is Initialization)
+				std::unique_lock: Use this one instead of lock() unlock() and you will have less deadlocks in your code.
+				(unless you like recursive mutex's and callbacks .... then all bets are off).
+			2) Smart pointers
+				std::unique_ptr: Initialize with a pointer and the object gets deleted when it goes out of scope.
+				                 This way when you catch an exception you wont skip your delete and leak memory.
+				                 You cano also add a custom deleter as well if the pointer is some C resource (like a FILE*)
+				std::shared_ptr: Keys track of a pointer and in internal reference count that is maintained when you
+				                 copy the pointer. This will make you happy when pointers you share all over the place
+												 don't get deleted multiple times or deleted early while you are still using them.
+
+		a. How important are these concepts?
+			If you want programs not to crash or deadlock or leak memory .... very.
+
+	b. What tools are you familiar with for tracking resource allocations?
+			Valgrind memcheck comes to mind. It has about 10 plugins for various things.
+				a) boundary checking
+				b) leak/double free .. etc.
+
 15. What security concerns have you come across in the past and how have you addressed them?
+		a) SQL injection attacks. Don't write freeform SQL queries. Use parameterized queries.
+		b) Storing user passwords. Use OpenSSL (not just for this, its huge) and encrypt the values before saving in the database.
+
 16. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
-17. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
-18. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
-	a. Consider both a long term and short-term solutions. 
-19. What concerns do you had supporting legacy operating systems? (If any)
-20. Tell us about a project you worked on that you found to be interesting or unusual. 
+		a) CMake: I find this easy to use to manage build systems.
+		b) Static analysis tools.
+				CLion has decent static analysis tools built in. Its also nice to run SonarQube on your code at least once a release.
+		c) Security scanning tools can be nice:
+				Gitleaks will find keys embedded in your code.
+				Coverity will scan the code with a security focus
+		d) Profilers to analyze performance.
+		e) Jenkins (I prefer Version One) ... you gotta build it after all.
+
+17. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.
+		1) But trackers (i.e. jira)
+		2) kanban: An agile process used to track work by maintenance/support teams.
+
+18. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution.
+	a) Short term:
+		1) Review the code to see what I think it does currently
+		2) Talk to people on the team that have worked with the code if any and see how they think the current code works.
+		3) Talk with product management to see how they think the functionality should work.
+		4) For a feature create a design (size depending on the feature or bug fix of course).
+		5) Get it reviewed by peers.
+		6) Implement change.
+		7) I am REALLY hoping you have a code review process ...
+	b) Long term:
+		1) If the code is to be kept. CREATE UNIT TESTS.
+		2) If I can refactor/re-implement the code in future at that time make sure the requirements are
+		   written down and store somewhere (I don't know what tools you use for this) and then ADD UNIT TESTS.
+		3) Unit tests are not automated testing .... I would also hope long term that the code is tested at the
+		   solution/product level not just unit tests.
+
+19. What concerns do you have supporting legacy operating systems? (If any)
+		If what you mean here is PERSONAL concerns.
+			1) None, as long as that's not ALL I am doing.
+		If what you mean is from a product perspective
+			1) Is the platform getting security patches .. if not ... that's bad.
+			2) What kind of and how good are the tools available for the platform.
+
+20. Tell us about a project you worked on that you found to be interesting or unusual.
+
+The project I am on now. It's not often you get to design and build system that uses Inversion of
+Control to use XML files to drive the execution of code to reduce coupling of code. The system allows
+for the adding of "Actions" and flow code completely separately. To change the behavior of the system you
+change the XML file and POSSIBLY add more actions. The new actions can be anywhere in the system. No action
+knows of the existence of another. They just have inputs and outputs using Transaction objects.
+
+Consider (just an example):
+
+An xml file controls the flow:
+  <Flows>
+    <Flow Name="HandleStartError">
+	<Call Action="Cry"/>
+	<Abort />
+    </Flow>
+
+    <Flow Name="StartCar">
+      <Call Action="InsertKey" OnError="HandleStartError"/>
+        <If Condition="KeyFits == YES">
+          <Call Action="TurnKey" OnError="HandleStartError"/>
+        </If>
+    </Flow>
+  </Flows>
+
+
+In the code you have methods in plugins that take input in the form of a transaction that Stores names and values.
+
+
+int ErrorProcessor::Cry(std::shared_ptr<Transaction> tran) {
+  // since we failed ... this is what we do ... cry and we will succeed.
+  return EC_SUCCESS;
+}
+
+int CarProcessor::InsertKey(std::shared_ptr<Transaction> tran) {
+  tran->put("KeyFits", "YES");
+  return EC_SUCCESS;
+}
+
+tnt CarProcessor::TurnKey(std::shared_ptr<Transaction> tran) {
+  if (turnTheKey(tran) == false) {
+    return EC_ERROR;
+  }
+  return EC_SUCCESS;
+}
+
+Implementing the code to process the xml and build the parse tree for the expressions in the Condition was fun.
+Executing the xml "statements" and evaluating the expressions based on the Transaction object data
+was kind of fun as well.
+
+Doing it so that the minimum execution speed of evaluating simple expressions in our unit
+tests was over 1000000 a second was exceedingly fun.
+
+Building the AST for the parsed grammar of the expression and writing the code to pass in the tran data
+and evaluate true/false for the expressions ... fun.
