@@ -1,30 +1,239 @@
 1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
+    
+    Following are the types of container according to the website https://en.cppreference.com/, considering only the containers up to the c++11 version
+
+
+    ## Sequence containers
+
+    Sequence containers implement data structures which can be accessed sequentially.
+
+    array
+        definition: A sequence of objects allocated in contiguous memory that provide random access.
+        use case: If what you want is a simple fixed-length sequence of objects of a given type in memory.
+
+    vector
+        definition: A sequence of elements of a given type. The elements are stored contiguously in memory and manages its storage dynamically. Also provide random access.
+        use case: When you need random access and a dynamic size. In practical terms, unless you have a solid reason not to, use a vector.
+        
+    deque
+        definition: A cross between a vector and a list. A sequence optimized for insertion and deletion of elements at both its beginning and its end. It is implemented as a double-ended queue.
+        use case: If you add or remove elements frequently at both the front and back of a container, use std::deque.
+
+    forward_list
+        definition: It is a singly-linked list. Compared to std::list this container provides more space efficient storage when bidirectional iteration is not needed. This container not provide insert(), erase(), push_back(), size() and others.
+        use case: When you are concerned about storage size more than you are about access iteration. Ideal for empty and very short sequences. For example, an empty forward_list takes up just one word of memory.
+
+    list
+        definition: A sequence optimized for insertion and deletion of elements from anywhere. Its non-contiguous memory locations and not provide random access. It is usually implemented as a doubly-linked list.
+        use case: If you don't need random access and need to insert/remove elements quickly from anywhere, use list.
+
+
+    ## Associative containers
+
+    Associative containers implement sorted data structures that can be quickly searched (O(log n) complexity).
+
+    set
+        definition: An ordered container of unique elements called keys.
+        use case: Use it when you need to keep track of individual values that are unique and sorted.
+
+    map
+        definition: Is a sorted associative container that contains key-value pairs with unique keys, and works as an associative array.
+        use case: Use a map if you want to look up values based on the key, through operator[].
+
+    multiset
+        definition: A set where a key can occur multiple times
+        use case: Use a multiset rather than a set if it's important that you store multiple elements with the same key. For example, when you have a struct with more than one property and you want to filter by some of them. 
+
+    multimap
+        definition: A map where a key can occur multiple times
+        use case: Use a multimap rather than a map if it's important that you store multiple elements with the same key. 
+            Example:
+                multimap<string, const Message*> sender;
+                auto pp = sender.equal_range("John Doe <jdoe@machine.example>");
+
+
+    ## Unordered associative containers 
+
+    Unordered associative containers implement unsorted (hashed) data structures that can be quickly searched (O(1) amortized, O(n) worst-case complexity).
+
+    unordered_set
+        definition: Like unordered_map, but just with values, not (key,value) pairs
+        use case: If performance is an issue, and in a situation in which there is no natural ordering among the keys and you don’t need to iterate through the collection in such an order. 
+
+    unordered_map
+        definition: A hash table; an optimized version of map.
+        use case: Use for large maps when you need high performance and can devise a good hash function.
+
+    unordered_multiset
+        definition: An unordered_set where a key can occur multiple times
+        use case: When multiset is an option but you don't need sorted data, and performance is an issue.
+
+    unordered_multimap
+        definition: An unordered_map where a key can occur multiple times
+        use case: When multimap is an option but you don't need sorted data, and performance is an issue.
+
+
+    ## Container adaptors
+
+    Container adaptors provide a different interface for sequential containers.
+
+    stack
+        definition: Is a data structure with two fundamental operations: push and pop, with an arrangement called last-in, first-out (LIFO).
+        use case: Use a stack when you need a stack algorithm, for example a Backtracking.
+
+    queue
+        definition: Is a data structure like a stack, but with an arrangement first-in, first-out (FIFO).
+        use case: Use a queue when you need a queue algorithm, for example a producer/consumer messaging model.
+
+    priority_queue
+        definition: Is a data structure like a stack, but keeps elements sorted according to some user-specified comparator object.
+        use case: Use a priority_queue when you need a container sorted by some criteria.
+
+
 2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
+    ## Bubble Sort
+        runtime: O(n^2) average and worst case. Memory: O(1).
+        description: In bubble sort, we start at the beginning of the array and swap the first two elements if the first is greater than the second. Then, we go to the next pair, and so on, continuously making sweeps of the array until it is sorted. In doing so, the smaller items slowly "bubble" up to the beginning of the list.
+        use case: For small sets, or when memory is a limitation.
+
+    ## Merge Sort: 
+        runtime: Runtime: O(n log(n)) average and worst case. Memory: O(n).
+        description: Merge sort divides the array in half, sorts each of those halves, and then merges them back together. Each of those halves has the same sorting algorithm applied to it. Eventually, you are merging just two single­element arrays. It is the "merge" part that does all the heavy lifting.
+        use case: Is very efficient for sorting linked lists.
+        
+    ## Quick Sort: 
+        runtime: Runtime: O(n log(n)) average, O(n^2) worst case. Memory: O(log(n)).
+        description: In quick sort we pick a random element and partition the array, such that all numbers that are less than the partitioning element come before all elements that are greater than it. The partitioning can be performed efficiently through a series of swaps.
+        use case: Is very efficient for sorting small datasets. It is also the preferred when allocating additional memory is costly.
+ 
+
 3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
+    Adding the virtual destructor causes the Derived Class destructor to get invoked when you delete the Base Class pointer. Lack of virtual destructor in base could cause undefined behavior.
+
+
 4. Explain the keyword: static. What does it mean in each context?
+    Static Variables: Exist for the "lifetime" of the translation unit that it's defined in.
+    Static Member Function: Differs from a regular member function in that it can be called without an instance of a class.
+    Static Function: Will not be referred to by any other translation unit, and thus the linker can ignore it entirely.
+
 5. When are static member variables initialized? 
+    It' s initialized only the first time it's is called.
+
 6. What is the difference between R-Values and L-Values?
+    An L-Value is an expression that identifies an object that could in principle be modified, correspond to objects you can refer to, either by name or by following a pointer or L-Value reference. An R-Value an expression that identifies something that may not be modified or have its address taken, such as a temporary value (e.g., the value returned by a function).
+
 7. Is this code safe? If so why? If not why?
 	std::string foo()
 	{
 		std::string something = "avalue";
 		return something;
 	}
+    Yes, it is safe. Because without compiler optimizations, a copy of string will be returned.
 	
 	Bonus: What would most compilers do with this code?
+
+    The compiler can optimize this code with the return value optimization (RVO). Is a compiler optimization that involves eliminating the temporary object created to hold a function's return value.
+
 8. Why would you use new rather than malloc when allocating an object? Likewise, what's the difference between free and delete?
+    "new" calls constructors, while malloc() does not. "new" operator is specific for C++ only, while malloc() is a C library function that can also be used in C++.
+    free() frees memory but doesn’t call Destructor of a class whereas "delete" frees the memory and also calls the Destructor of the class.
+
+
 9. Explain the purpose of std::move, and std::forward. 
+    std::move and std::forward are merely functions (actually function templates) that perform casts. std::move unconditionally casts its argument to an rvalue, while std::forward performs this cast only if a particular condition is fulfilled.
+    The purpose of std::move is to allows you to swap resources instead of copying them. And we use std::forward to retrieve the original value category, quite useful in universal reference.
+
 10. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
+    To access a resource safely, you must prevent simultaneous access to it. This can be done via a std::mutex or std::atomic type.
+    If only the integer scope needs safety, std::atomic is enough. As the user defined type needs to provide a specialization for std::atomic<>, it's simpler to use a std::mutex.
+    
+
 11. What are the some of the principles of object-oriented programming?
+    Abstraction: Hide details that we don't need to use a facility ("implementation details")
+    Inheritance: Reuse code 
+    Encapsulation: Hide data that we don’t want user to see and show data that we want them to see.
+    Polymorphism: "many shapes", i.e. can change the way that something works by changing the way it is done or just some parts of it. 
+
+    ## SOLID principles
+
+    1.1. Single Responsibility Principle (SRP)
+        A class should have one and only one reason to change, meaning that a class should have only one job.
+
+    1.2. Open/Closed Principle (OCP)
+        Objects or entities should be open for extension, but closed for modification.
+
+    1.3. Liskov Substitution Principle  (LSP)
+        Derived classes must be substitutable for their base classes.
+
+    1.4. Interface Segregation Principle (ISP)
+        Make fine grained interfaces that are client specific.
+
+    1.5. Dependency Inversion Principle (DIP)
+        Depend on abstractions, not on concretions.
+
+
 12. Explain inheritance vs composition vs aggregation?
+    Inheritance: Inheritance is a feature or a process in which, new classes are created from the existing classes.
+    Composition: Composition is a strong Association. The child object does not have their own life cycle and it depends on the parent's life cycle.
+    Aggregation: Aggregation is a weak Association. All objects have their own life cycle.
+
+
 13. Should you always initialize variables? 
+    It's a good practice to cleaning memory before use it. Uninitialized variables are a common source of bugs 
+
 14. What concept(s) in C++ would you use to manage resources automatically?
+    - Resource Acquisition Is Initialization or RAII
+    - Smart Pointers
+        
 	a. How important are these concepts? 	
+        The advantages of RAII as a resource management technique are that it provides encapsulation, exception safety (for stack resources), and locality (it allows acquisition and release logic to be written next to each other).
+
+        Smart pointers provides a user-friendly interface to share and manage resources. They use the RAII philosophy to ensure that heap allocated objects are destroyed any time the pointer variable is destroyed.
+
 	b. What tools are you familiar with for tracking resource allocations? 
+        I currently use Vscode with gdb in debug mode to track these resources. But I've also used Valgrind.
+
+
 15. What security concerns have you come across in the past and how have you addressed them?
+    ## Bugs
+        A bug can be a potential security risk in the application. For this I try to do the appropriate tests, whenever possible automated with the implementation of unit and integration tests.
+
+    ## Hide critical information
+        Logs, message exchanges between processes, APIs and anything else that transmits information, should be given a lot of attention. This data may jeopardize the security of the user. Even application binaries can be a risk if symbols are present. For this, I try to let only transmit essential information and, when necessary, encrypted. As for binary, strip tools remove symbols.
+
+    ## App Privileges
+        Protect the app from running routines with admin permission when not needed. For this, I try to separate the routines that are executed with privilege from the others that do not need to, such as between services and UIs.
+
+    ## Dynamic links
+        Avoid dynamic links. Because an attacker can replace a DLL with a malicious one.
+
+
 16. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
+    - Design Patterns
+    - TDD
+    - Unit tests (gtest, gmock)
+    - Integration tests (cucumber)
+    - Good Text editor with autocomplete, linter, formatter (Vscode, Clang-Tidy, Clang-Format)
+
 17. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
+    - Unit tests (gtest, gmock)
+    - Integration tests (cucumber)
+    - Static code analysis (CodeChecker)
+    - Conan package manager
+    - Git (Gitlab, Github)
+    - CI/CD (Gitlab, Jenkins)
+
+
 18. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
 	a. Consider both a long term and short-term solutions. 
+    
+    short-term - I analyze the current code. I check if it is possible to do a simple test. I make the change and test again to see if the behavior remains the same.
+    long-term - I analyze the current code. I see what needs to be done to allow the inclusion of tests. Implement automated tests. And I make the change, validate with the tests are keep it for future use.
+
 19. What concerns do you had supporting legacy operating systems? (If any)
+    - Some versions of dependencies may not be compatible with the operating system (ABI Compatibility). It may be necessary to recompile the code with older versions. However, depending on the case, such as using a version of c++ that the operating system does not have a supported compiler, may not be possible. This can happen on linux, due to incompatibility with glibc. There are work arounds to try to make it work, but it can be a nightmare.
+    - In the case of Windows and MacOs, which have many APIs for accessing system information, privileges, among other things, there may be a break in compatibility. For this you can implement a different behavior for each version, or mark an older version as incompatible for installation/update. Other APIs can coexist in the application system, and care must also be taken.
+
+
 20. Tell us about a project you worked on that you found to be interesting or unusual. 
+    I worked on a project where I was responsible for refactoring a monolithic legacy code that aimed to change the architecture to microservices and make use of messaging services like kafka. It was a big challenge because I had to better study the concepts of microservices, in addition to the tools we could use. I picked up some good books on the subject for this and a lot of internet research. After the studies, the refactoring stages were planned, dividing them into small changes and testing each stage and appling the concepts. It was a long way, but a great learning experience.

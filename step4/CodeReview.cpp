@@ -11,121 +11,189 @@ Comments are encouraged.
 */
 
 
-struct ThirdPartyAVSoftware
+#include "CodeReview.hpp"
+#include "ThirdPartyAVSoftware.hpp"
+#include "ScopedCoInitialize.hpp"
+
+#include <atlbase.h>
+#include <windows.h>
+#include <iwscapi.h>
+#include <Wscapi.h>
+#include <iostream>
+#include <optional>
+
+
+// 1 - Breaking the code into smaller parts helps readability
+// 2 - I prefer the output in return, but in this case, to improve readability, I chose to use an output parameter.
+static bool parseProductName(IWscProduct* ptrProduct, ThirdPartyAVSoftware& thirdPartyAVSoftware);
+static bool parseProductState(IWscProduct* ptrProduct, ThirdPartyAVSoftware& thirdPartyAVSoftware);
+static bool parseProductStatus(IWscProduct* ptrProduct, ThirdPartyAVSoftware& thirdPartyAVSoftware);
+static bool parseProductStateTimestamp(IWscProduct* ptrProduct, ThirdPartyAVSoftware& thirdPartyAVSoftware);
+static std::optional<ThirdPartyAVSoftware> getAntiVirusInfo(IWSCProductList *ptrProductList, ULONG index);
+
+bool AntiVirusInfoSeeker::queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftware>& thirdPartyAVSoftwareMap)
 {
-    std::wstring Name;
-    std::wstring Description;
-    std::wstring DefinitionUpdateTime;
-    std::string DefinitionStatus;
-    std::wstring Version;
-    std::wstring ProductState;
-};
+    // CoInitialize has to be called in every single thread that uses COM
+    auto scopedCoInitialize = ScopedCoInitialize();
+    // Use a smart pointer class for managing COM interface pointers.
+    CComPtr<IWSCProductList> ptrProductList;
 
-bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftware>& thirdPartyAVSoftwareMap)
-{
-    HRESULT hr = S_OK;
-    IWscProduct* PtrProduct = nullptr;
-    IWSCProductList* PtrProductList = nullptr;
-    BSTR PtrVal = nullptr;
-    LONG ProductCount = 0;
-    WSC_SECURITY_PRODUCT_STATE ProductState;
-    WSC_SECURITY_SIGNATURE_STATUS ProductStatus;
+    LONG productCount = 0;
 
-    std::wstring displayName, versionNumber, state, timestamp;
-    std::string definitionState;
+    // 1 - 'hr' is too short, reduces readability
+    // 2 - auto variables must be initialized, are generally immune to type mismatches that 
+    //   can lead to portability or efficiency problems, can ease the process of refactoring, 
+    //   and typically require less typing than variables with explicitly specified types
+    // 3 - Use nullptr insted of NULL
+    auto hResult = CoCreateInstance(
+        __uuidof(WSCProductList),
+        nullptr,
+        CLSCTX_INPROC_SERVER,
+        __uuidof(IWSCProductList),
+        reinterpret_cast<LPVOID*>(&ptrProductList));
 
-    hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&PtrProductList));
-    if (FAILED(hr))
+    if (FAILED(hResult))
     {
+        // If this function is to be used in the future by a lib, I suggest not using stdout, 
+        // perhaps a log when in debug mode, or returning the error to the function that calls it.
         std::cout << "Failed to create WSCProductList object. ";
         return false;
     }
 
-    hr = PtrProductList->Initialize(WSC_SECURITY_PROVIDER_ANTIVIRUS);
-    if (FAILED(hr))
+    hResult = ptrProductList->Initialize(WSC_SECURITY_PROVIDER_ANTIVIRUS);
+    if (FAILED(hResult))
     {
         std::cout << "Failed to query antivirus product list. ";
         return false;
     }
 
-    hr = PtrProductList->get_Count(&ProductCount);
-    if (FAILED(hr))
+    hResult = ptrProductList->get_Count(&productCount);
+    if (FAILED(hResult))
     {
         std::cout << "Failed to query product count.";
         return false;
     }
 
-    for (uint32_t i = 0; i < ProductCount; i++)
+    // The types were different 
+    for (LONG i = 0; i < productCount; i++) 
     {
-        hr = PtrProductList->get_Item(i, &PtrProduct);
-        if (FAILED(hr))
+        auto antiVirus = getAntiVirusInfo(ptrProductList, i);
+        if (antiVirus) 
         {
-            std::cout << "Failed to query AV product.";
-            continue;
+            thirdPartyAVSoftwareMap[antiVirus.value().name] = antiVirus.value();
         }
-
-        hr = PtrProduct->get_ProductName(&PtrVal);
-        if (FAILED(hr))
-        {
-            PtrProduct->Release();
-            std::cout << "Failed to query AV product name.";
-            continue;
-        }
-
-        displayName = std::wstring(PtrVal, SysStringLen(PtrVal));
-
-        hr = PtrProduct->get_ProductState(&ProductState);
-        if (FAILED(hr))
-        {
-            std::cout << "Failed to query AV product state.";
-            continue;
-        }
-
-        if (ProductState == WSC_SECURITY_PRODUCT_STATE_ON)
-        {
-            state = L"On";
-        }
-        else if (ProductState == WSC_SECURITY_PRODUCT_STATE_OFF)
-        {
-            state = L"Off";
-        }
-        else
-        {
-            state = L"Expired";
-        }
-
-        hr = PtrProduct->get_SignatureStatus(&ProductStatus);
-        if (FAILED(hr))
-        {
-            std::cout << "Failed to query AV product definition state.";
-            continue;
-        }
-
-        definitionState = (ProductStatus == WSC_SECURITY_PRODUCT_UP_TO_DATE) ? "UpToDate" : "OutOfDate";
-
-        hr = PtrProduct->get_ProductStateTimestamp(&PtrVal);
-        if (FAILED(hr))
-        {
-            std::cout << "Failed to query AV product definition state.";
-            continue;
-        }
-        timestamp = std::wstring(PtrVal, SysStringLen(PtrVal));
-        SysFreeString(PtrVal);
-
-        ThirdPartyAVSoftware thirdPartyAVSoftware;
-        thirdPartyAVSoftware.Name = displayName;
-        thirdPartyAVSoftware.DefinitionStatus = definitionState;
-        thirdPartyAVSoftware.DefinitionUpdateTime = timestamp;
-        thirdPartyAVSoftware.Description = state;
-        thirdPartyAVSoftware.ProductState = state;
-        thirdPartyAVSoftwareMap[thirdPartyAVSoftware.Name] = thirdPartyAVSoftware;
-
-        PtrProduct->Release();
     }
 
-    if (thirdPartyAVSoftwareMap.size() == 0)
+    // Use empty method here
+    if (thirdPartyAVSoftwareMap.empty())
     {
         return false;
     }
     return true;
 }
+
+std::optional<ThirdPartyAVSoftware> getAntiVirusInfo(IWSCProductList *ptrProductList, ULONG index) 
+{
+    ThirdPartyAVSoftware thirdPartyAVSoftware;
+    // Use a smart pointer class for managing COM interface pointers.
+    CComPtr<IWscProduct> ptrProduct;
+
+    auto hResult = ptrProductList->get_Item(index, &ptrProduct);
+    if (FAILED(hResult))
+    {
+        std::cout << "Failed to query AV product." << std::endl;
+        return {};
+    }
+
+    if (!parseProductName(ptrProduct, thirdPartyAVSoftware))
+    {
+        std::cout << "Failed to query AV product name." << std::endl;
+        return {};
+    }
+
+    if (!parseProductState(ptrProduct, thirdPartyAVSoftware))
+    {
+        std::cout << "Failed to query AV product state." << std::endl;
+        return {};
+    }
+
+    if (!parseProductStatus(ptrProduct, thirdPartyAVSoftware))
+    {
+        std::cout << "Failed to query AV product definition state." << std::endl;
+        return {};
+    }
+
+    if (!parseProductStateTimestamp(ptrProduct, thirdPartyAVSoftware)) 
+    {
+        std::cout << "Failed to query AV product definition state." << std::endl;
+        return {};
+    }
+
+    return {thirdPartyAVSoftware};
+}
+
+bool parseProductName(IWscProduct* ptrProduct, ThirdPartyAVSoftware& thirdPartyAVSoftware) 
+{
+    // Use a smart pointer class for managing COM interface pointers.
+    CComBSTR ptrVal;
+
+    auto hResult = ptrProduct->get_ProductName(&ptrVal);
+    if (FAILED(hResult))
+    {
+        return false;
+    }
+
+    thirdPartyAVSoftware.name = std::wstring(ptrVal, SysStringLen(ptrVal));
+    return true;
+}
+
+bool parseProductStatus(IWscProduct* ptrProduct, ThirdPartyAVSoftware& thirdPartyAVSoftware) 
+{
+    WSC_SECURITY_SIGNATURE_STATUS ProductStatus;
+    auto hResult = ptrProduct->get_SignatureStatus(&ProductStatus);
+    if (FAILED(hResult))
+    {
+        return false;
+    }
+    // Could be used enum here. Strong types helps avoid typos and reduces memory usage compared to strings
+    thirdPartyAVSoftware.definitionStatus = (ProductStatus == WSC_SECURITY_PRODUCT_UP_TO_DATE) ? "UpToDate" : "OutOfDate";
+    return true;
+}
+
+bool parseProductState(IWscProduct* ptrProduct, ThirdPartyAVSoftware& thirdPartyAVSoftware)
+{
+    WSC_SECURITY_PRODUCT_STATE ProductState;
+    auto hResult = ptrProduct->get_ProductState(&ProductState);
+    if (FAILED(hResult))
+    {
+        return false;
+    }
+    if (ProductState == WSC_SECURITY_PRODUCT_STATE_ON)
+    {
+        thirdPartyAVSoftware.productState = L"On";
+    }
+    else if (ProductState == WSC_SECURITY_PRODUCT_STATE_OFF)
+    {
+        thirdPartyAVSoftware.productState = L"Off";
+    }
+    else 
+    {
+        thirdPartyAVSoftware.productState = L"Expired";
+    }
+    return true;
+}
+
+bool parseProductStateTimestamp(IWscProduct* ptrProduct, ThirdPartyAVSoftware& thirdPartyAVSoftware)
+{
+    // Use a smart pointer class for managing COM interface pointers.
+    CComBSTR ptrVal;
+
+    auto hResult = ptrProduct->get_ProductStateTimestamp(&ptrVal);
+    if (FAILED(hResult))
+    {
+        return false;
+    }
+    thirdPartyAVSoftware.definitionUpdateTime = std::wstring(ptrVal, SysStringLen(ptrVal));
+    return true;
+}
+
