@@ -1,9 +1,45 @@
-1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
-2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
+1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.	
+	Sequence Containers - used for data structures that store objects of the same type in a linear way.
+		Ex.: array, vector, list and deque.
+	
+	Container Adapters - Is a especial type of containers, because they are like a wrapper to another containers.
+	The class Stack is part of Container Adapters and his template use the Deque Class as wrapping.
+		Ex.: stack, queue and priority_queue.
+	
+	Associative Containers - is a container who provides a sorted data sctructures to a fast lookup using keys for the search.
+		Ex.: set, map, multiset and multimap.
+
+	Unordered Associative Containers - used to store unsoprted structure data and can be accessed using hash.
+		Ex.: unordered_set and unordered_map.
+
+2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.	
+	1 - Quick sort - use a divide-and-conquer algorithm, there are many different versions of quickSort that pick pivot in different ways as first element, last element, random element or medians.
+		Also use the partition algorithm, given an array and an element x of an array as the pivot, put x at its correct position in a sorted array and put all smaller elements (smaller than x) before x.
+			When use: Is a efficient algorithm to sort, has a linear complexity algorithm and also requires less volatile memory then another similar algorithms. 
+
+	2 - Merge sort - also use a divide-and-conquer algorithm, divide the list into the smallest element (1), after compare each element with the adjacent list to sort and merge the two adjacent lists.  
+			When use: Also is a efficient and linear complexity sort algorithm, and compared to QuickSort show better performance for some cases (depends of the pivot element choosed to QuickSort).
+
+	3 - Bublle sort - each pass makes the largest element of the sequence float to the top, this algorithm is n² so is not recommended to be used in software that needs speed and operate with high mass of data.
+			When  use: When you want a simple algorithm of sort, is good for test ideas purpose.
+
 3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
+	If was created a class derived from a base, and seted a pointer to the class base from this derived.
+	When call the the destructor (delete) using this pointer, only class destroyed will be the base class.
+	To make sure both classes will be destroyed needs create a virtual signature to the destructor on both (Base and derived).  
+
 4. Explain the keyword: static. What does it mean in each context?
+	- Static variables in a function: When declared a static variable will remains allocated for the lifetime of the program, even the functions called multiple times the variable will carrier the value from one call to another.
+	- Static variable in a class: If a class has a static variable all objects created will shared this same varaible.
+	- Static class objects: As a static variable the object still allocated for the lifetime of the program.
+	- Static function in a class: Like a static variable in a class, the static function does not need the class be created to be called, but inside the function it is not possible to manipulate dynamic variables, only static ones.
+
 5. When are static member variables initialized? 
+	Static variables are initialized before starting the program (main function) and continue to exist until the program ends.
+
 6. What is the difference between R-Values and L-Values?
+	L-Value is a reference and R-Value is a value who will passed to reference.
+
 7. Is this code safe? If so why? If not why?
 	std::string foo()
 	{
@@ -11,20 +47,66 @@
 		return something;
 	}
 	
+	Response: Yes, is safe because copy elision ensures the compilers omit the copy and move construction of class objects, even if the copy/move constructor and the destructor have observable side-effects.
+	
 	Bonus: What would most compilers do with this code?
+		std::string foo()
+		{
+			std::string something("avalue");
+			return something;
+		}
+
 8. Why would you use new rather than malloc when allocating an object? Likewise, what's the difference between free and delete?
+	Both malloc() and "new" are used to dynamically allocate memory on the heap, but "new" calls a class's constructor, while "malloc()" does not.
+	"free" frees memory but doesn't call a class's destructor, while "delete" frees memory and also calls the class's destructor.
+	If a class is created inside a function, when leaving it, the destutor will be called implicitly, guaranteeing that the resource will be deallocated.
+
 9. Explain the purpose of std::move, and std::forward. 
+	"std::move" takes an object and allows you to treat it as a temporary, and "std::forward" is used to cast a templated function parameter.
+
 10. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
+	Using semaphores or mutexes to access resources across tasks, or queues/stacks to shared resources in asynchronous tasks.
+	User defined can share via struct, typedef, enum or class.	
+
 11. What are the some of the principles of object-oriented programming?
+	Using the C language as a comparison parameter, C is procedural, C++ is multi-paradigm, where we can use the same features as C, but we also have the possibility to implement object orientation. 
+	The main concepts are polymorphism, inheritance, abstraction, class and object.
+
 12. Explain inheritance vs composition vs aggregation?
+	Inheritance - when create a new class and that uses properties and methods of an existing class
+	Composition - when a class own an object and is responsible for its lifetime
+	Aggregation - when a object is borrowed from some another object, and they are not responsible for each other lifetime.
+
 13. Should you always initialize variables? 
+	A good practice is always to start a variable with initial or default value, to avoid that it is started with garbage.
+
 14. What concept(s) in C++ would you use to manage resources automatically?
-	a. How important are these concepts? 	
+	a. How important are these concepts?
+		To avoid leak memory, data race and deadlock. 	
+
 	b. What tools are you familiar with for tracking resource allocations? 
+		Valgrind 
+
 15. What security concerns have you come across in the past and how have you addressed them?
+	I've already faced problems of direct access to the system via parameter ( system("echo "argv[1])), sensitive data stored in static memory, and also the most classic, which is the buffer overflow.
+	I believe most security issues can be minimized using good development practices.
+
 16. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
+	Better IDE's that make the language friendly, debuggers, log systems and tab completion.
+
 17. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
+	Git and code pattern.
+
 18. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
 	a. Consider both a long term and short-term solutions. 
+		Short-term: for short time I believe that the change should be done based on trial and error, always looking for side effects that may appear.
+		Long-term: do code research work and create test cases and documentation to be more assertive and secure in future changes.
+
 19. What concerns do you had supporting legacy operating systems? (If any)
+	Compatibility with IDE, compilers, and even base for testing software. 
+	Security is also an issue when talking about legacy operating systems as security updates are no longer performed for it.
+
 20. Tell us about a project you worked on that you found to be interesting or unusual. 
+	I believe that the most interesting project I participated in was the creation of a POS (Point of sale) from scratch.
+	From the first LED that blinked to the final safety certification and card issuers certifications.
+	During the process I worked in several areas, such as communication interfaces (WiFi, NFC, Bluetooth and 3G/4G), data capture from smart cards, encryption, HMI and even in customer financial applications.

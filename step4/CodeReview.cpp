@@ -10,6 +10,16 @@ Comments are encouraged.
 
 */
 
+/*Added these #include for compiling purpose*/
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <map>
+#include <windows.h>
+#include <wscapi.h>
+#include <iwscapi.h>
+
+/*iAlexandre: Missing includes*/
 
 struct ThirdPartyAVSoftware
 {
@@ -20,6 +30,7 @@ struct ThirdPartyAVSoftware
     std::wstring Version;
     std::wstring ProductState;
 };
+/*iAlexandre:This structure could be a class, and the constructor could set the variables and avoid duplicated varaibles*/
 
 bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftware>& thirdPartyAVSoftwareMap)
 {
@@ -30,6 +41,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
     LONG ProductCount = 0;
     WSC_SECURITY_PRODUCT_STATE ProductState;
     WSC_SECURITY_SIGNATURE_STATUS ProductStatus;
+    /*iAlexandre: Is good pratice start the variable with a default state*/
 
     std::wstring displayName, versionNumber, state, timestamp;
     std::string definitionState;
@@ -39,6 +51,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
     {
         std::cout << "Failed to create WSCProductList object. ";
         return false;
+        /*iAlexandre: Multiples return in the function, a good alternative could be handler errors with goto*/
     }
 
     hr = PtrProductList->Initialize(WSC_SECURITY_PROVIDER_ANTIVIRUS);
@@ -102,6 +115,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         }
 
         definitionState = (ProductStatus == WSC_SECURITY_PRODUCT_UP_TO_DATE) ? "UpToDate" : "OutOfDate";
+        /*iAlexandre: As here, if ThirdPartyAVSoftware was a class this kind of copy would not be necessarie */
 
         hr = PtrProduct->get_ProductStateTimestamp(&PtrVal);
         if (FAILED(hr))
