@@ -1,9 +1,208 @@
 1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
+
+   array: linear storage and fixed size.
+           
+           Use: store something what you know the size, for example a telephone number  int telephone[] = {4,5,6,7,8,9}
+
+   vector: it represents an array. The elements are stored in linear order. It dynamically allocate memory space rather than arrays 
+           that have fix size. It has different modifiers (push_back, pop_back, insert, erase, ...)
+
+          Use: You need a set of elements, but you don't know the size of the container, rather than in array (Ex costs at home)  
+         
+   list: same as vector but gives modifiers to the front of the container (push_front, pop_front, ...), it you want this behavior in
+         vectors you need insert, which is very costly for the system (time complexity). 
+         
+         Use: Same as vector, but sometimes you need to insert elements efficiently in the front (vector takes a lot of time to do it). 
+              (Ex costs at home but, ordered by some criteria)
+   
+   deque: similar to vector and list but provides random access, faster insertions and deletions in front and in the back. Any insertion
+         or deletion other than beginning or end invalidates pointers, references and iterators. 
+         
+         Use: same as before but when you need more performance inserting and deleting elements, (Ex: attend to serial port)
+
+   stack: is a LIFO with a reduce set of member functions (top, push, pop, ..) not as much as the containers above. Elements are pushed/popped
+        from the top of the container.
+        
+        Use: for example, you need to store commands (Command Design Pattern) afterwards perform an undo function. 
+            Then you need only access to the top element. (like undo shortcut Ctrl+Z) 
+
+   queue: it is a FIFO with a reduced set of member functions (front, back, push_back, pop_front). Elements are pushed into the back and 
+         popped from its front.
+
+        Use: you receive commands from different sources and you want to process in order of arrival. 
+
+   priority_queue: it is like a queue but it is ordered with the bigger/larger element in the top or reverse. 
+         Ex: priority_queue<int> pq   // increasing order
+             priority_queue<int, std::vector<int>, std::greater<int> > // decreasing order
+
+         Use: Same as queue but with priorities, maybe there are in the list of commands some that are more important and you need to 
+              have it sorted (priority interrupts)
+
+   set: stores everything sorted and elements are unique.
+
+         Use: if you want storage but you don't need duplications. Ex: you are waiting in a socket and the same message arrives twice.
+
+   multiset: It is similar to set but the elements are not unique, it means that you can have duplicated values inside. The sorted feature
+        is like in set.
+
+         Use: same as before but you are care only about the order of the messages if arrives twice you want to logged.
+
+   unordered_set: Similar to set but now it is not ordered, the elements are unique.
+
+         Use: again the example of the socket, in TCP the messages are not guaranty that arrives in order, TCP only guaranties that 
+            the message arrives. If you want to know the sequence of arrival this is your container. 
+
+   map: is a container which stores key, value pairs. They are stored sorted by the key and the key is unique. Then, you can have 
+        duplicated values but different keys which means you can differentiate each.
+
+         Use: sometimes you need to store large user defined classes, then you can used to index in the container the elements and 
+              reference them easily identifying in a concise manner each element due to uniqueness.
+
+   multimap: similar to map but you are allowed to store duplicate keys and they are sorted like map.
+
+         Use: for example you want to store the students of a school, you can store in the key the class and the name of the student
+            in the value. Then you can list all the students in each class.
+
+   unorderedmap: similar to map with unique keys but not ordered. 
+             
+
+
 2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
+   
+   BubleSort: Basically buble sort iterate over all the container from the left to the right, swapping the adjacent elements if they are
+              not in the wrong order (smaller in the left, bigger in the right). 
+
+   Selection: It divide the container in two parts, one sorted on the right and one unsorted on the left. Initially the unsorted section 
+              contains all the container, and the sorted part is empty. Then repeatedly is finding the minimum element of the unsorted part
+              and move it to the left. 
+
+   Insertion: It iterates fromm left to right and compare pairs. If is not in the correct order swap the pair, if is in the correct order
+              the comparison is done with the right value of the pair with the next one.
+
+   the use cases are not clear. It depends a lot on the size of the container, on how the data is messed up. Moreover, in systems that are 
+   not deterministic, it may be that some of them are faster than others and in the next sorting it changes and the faster ones are others.
+   It depends on the tasks that the system is performing.  
+
 3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
+
+   guaranty that the object of derived class is destructed when the base class is destructed. If the destructors are not virtual we can
+   result in undefined behaviors and memory leaks.
+
+   Ex: 
+         class base {
+           public:
+             base(){..};
+             ~base(){...};  // virtual ~base(){...}; solves the problem
+         };
+
+         class derived: public base {
+           public:
+             derived(){...};
+             ~derived(){...};         
+         };
+
+         int main() {
+           
+           base *b = new derived();
+           delete b;
+
+           return 0;
+         }
+       
+        In this case the class derived is not destroyed, we need to change the line in the comment           
+
 4. Explain the keyword: static. What does it mean in each context?
+
+   static keyword in C++ gives special characteristics to an element. Static elements are allocated storage only once in a program lifetime in static storage area 
+   (not in the stack). Static can be used with:
+
+   static variable inside functions: They are initialized only once and they hold the value even through function calls. 
+   
+   Ex: void counter()
+       {
+           static int count = 0;
+           cout << count++;
+       }
+      
+
+   static class objects: they are stored in static storage area and have scope till the end of program.
+
+   Ex: class Abc
+       {
+         public:
+           Abc(){};
+           ~Abc(){};
+       }
+       int main()
+       {
+         static Abc obj;
+       }
+
+   static data member in class: it is a member which is shared by all the objects, they have a single piece of storage. 
+
+   Ex:
+       class A
+       {
+         public: 
+           static int i;  
+       };
+       
+       int A::i=2;
+
+       int main()
+       {
+         A a;
+         cout << a.i;  //prints 2 because variable is chared by all objects, only one copy.   
+       }
+   
+    static methods in class: these functions can't access ordinary data members and functions, only static data members and static 
+    member functions. They are called using the cass name and the "::" operator
+
+    Ex:
+        class A
+        {
+          public:
+            static void func(){...}
+        };
+        int main()
+        {
+          X::func(); // calling directly with class name
+        }
+
 5. When are static member variables initialized? 
+
+   if the initialization is done by a constant expression in compile time, that is the ideal situation. If possible values are evaluated during 
+   compilation and write into data section. If the value can't be evaluated then the initialization happens at runtime. We can force const 
+   initialization by constexpr.
+   
+   Ex:
+      struct Point
+      {
+          float x{};
+          float y{};
+      };
+
+      constexpr Point newPoint(Point p, float x_offset, float y_offset)
+      {
+          return {p.x + x_offset, p.y + y_offset};
+      }
+
+      constexpr auto P2 = newPoint({1.f, 5.f}, -1.f, 1.f); // force the compiler
+      
+   
 6. What is the difference between R-Values and L-Values?
+
+   R-Values are commonly the right-hand part of an assignment expression and L-Value is the left-handside (not always but common). The main difference is that 
+   L-Value points to a specific memory location and R-Value is just a value that has no memory location, it is just a literal. 
+
+   Ex: int i = 10;
+        i is the L-Value
+       10 is the R-Value
+
+
+       10 = i; WRONG because 10 has no location to store i, 10 is just a literal value.
+
+
 7. Is this code safe? If so why? If not why?
 	std::string foo()
 	{
@@ -12,19 +211,233 @@
 	}
 	
 	Bonus: What would most compilers do with this code?
+
+        Regarding safety I think the code is safe because it is returning an rvalue (copied to return) and its life time is untill returns
+        from the function.
+
+        According the code, the function will initilize a temporary std::string (something) with a value ("avalue"), then copy
+        this value to the return value object, then destroy the temporary. 
+
+        Some compilers have an optimization called "copy elision" where the compiler realizes that it can optimize away temporary 
+        objects and instead construct the new object in place. With each copy elision, one construction and one destruction are omitted, 
+        thus saving CPU time and space on the stack frame.
+
+        The type must have the copy/move constructor that would be called.     
+
+
 8. Why would you use new rather than malloc when allocating an object? Likewise, what's the difference between free and delete?
+
+   new allocates memory in the heap but calls the constructor of the object while malloc returns void and we have to cast the result.
+   delete frees the memory and calls the destructor of the object while free frees the memory and does not call the destructor.
+
+   working in C++ we should use new and delete.
+
+   There are some other disadvantages. 
+      new calculates the required space in memory while malloc we have to do it manually.
+      new throws and exception in case of failure while malloc returns NULL. 
+
+
 9. Explain the purpose of std::move, and std::forward. 
+
+    This feature is called move semantics.
+    std::move() is a function used to convert an lvalue reference into the rvalue reference (static_cast). Used to move the resources 
+           from a source object to another. It is commonly used with smart pointers, as they only exist in the scope
+           that they are defined, with std::move you can move this ownership to another scope.
+
+    std::forward() is a conditional cast to an rvalue. It can be useful if I am writing a function (template) which expects 
+               an lvalue or rvalue in a parameter and wants to pass it to another function as an rvalue only if as an rvalue. 
+               If I did not wrap the parameter in std::forward, it would be always passed as a normal reference.
+
 10. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
+
+    In order to avoid race conditions we need a mechanism to orquestrate the access to the common resources. Then, we have 
+    different options.
+
+    1.- The use of threads. It is a mechanism to define a critical section of code. When a thread wants to access
+        then locks at the beginning of the section, ensuring that he is the only one using this piece of code, 
+        after finish unlock the section. Then, the section is available for any one that needs it. This has 
+        an associated risk, if the section is not unlocked the program is blocked because nobody can access to 
+        this resource. This situation is named "Dead Lock".
+
+        Ex:
+          try {
+            lock..
+            .....
+            unlock .. 
+            } catch exception {
+              // if exception happens, maybe the mutex is not unlocked and "DeadLock" apair.
+            }
+         
+        It is not recommneded to use mutex directly for this reason (RAII). Instead use wrappers as lock_guard(mutex). 
+        Lock_guard is a wrapper (template) that releases the mutex when it goes out of scope, then we ensure that 
+        we will unlock the mutex.
+
+    2.- Another option is define atomic variables. They are usig mutex too behind the scene. They don't allow to 
+        define critical sections, it is only a type of variable. You define as below and you can use it thread-safe.
+
+        Ex: Integer value
+          #include <atomic>
+          atomic <int> i(5);    
+
+          #include <atomic>
+
+
+       Ex: User defined type
+
+           class A
+           {
+           public:
+             int a;
+           };
+
+           int main( ) {
+             A a{1};
+             std::atomic<A> atomicA{a};
+           }  
+
+        The limitation is that not all the types have their version atomic and not not all UDT can gain a real atomic behavior. 
+        To make sure that your atomic has a real atomic behavior you can use atomicA.is_lock_free().
+
+  
 11. What are the some of the principles of object-oriented programming?
+
+    Encapsulation: It is the mehcanism used for classes, consists of hiding data restricting access to it. 
+                   Definining public and private variables or methods.
+
+    Abstraction: With abstract class / Interface we express only the interfaces of the class, not the details of the 
+                 implementation, it is strongly related with Inheritance. It is a kind of API of the class. 
+
+    Inheritance: Express the relationship of two objects, with this mechanism the derived class can reuse the code of the
+                 inheriting parent class that it inherits.
+
+    Polymorphism: It means that an object can have many forms. It is related to inheritance. We can write code that works on the superclass
+                  and it will work in the subclass also.
+
+
 12. Explain inheritance vs composition vs aggregation?
+    
+    inheritance is a specializazion of the parent class("is a"). It is commonly used to use with abstract classes where you override the public 
+                methods of the parent class, and very usefull with the polimorphism.
+                
+                Ex:     bike     -parent class
+                       /    \
+                      /      \
+    - subclass  Mountain    Road  - subclass
+                bike        bike
+
+    composition basically is a composition of classes. In the example we say that a car has 5 seatbelts, 4 wheels and 2 windshields.
+                
+                                       5    1        1      4
+                 Ex:          seatbelt -----<> car <>  ----  wheel        the diamonds in UML should be dark but is dificult to represent with this editor!!
+                                                <> 1                      and continuous lines 
+                                                |                      
+                                                |  2 
+                                           windshield
+    
+   aggregation is more or less like composition but the relation between the classes is very light. For example in the car above
+   the car has to have 4 wheels, and seatbelts but a class called for example driver is not need it. Both classes can live independently
+   but some times a car has a driver.
+
+                                           1     1
+      here the relation between   driver <>------ car                     here the diamonds are white and continuous lines.
+
 13. Should you always initialize variables? 
+
+    We must always initialize variables to avoid that in some case they can be used without having reserved the memory for their use, 
+    and that the program has uncontrolled behaviors.
+    
+    
 14. What concept(s) in C++ would you use to manage resources automatically?
-	a. How important are these concepts? 	
+	a. How important are these concepts? 
+        
+          This concept is known as RAII (Resource acquisition is initialization).
+          Unlike other languages such as java, C++ doesn't have a garbage collector (a process that releases heap memory and other resources), 
+          Then, if our program does not release an unused resource properly, it will cause a leak and potentially a dangerous behavior of our software.
+
+          It is recommended to declare objects in the stack because they are released automatically when they are out of scope. Another way of
+          manage the memory is using smart pointers (standard library). They handle the allocation and deletion of memory and eliminates the need of an 
+          explicit destructor in the classes. Another example could be mutex in concurrency programming, it is not recommended to work directly
+          with mutexes, instead it is better to work with wrappers like "lock_guard" because it will unlock the critical zone when the program
+          goes out of scope.
+
+	
 	b. What tools are you familiar with for tracking resource allocations? 
+
+          valgrind and gdb.
+
+
 15. What security concerns have you come across in the past and how have you addressed them?
+
+      For example I was developing a web page with mongodb in the backend and instead of saving passwords as passwords I
+      read that it was better to store the md5sum of the password and store it. Then every time that a user logged in
+      the node.js middleware calculated the md5sum and cross checked with the data base datas.
+
+      Another project that we did was an embedded system and we were storing the ssh password in a file (only to remember) 
+      inside the rootfs. The first time that we wanted to pass the auditory they suggest us to do something because 
+      with a simple script they can found the password. We remove the file and we store it in a central server in the company
+      and we implemented "Port knoching To Secure SSH Service".
+      
 16. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
-17. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
+      
+      For software, I feel very powerfull toolchains, they allow programming in your desk computer for the architecture you need.
+      Obviously, you need cross-compile and generate the code to the target architecture. 
+
+      IDE`s like vscode. For me is one of the bests because it is highly configurable and you can use for almost every language 
+      that you need. 
+      
+      A platform to collect all your software is Anaconda, very very useful. I usually used to configure diferent environments with
+      different versions of software. Ex: an environment with Python2.7, another one with Python3.1, .....
+
+      Docker it is very powerful also and reduces a lot of time you need when you have to configure your computer from scratch.
+      Allow new colleagues to reduce a lot the time to start working. You can have a server with machines already configure and in
+      your local computer only downloading the machine you can start working. Another advantage is that Docker is highly integrated
+      with the operating system and share all the resources with the host unlike other virtualizations like vmware or virtualbox.
+
+
+ 
+17. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.  
+
+      For code maintenance I think the version controlling is the best. 
+      I have used in the past subversion (SVN), after that Gitlab but now with Atlassian framework (bitbuket, jira and confluence) 
+      all is centralized and very helpfull, and make easier the work in groups. It is posible to plan/prioritize the jobs with jira, 
+      make code reviews and manage the repositories with bitbuket (it is git but in a server) and if you have to document things
+      have confluence which is a repository of documentation.
+
+      Also I remember Artifactory to store binaries and releases.
+
+      Jenkins to plan compilations everyday/night and automatize Unit Testings.
+ 
 18. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
-	a. Consider both a long term and short-term solutions. 
+	a. Consider both a long term and short-term solutions.
+
+        --> Short-Term:
+        1.- First I would save the code as it is now, I use to work with git, I would make a tag for safety and freeze this version. 
+        2.- I would mount some tests to know how the legacy software is working right now (not deep tests, only to understand the behavior). 
+        3.- I would try to follow a TDD, I would make a test for each change that I need. Then making small changes and ensuring that the 
+            software adds the new features but maintaining legacy ones.
+
+        --> Long-Term:
+        1.- I would try to speak with the managers of the project in order to know his lifecycle and decide the feasibility to refactor the project. 
+        2.- If refactor is not an option, I will try to adopt an Adapter Pattern Design to ensure the growth of the project. 
+
+        If something is successfully working, sometimes is better to isolate and don't touch it because maybe a lot of people is using it and the risks are
+        higher than the benefits. 
+          
+ 
 19. What concerns do you had supporting legacy operating systems? (If any)
+
+        1.- Hardware dependencies, you need old machines to replicate situations. You can use virtualization, 
+            but they are not 100% accurate. 
+        2.- Safety of the OS because usually the operating systems resolve vulnerabilities with patches.
+        3.- Sometimes they have incompatibility with new software because of dependencies not supported. 
+ 
+
 20. Tell us about a project you worked on that you found to be interesting or unusual. 
+
+        I have been working on a project to detect fraud in the electricity net. The company knew that there were people 
+        with marijuana plantations and that they connected directly to the electricity net in the street without going through 
+        the meter at home. So they were consuming electricity but not paying for it. I was in charge of collecting this data from 
+        sensors, storing it in a database (sqlite3) and sending it to the cloud. On the other hand I also programmed an API to 
+        query instant data in an App.
+
+        https://www.myebox.es/
