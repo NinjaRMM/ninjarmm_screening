@@ -13,6 +13,8 @@ public:
 	string DoWork() {
 		return "My work involves " + getDescription();
 	}
+	virtual ~Job(){};
+
 };
 
 class Programmer: public Job
@@ -34,6 +36,8 @@ public:
 	}
 
 	Programmer(string name_, string description_, int hours_) :name(name_), description(description_), hours(hours_){};
+
+    virtual ~Programmer(){};
 
 private:
 	string name;
@@ -61,6 +65,8 @@ public:
 	}
 
 	Pilot(string name_, string description_, int hours_) :name(name_), description(description_), hours(hours_) {};
+
+    virtual ~Pilot(){};
 
 private:
 	string name;

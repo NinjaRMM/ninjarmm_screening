@@ -19,6 +19,7 @@ void part4()
 
     std::cout << std::endl << std::endl << "---> Total Costs";
     travel.printTotal();
+    std::cout << std::endl;
 }
 
 int main() {
