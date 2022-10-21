@@ -9,6 +9,9 @@ Make any code updates that you see fit (If any).
 Comments are encouraged.
 
 */
+#include <iostream>
+#include <cstdio>
+#include <map>
 
 
 struct ThirdPartyAVSoftware
@@ -21,20 +24,106 @@ struct ThirdPartyAVSoftware
     std::wstring ProductState;
 };
 
+
+
+/*
+ * This function has a lot of responsabilities, maybe we should break it in more functions in order to make each function 
+ * responsible for something smaller, it eases the manteinability and readability of the code.
+ *
+ * 1 - The return of the function is not clear on its purpose, maybe it's better to return an integer with 
+ *     a status code, given the amount of possible return errors, another approach would be the use of exceptions.
+ *
+ * 2 - The v ariable hr is being used on all the calls, maybe the return of it is discardable? 
+ *
+ * 3 - The code is pretty ugly and hard to understand, we could have a cleaner code in order to understand better what is happening.
+ *  Ex:
+ *  Instead of a big chunk of code in one line like this:
+ * 
+ *   hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&PtrProductList));
+ *
+ *   we can break in multiple lines like this:
+ *
+    hr = CoCreateInstance(__uuidof(WSCProductList), 
+	                      NULL, 
+						  CLSCTX_INPROC_SERVER, 
+						  __uuidof(IWSCProductList), 
+						  reinterpret_cast<LPVOID*>(&PtrProductList));
+
+	Its easy to read and to know each argument of the function.
+
+ * 4 - The code lacks patterns:
+ * 		IWscProcuct and IWSCProductList -> should be IWSCProduct or IWscProductList.
+ * 		A lot of uknown types, enums and classes (probably will come from another file).
+ *
+ *
+ */
+
+
+// I've tried to recreate some of the headers in order to understand the code better, however i was not able to do it perfectly.
+// Enums/Types definition
+typedef int HRESULT;
+typedef long LONG;
+typedef std::string BSTR;
+typedef void LPVOID;
+typedef int WSC_SECURITY_PRODUCT_STATE;
+typedef int WSC_SECURITY_SIGNATURE_STATUS;
+
+
+// This should probably be an enum
+int S_OK = 0;
+int CLSCTX_INPROC_SERVER = 1;
+int WSC_SECURITY_PROVIDER_ANTIVIRUS = 0;
+int WSC_SECURITY_PRODUCT_STATE_ON = 1;
+int WSC_SECURITY_PRODUCT_STATE_OFF = 0;
+int WSC_SECURITY_PRODUCT_UP_TO_DATE = 0;
+
+// Functions
+int __uidof(void * t);
+bool FAILED(HRESULT);
+int SysStringLen(BSTR); // this is missing some parameter that im not sure what.
+void SysFreeString(BSTR);
+void CoCreateInstance();
+
+// Class definition
+//
+class IWscProduct {
+	public:
+	HRESULT get_ProductName(BSTR*a);
+	void Release();
+	HRESULT get_ProductState(WSC_SECURITY_PRODUCT_STATE *);
+	HRESULT get_ProductStateTimestamp(BSTR *);
+	HRESULT get_SignatureStatus(WSC_SECURITY_SIGNATURE_STATUS *);
+};
+class IWSCProductList {
+	public:
+
+	HRESULT Initialize(int );
+	HRESULT get_Count(LONG *);
+	HRESULT get_Item(int, LONG *);
+	HRESULT get_Item(uint32_t & a, IWscProduct ** b);
+};
+
+// 
+// End of definitions
+//
 bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftware>& thirdPartyAVSoftwareMap)
 {
     HRESULT hr = S_OK;
+
+	// IWsc and IWSC -> may we should maintain standard names.
     IWscProduct* PtrProduct = nullptr;
     IWSCProductList* PtrProductList = nullptr;
     BSTR PtrVal = nullptr;
+	// Im not sure why it's using LONG, the standard provides long.
     LONG ProductCount = 0;
+
     WSC_SECURITY_PRODUCT_STATE ProductState;
     WSC_SECURITY_SIGNATURE_STATUS ProductStatus;
 
     std::wstring displayName, versionNumber, state, timestamp;
     std::string definitionState;
 
-    hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&PtrProductList));
+    hr = CoCreateInstance(__uuidof(IWSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&PtrProductList));
     if (FAILED(hr))
     {
         std::cout << "Failed to create WSCProductList object. ";

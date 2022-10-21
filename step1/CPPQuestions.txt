@@ -1,9 +1,103 @@
 1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
+
+
+# Sequence containers
+implement data structures which can be accessed sequentially.
+* array
+* vector
+* deque
+* forward_list
+* list
+
+
+# Associative containers
+implement sorted data structures that can be quickly searched (O(log n) complexity).
+* set
+* map
+* multiset
+* multimap
+
+
+# Unordered associative containers
+containers implement unsorted (hashed) data structures that can be quickly searched (O(1) amortized, O(n) worst-case complexity).
+* unordered_set
+* unordered_map
+* unordered_multiset
+* unordered_multimap
+
+# Container adaptors
+It is not exaclty a container itself, but it provides a different interface for sequential containers.
+* stack
+* queue
+* priority_queue
+* flat_set
+* flat_map
+* flat_multiset
+* flat_multimap
+
+
+###########################################################################################################
+
 2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
+
+# BubbleSort
+Simple algorithm, runs on n² time average, good to teach new programmers about arrays/for/while/if.
+
+
+# QuickSort
+Good algorithm, runs in n log n time average, used on common cases where a sorting is needed.
+
+# MergeSort
+Its higly parallelizable, so it's a good algorithm when you have a environment where you can have a lot of threads/processors.
+
+###########################################################################################################
 3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
+
+To ensure all destructors are called and in the correct order. 
+If we do not call it in the correct order it might have memory leaks.
+
+
+###########################################################################################################
+
 4. Explain the keyword: static. What does it mean in each context?
+
+
+Static member functions
+not associated with any object. When called, they have no this pointer.
+Static member functions cannot be virtual, const, volatile, or ref-qualified.
+The address of a static member function may be stored in a regular pointer to function, but not in a pointer to member function.
+
+
+
+Static data members
+not associated with any object. They exist even if no objects of the class have been defined. There is only one instance of the static data member in the entire program with static storage duration, unless the keyword thread_local is used, in which case there is one such object per thread with thread storage duration (since C++11).
+Static data members cannot be mutable.
+
+
+Constant static members
+If a static data member of integral or enumeration type is declared const (and not volatile), it can be initialized with an initializer in which every expression is a constant expression, right inside the class definition.
+
+
+ref: https://en.cppreference.com/w/cpp/language/static
+
+###########################################################################################################
+
 5. When are static member variables initialized? 
+
+There's two stages, static and dynamic, static happens at compile time and dynamic happens at runtime.
+
+
+###########################################################################################################
+
 6. What is the difference between R-Values and L-Values?
+
+
+Bassicaly, L-value is an object reference and an R-value is a value.
+In other words, L-Values points to memory, R-values don't point anywhere.
+
+
+###########################################################################################################
+
 7. Is this code safe? If so why? If not why?
 	std::string foo()
 	{
@@ -12,19 +106,155 @@
 	}
 	
 	Bonus: What would most compilers do with this code?
+
+Yes, its safe because we copy the rvalue to the return.
+The compiler will try to optimize it and generate a string directly and avoid a function call for anything.
+
+
+###########################################################################################################
+
 8. Why would you use new rather than malloc when allocating an object? Likewise, what's the difference between free and delete?
+
+The new operator allocates memory and calls constructor for object initialization. 
+The malloc() function allocates memory and does not call constructor.
+
+
+###########################################################################################################
+
 9. Explain the purpose of std::move, and std::forward. 
+
+	- move :
+			"Indicate that an object t may be "moved from", i.e. allowing the efficient transfer of resources from t to another object."
+			Used to convert an L-Value to an R-value, move the resources from a source object to another.
+			Commonly used with smart pointers, with move you can move the ownership to another scope.
+
+
+	- forward:
+			"Forwards lvalues as either lvalues or as rvalues, depending on typecast from the template."
+			Used to preserv the value category of it's argument.
+
+
+
+ref: 
+https://en.cppreference.com/w/cpp/utility/move
+https://en.cppreference.com/w/cpp/utility/forward
+
+###########################################################################################################
+
+
 10. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
+
+Using thread safe containers, you can use containers from boost libraries that are thread safe.
+However, if you want to do it by hand, you can allways use a mutex.
+
+It deppends on the problem, I would probably create a class containing everything that I need and make it this easy to use.
+
+
+###########################################################################################################
+
 11. What are the some of the principles of object-oriented programming?
+
+Abstraction   -> hide complexity from users.
+Encapsulation -> protect data stored on class that should not be accessible from other users.
+Inheritance   -> makes possible to have a child class that have's fields/methods from the parent class.
+Polymorphism  -> Ability to perform the same action with different ways.
+
+
+###########################################################################################################
+
 12. Explain inheritance vs composition vs aggregation?
+
+Inheritance:
+Specialization of the parent class. 
+
+
+Composition:
+A composition of things, strong association between classes/objects, each object have it's lifecycle dependent on the main object.
+
+Aggregation:
+Weak association, the objects are independent and have they'r own life cycle.
+
+###########################################################################################################
+
 13. Should you always initialize variables? 
+It's a good practice, also, the compiller usually give a warning if a variable is undefined.
+
+
+###########################################################################################################
+
 14. What concept(s) in C++ would you use to manage resources automatically?
+
+
+ - Smart pointers
+
 	a. How important are these concepts? 	
+		Smart pointers take care of the memory for you based on the type of smart pointer used, it eases the process of taking care of the memory and help's us prevent memory leak.
+
 	b. What tools are you familiar with for tracking resource allocations? 
+		Valgrind
+
+
+###########################################################################################################
+
 15. What security concerns have you come across in the past and how have you addressed them?
+
+	Unsafe functions ( scanf/gets/strcat ), use safer alternatives (fgets/strncat/etc).
+	
+
+###########################################################################################################
+
 16. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
+
+ - Scrum;
+ - Pair programming;
+  
+
+
+###########################################################################################################
+
 17. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
+
+- Valgrind
+- gdb
+- Pair programming;
+
+
+###########################################################################################################
 18. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
 	a. Consider both a long term and short-term solutions. 
+
+
+Short Term:
+	- Perform the changes;
+	- Test the changes on a sandbox;
+	- Deploy.
+
+
+Long term:
+	- Study the code that needs to be changed;
+	- Test some modifications on a sandbox
+	- Perform all the changes needed 
+	- Test again on a sandbox and ask others to test too;
+	- Deploy.
+
+###########################################################################################################
+
 19. What concerns do you had supporting legacy operating systems? (If any)
+
+ - Keep the OS with the security patches updated;
+ - Test any changes on a sandbox before putting it on production;
+ - Keep the libraries on the same version and only update any library if the tests on the sandbox are successfull.
+
+
+
+###########################################################################################################
+
 20. Tell us about a project you worked on that you found to be interesting or unusual. 
+
+The first project that i've started working with embedded systems, on this project the goal was to replace an old board from an old equipment that was running on the ITAIPU power plant.
+This equipment is responsible to monitorate variables from the gas-insulated substation, the board that needs to be repaced makes the communication betwen other boards and the system that tracks everything, 
+so we need to make a reverse engineer of the protocol that is being used and how the board works with the data.
+
+We developed the firmware to the new board using C++ and a linux distro running on a raspbery pi compute module 3.
+The linux distro was created using buildroot in order to optimize everything possible to get less power consumption and better performance.
+
