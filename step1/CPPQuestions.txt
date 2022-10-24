@@ -1,30 +1,101 @@
 1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
+Sequence containers - Maintains order of objects that are inserted. Similar to an array.
+Associative containers - Objects are inserted in a predefined order. Can have key/value pairs.
+
+
 2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
+Bubble sort - Swaps adjacent elements over several passes, if needed. One of the simplest, but not efficient. Bad for large data sets.
+Selection sort - Finds the smallest in the unsorted and moves it to the front of the list. Takes many passes, but doesn't require any extra memory. 
+Insertion sort - Moves one element at a time. One of the simplest. Best used for data that is partially sorted.
+
+
 3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
+To delete memory from a derived class. It can result in dangling pointers. Can have undefined behavior.
+
 4. Explain the keyword: static. What does it mean in each context?
+In a function - It will be allocated for the life of the program.
+In a class - shared by the object
+
 5. When are static member variables initialized? 
+They are initalized only once, and cannot be initalized in the constructor.
+
 6. What is the difference between R-Values and L-Values?
+L-value - Modifiable value in a memory
+R-value - Non-Modifiable value in a memory
+
 7. Is this code safe? If so why? If not why?
 	std::string foo()
 	{
 		std::string something = "avalue";
 		return something;
 	}
+
+	No, the variable 'something' goes out of scope. It should return a pointer.
 	
 	Bonus: What would most compilers do with this code?
+	Probably nothing, thinking it is ok.
+
 8. Why would you use new rather than malloc when allocating an object? Likewise, what's the difference between free and delete?
+'new' handles the memory operations, whereas malloc you have to specify the number of bytes needed. It is usually easier to use 'new'.
+
+'delete' is an operator, used to free memory created with 'new'
+'free' is a function that is used to free memory with 'malloc'
+
+
 9. Explain the purpose of std::move, and std::forward. 
+Not even going to pretend I used these before. If you want the definition here it is:
+std::move - used to indicate that an object t may be "moved from", i.e. allowing the efficient transfer of resources from t to another object. 
+st::forward - Forwards lvalues as either lvalues or as rvalues, depending on T
+
+
 10. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
+Using mutex or a semaphore. Two threads interacting with one memory location can cause undefined behavior.
+User defined types can make certain objects readonly.
+You could create a wait and notify type system, or queue, where it writes to a buffer, then writes to the actual memory location when it is free.
+
+
 11. What are the some of the principles of object-oriented programming?
+Encapsulation - You can hide data from the public view by restricting access
+Abstraction - You can interact with a class or interface without actually knowing the implementation.
+Inheritance - You can derive a subclass from a baseclass. Base class shape can have a derived class called square.
+Polymorphism - Function overloading - Can have many functions with same name but different parameters. Operator overloading - can have operators do different things based on the object they are interacting with
+
 12. Explain inheritance vs composition vs aggregation?
-13. Should you always initialize variables? 
+Inheritance - a class can use features of another class. Animal class -> Dog class. Dog 'is a' Animal
+aggregation - A class can be part of another class. Department 'has a' teacher. Each class has their own lifecycle
+Composition - A class that is apart of another class. Build class 'has a' room. In this case, the room cannot exist without the building.
+
+13. Should you always initialize variables?
+It is good practice to. I would say yes.
+
 14. What concept(s) in C++ would you use to manage resources automatically?
-	a. How important are these concepts? 	
+Using destructors to delete object
+	a. How important are these concepts? 
+		Very important so that memory is not left hanging 
 	b. What tools are you familiar with for tracking resource allocations? 
+		I've not used them too often, but I think Valgrind is one.
+
+	
 15. What security concerns have you come across in the past and how have you addressed them?
+	SQL injections were a pretty big problem in the past. That was where you could insert SQL code to execute queries from a textbox. 
+	Hackers could steal information this way. We solved this by using stored procedures instead of executing SQL code directly.
+	Other examples include updating old code that was found to have exploits.
 16. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
+	I think readable code is important. Comments are always nice to have to explain how or why a function is working the way it does.
+	Google is useful. I often have to look up the exact syntax for certain standard functions. Plus, there are a million ways to write code. Someone out there could probably have done it better.
 17. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
+	Debug statements are important. Dealing with large amounts of code in different modules can be difficult to debug and maintain.
+	Adding debug statements to figure out what is executing and in what order can help make correct decisions on what needs to be changed.
+	Maintaining code can become a refactoring work. Making functions have a singular purpose and separating things that have become to large into smaller parts helps testing and maintaining.
 18. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
 	a. Consider both a long term and short-term solutions. 
 19. What concerns do you had supporting legacy operating systems? (If any)
+	Testing on new software/hardware components such as new operating systems.
+	Things in libraries could have been deprecated, so if you update legacy libraries it could cause problems.
+	Making changes to complex code could have further reaching consequences that what immediately appears to be the problem.
+	The person that wrote the code might not work or remember how the code works. The intent of the code could be lost.
 20. Tell us about a project you worked on that you found to be interesting or unusual. 
+	When I worked at Microchip, we had built a bunch of APIs for our users to interact with our storage controllers.
+	Because of the success of this and the fact we wrote a lot of it in C, we were able to push the functionality directly onto memory on the controller.
+	This allowed users to not have to insert a usb/disc when trying to program their storage controllers.
+
