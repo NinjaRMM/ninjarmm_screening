@@ -29,7 +29,7 @@ Once you feel you have everything in a good spot, please submit your answer as a
 Please make sure all of the following are checked:
 1. All of the questions in step 1 have been answered. 
 Any small coding questions need to be in their own file.
-2. The code for steps 2 and 4 compiles and runs without errors. 
+2. The code for steps 2, 3 and 5 compiles and runs without errors. 
 3. There should be meaningful feedback provided for the sample code in step 3.
 
 Happy coding!
