@@ -1,0 +1,15 @@
+Count: 1
+Name: Programmer
+Description: Developing code
+Hours required: 40
+Lower range: 32
+Higher range: 50
+Result: hours required is within range
+My work involves Developing code
+Name: Pilot
+Description: Flying airplanes
+Hours required: 52
+Lower range: 32
+Higher range: 50
+Result: hours required is not within range
+My work involves Flying airplanes
