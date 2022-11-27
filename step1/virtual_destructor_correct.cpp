@@ -29,7 +29,7 @@ int main()
   A* a = new B();
   
   delete b;
-  delete a; //The destructor of B and A are called as ins the output bellow
+  delete a; //The destructor of B and A are called as in the output bellow.
 }
 
 /* Output

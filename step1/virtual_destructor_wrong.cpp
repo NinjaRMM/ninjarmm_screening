@@ -29,7 +29,7 @@ int main()
   A* a = new B();
   
   delete b;
-  delete a; //Only the destructor of A is called, althought the constructor of B is called what may cause memory leak, as shown in the output bellow
+  delete a; //Only the destructor of A is called, althought the constructor of B is called what, may cause memory leak, as shown in the output bellow.
 }
 
 /* Output
