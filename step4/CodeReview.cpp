@@ -23,31 +23,24 @@ struct ThirdPartyAVSoftware
 
 bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftware>& thirdPartyAVSoftwareMap)
 {
+    //REVIEW> It's better to declare the variables when using it, avoiding using it prematurely.
     HRESULT hr = S_OK;
-    IWscProduct* PtrProduct = nullptr;
     IWSCProductList* PtrProductList = nullptr;
-    BSTR PtrVal = nullptr;
-    LONG ProductCount = 0;
-    WSC_SECURITY_PRODUCT_STATE ProductState;
-    WSC_SECURITY_SIGNATURE_STATUS ProductStatus;
-
-    std::wstring displayName, versionNumber, state, timestamp;
-    std::string definitionState;
-
     hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&PtrProductList));
     if (FAILED(hr))
     {
-        std::cout << "Failed to create WSCProductList object. ";
+        std::cout << "Failed to create WSCProductList object.";
         return false;
     }
 
     hr = PtrProductList->Initialize(WSC_SECURITY_PROVIDER_ANTIVIRUS);
     if (FAILED(hr))
     {
-        std::cout << "Failed to query antivirus product list. ";
+        std::cout << "Failed to query antivirus product list.";
         return false;
     }
 
+    LONG ProductCount = 0;
     hr = PtrProductList->get_Count(&ProductCount);
     if (FAILED(hr))
     {
@@ -55,8 +48,10 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         return false;
     }
 
-    for (uint32_t i = 0; i < ProductCount; i++)
+    //REVIEW> Avoid comparing signed with unsigned variables.
+    for (LONG i = 0; i < ProductCount; i++)
     {
+        IWscProduct* PtrProduct = nullptr;
         hr = PtrProductList->get_Item(i, &PtrProduct);
         if (FAILED(hr))
         {
@@ -64,64 +59,94 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
             continue;
         }
 
+        BSTR PtrVal = nullptr;
         hr = PtrProduct->get_ProductName(&PtrVal);
         if (FAILED(hr))
         {
+            //REVIEW> As there are several exit points in this function, it would be better to wrap
+            //        this PtrProduct in a new class to handle the release process on destructor,
+            //        making the resource management less error prone.
             PtrProduct->Release();
+            PtrProduct = nullptr;
             std::cout << "Failed to query AV product name.";
             continue;
         }
+        std::wstring displayName(PtrVal, SysStringLen(PtrVal));
+        SysFreeString(PtrVal);
+        PtrVal = nullptr;
 
-        displayName = std::wstring(PtrVal, SysStringLen(PtrVal));
-
+        WSC_SECURITY_PRODUCT_STATE ProductState = WSC_SECURITY_PRODUCT_STATE_OFF;
         hr = PtrProduct->get_ProductState(&ProductState);
         if (FAILED(hr))
         {
+            //REVIEW> it was missing the PtrProduct release.
+            PtrProduct->Release();
+            PtrProduct = nullptr;
             std::cout << "Failed to query AV product state.";
             continue;
         }
 
-        if (ProductState == WSC_SECURITY_PRODUCT_STATE_ON)
+        std::wstring state;
+        //REVIEW> A switch statement is more appropriate for this kind of checking cases.
+        switch (ProductState)
         {
+        case WSC_SECURITY_PRODUCT_STATE_ON:
             state = L"On";
-        }
-        else if (ProductState == WSC_SECURITY_PRODUCT_STATE_OFF)
-        {
+            break;
+        case WSC_SECURITY_PRODUCT_STATE_OFF:
             state = L"Off";
-        }
-        else
-        {
+            break;
+        case WSC_SECURITY_PRODUCT_STATE_EXPIRED:
+            //REVIEW> Checking for WSC_SECURITY_PRODUCT_STATE_EXPIRED as other types can be added
+            //        to enumeration, causing other states to be considered as Expired.
             state = L"Expired";
-        }
-
-        hr = PtrProduct->get_SignatureStatus(&ProductStatus);
-        if (FAILED(hr))
-        {
-            std::cout << "Failed to query AV product definition state.";
+            break;
+        default:
+            PtrProduct->Release();
+            PtrProduct = nullptr;
+            std::cout << "Unsupported AV product state.";
             continue;
         }
 
-        definitionState = (ProductStatus == WSC_SECURITY_PRODUCT_UP_TO_DATE) ? "UpToDate" : "OutOfDate";
+        WSC_SECURITY_SIGNATURE_STATUS ProductStatus = WSC_SECURITY_PRODUCT_OUT_OF_DATE;
+        hr = PtrProduct->get_SignatureStatus(&ProductStatus);
+        if (FAILED(hr))
+        {
+            PtrProduct->Release();
+            PtrProduct = nullptr;
+            std::cout << "Failed to query AV product definition state.";
+            continue;
+        }
+        std::string definitionState = (ProductStatus == WSC_SECURITY_PRODUCT_UP_TO_DATE) ? "UpToDate" : "OutOfDate";
 
         hr = PtrProduct->get_ProductStateTimestamp(&PtrVal);
         if (FAILED(hr))
         {
-            std::cout << "Failed to query AV product definition state.";
+            //REVIEW> it was missing the PtrProduct release.
+            PtrProduct->Release();
+            PtrProduct = nullptr;
+            std::cout << "Failed to query AV product timestamp.";
             continue;
         }
-        timestamp = std::wstring(PtrVal, SysStringLen(PtrVal));
+        std::wstring timestamp = std::wstring(PtrVal, SysStringLen(PtrVal));
         SysFreeString(PtrVal);
+        PtrVal = nullptr;
 
         ThirdPartyAVSoftware thirdPartyAVSoftware;
         thirdPartyAVSoftware.Name = displayName;
         thirdPartyAVSoftware.DefinitionStatus = definitionState;
         thirdPartyAVSoftware.DefinitionUpdateTime = timestamp;
-        thirdPartyAVSoftware.Description = state;
         thirdPartyAVSoftware.ProductState = state;
+        //REVIEW> Description and Version fields are missing. Keeping the default empty string as
+        //        they are not being set.
         thirdPartyAVSoftwareMap[thirdPartyAVSoftware.Name] = thirdPartyAVSoftware;
 
         PtrProduct->Release();
+        PtrProduct = nullptr;
     }
+
+    //REVIEW> Missing CoUninitialize.
+    CoUninitialize();
 
     if (thirdPartyAVSoftwareMap.size() == 0)
     {

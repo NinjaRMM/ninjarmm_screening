@@ -1,0 +1,17 @@
+AC_PREREQ([2.69])
+AC_INIT([osinfo], [0.0.1])
+AC_CONFIG_AUX_DIR([build-aux])
+AM_INIT_AUTOMAKE([subdir-objects])
+
+# Checks for programs.
+AC_PROG_CXX
+AC_PROG_AWK
+AC_PROG_CC
+AC_PROG_CPP
+AM_PROG_AR
+AC_PROG_LN_S
+AC_PROG_MAKE_SET
+
+AC_CONFIG_FILES([Makefile])
+
+AC_OUTPUT

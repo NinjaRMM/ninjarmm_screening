@@ -1,30 +1,264 @@
 1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
+    The standard library provides several types of containers which can be categorized in three
+groups: Sequence Containers (ordered collections), Associative Containers (sorted collections -
+elements are sorted by their keys) and Unordered Associative Containers (the position of an
+element doesn’t matter). There are also some Container Adapters which are not containers, but
+provide a different interface for underlying containers.
+    The first difference is based on how elements are stored: some containers keep elements in
+sequence, contiguously in memory (std::array and std::vector) or not (std::deque, std::forward_list
+and std::list), while other containers keeps elements in an internal order, requiring an associated
+key (std::map, std::multimap, std::unordered_map and std::unordered_multimap) or not (std::set,
+std::multiset, std::unordered_set and std::unordered_multiset - in these containers, the element is
+the key itself). Lastly, container adaptors give interfaces for common handling methods: LIFO
+(std::stack), FIFO (std::queue) and Priority Queue (std::priority_queue).
+    Besides that, a very important point is that all containers can change their sizes dynamically
+(handled internally by container itself), except the std::array, which has its size fixed at
+compilation time.
+    Another important point is related to complexity on accessing/searching an element and inserting
+or removing elements. Some containers are fast to access determined elements but are slow to add new
+elements or remove existing ones whereas other containers are fast to insert and remove elements but
+are slow to access specific elements.
+    Therefore, all these characteristics shall be taken into account when choosing the container to
+keep elements, which are summarized below:
+    * std::array
+      - Similar to ordinary arrays: fixed size at compilation time and can not be changed
+        dynamically;
+      - Elements are stored contiguously in memory;
+      - Constant time random access to elements;
+      - Used when the number of elements is known at compilation time and it’s static.
+    * std::vector
+      - Similar to array, but can change its size dynamically (can be costly);
+      - Elements are stored contiguously in memory;
+      - Constant time random access to elements;
+      - Constant time to insert or remove elements at the end of vector;
+      - Linear time to insert or remove elements not at the end of vector;
+      - Used when there are frequent accesses to elements by index and insertions/removals are
+        performed mainly at the end of the vector.
+    * std::deque
+      - Elements are not stored contiguously in memory;
+      - Can change its size dynamically;
+      - Constant time random access to elements;
+      - Constant time to insert or remove elements at the end or beginning of the deque;
+      - Linear time to insert or remove elements not at the end or beginning of the of deque;
+      - Used when there are frequent accesses to elements by index and insertions/removals are
+        performed mainly at the end and/or beginning of the deque.
+    * std::forward_list
+      - Elements are not stored contiguously in memory;
+      - Can change its size dynamically;
+      - Constant time to insert or remove elements anywhere in the container;
+      - Linear time random access to elements (no direct access to elements);
+      - Can only be iterated forward (sequential access in forward direction);
+      - Don’t have a “size” member function;
+      - Used when there are frequent insertions/removals at any point of the container, elements are
+        not frequently randomly accessed and sequential accesses are in forward direction only.
+    * std::list
+      - Elements are not stored contiguously in memory;
+      - Can change its size dynamically;
+      - Constant time to insert or remove elements anywhere in the list;
+      - Linear time random access to elements (no direct access to elements);
+      - Can be iterated forward or backward (sequential access in both forward and reverse
+        direction);
+      - Used when there are frequent insertions/removals at any point of the container, elements are
+        not frequently randomly accessed and sequential accesses can be in forward or reverse
+        directions.
+    * std::set
+      - Elements are referenced by their value (which are their keys) instead of by index;
+      - Can change its size dynamically;
+      - There can be at most one element of any value;
+      - Elements are sorted on insertion/removal;
+      - Inserted elements are constant (cannot change its value in place);
+      - Search, removal, and insertion operations have logarithmic complexity;
+      - Used when elements are searched by value and there is at most one element of any value.
+    * std::map
+      - Elements are referenced by their associated keys instead of by index;
+      - Can change its size dynamically;
+      - There can be at most one element of any key;
+      - Elements are sorted on insertion/removal;
+      - Search, removal, and insertion operations have logarithmic complexity;
+      - Used when elements are searched by key and there is at most one element of any key.
+    * std::multiset
+      - Same as std::set, but allows more than one element to have equivalent key;
+      - Used when elements are searched by value and there can be more than one element sharing the
+        same value.
+    * std::multimap
+      - Same as std::map, but allows more than one element to have equivalent key
+      - Used when elements are searched by key and there can be more than one element sharing the
+        same key.
+    * std::unordered_set, std::unordered_map, std::unordered_multiset and std::unordered_multimap
+      - Similar to their ordered versions (std::set, std::map, std::multiset and std::multimap), but
+        instead of storing elements by sorting keys (for std::set and std::multiset, the key is the
+        element value itself), they store elements based on the hash of the keys, making it faster
+        to access elements;
+      - There is no ordering on elements;
+      - Search, insertion, and removal of elements have average constant-time complexity;
+      - Used in the same cases of their ordered versions and ordering doesn’t matter.
+    * std::stack
+      - Export the functionality of a stack (LIFO) data structure;
+      - Used when a LIFO behavior is required.
+    * std::queue
+      - Export the functionality of a queue (FIFO) data structure;
+      - Used when a FIFO behavior is required.
+    * std::priority_queue
+      - Export the functionality of a priority queue data structure;
+      - Used when a priority queue is required.
+
 2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
-3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
+    Sorting algorithms are algorithms that sort a collection of elements based on some criteria.
+Some examples are the Bubble Sort, Merge Sort, Heapsort and the Quicksort.
+    The first difference is if the sorting algorithm is stable (Bubble Sort and Merge Sort) or not
+(Heapsort and Quicksort). An algorithm is stable if it maintains the relative order of elements with
+equal sort keys.
+    Another difference is the amount of auxiliary storage the sorting algorithm requires to sort
+the input elements: Bubble Sort and Heapsort needs O(1) auxiliary space whereas Merge Sort and
+Quicksort depend on the number of elements (O(n) and O(log n), respectively).
+    That said, Bubble Sort is useful when sorting a small number of elements or when the elements
+are nearly sorted and stable sorting is required. Merge Sort is preferred when stable sorting is
+required or when it can take advantage of parallel computing. When stable sorting is not required,
+Quicksort and Heapsort come in handy: Heapsort can be used when worst case is a concern or when
+using storage auxiliary space is costly while Quicksort can be used when average case performance
+matters more than worst case performance and using storage auxiliary space is cheap.
+
+3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly.
+    The purpose of virtual destructors is to properly call the derived-class’s destructor when
+deleting an object via a base-class pointer. If this call is missing, resources that are related to
+the derived-class are not released, causing memory leaks (for derived-class’ members and/or
+dynamically allocated memory), file handlers not being closed, mutex locks not being released, etc.
+
 4. Explain the keyword: static. What does it mean in each context?
-5. When are static member variables initialized? 
+    Static keyword has different meanings depending on the context it is being used. If it’s a
+storage class (within a function), static instructs the compiler to keep a local variable or object
+even after going out of scope. This keyword is also used to define static data members of a class,
+making these elements shared by all objects of that class (similarly, static keyword also states
+which member functions of the class can be accessed by class name instead of being associated with
+an object). Finally, another use for this keyword is to specify internal linkage when used in a
+declaration at namespace scope.
+
+5. When are static member variables initialized?
+    Static member variables are initialized before the program starts (i.e., before calling main()
+function).
+
 6. What is the difference between R-Values and L-Values?
+    L-Value refers to memory location that the program can access (it can appear on the left-hand or
+right-hand) whereas R-Value refers to data value that is stored at some address in memory that
+cannot be accessed by the program, for example literals, function calls that return a non-reference
+type, and temporary objects that are created during expression evaluation but can be accessed by the
+compiler (it can appear only on the right-hand).
+
 7. Is this code safe? If so why? If not why?
 	std::string foo()
 	{
 		std::string something = "avalue";
 		return something;
 	}
-	
+
 	Bonus: What would most compilers do with this code?
+    This code is safe because it doesn’t have any concurrency or scope issues. Also, most compilers
+will perform a copy elision, reusing a temporary object instead of creating new ones. In the given
+code, a temporary std::string object will be created with value “avalue” by using its copy
+constructor, then this object will be returned to caller (as opposite as creating a new object to be
+returned by calling the copy constructor passing the newly created object and then destroying it).
+
 8. Why would you use new rather than malloc when allocating an object? Likewise, what's the difference between free and delete?
-9. Explain the purpose of std::move, and std::forward. 
-10. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
+    “Malloc” just allocates memory from the heap and “free” just releases previously allocated
+memory whereas “new“ automatically allocates required memory space from heap and calls all related
+constructors (or throws exceptions if something goes wrong). Likewise, “delete” calls all related
+destructors and releases allocated memory.
+
+9. Explain the purpose of std::move, and std::forward.
+    The purpose of std::move is to allow the compiler to take over ("move”) resources (transfer
+ownership) held by one object that will be destroyed soon to another one instead of making a full
+copy of these resources to the new object, leaving the original object in a valid but unspecified
+state in which it should only be destroyed.
+    In the other hand, the purpose of the std::forward is to forward an universal reference variable
+along with its type (lvalue or rvalue), giving a “perfect forwarding” - a function receiving this
+variable is able to determine if the original variable is a L-Value or a R-Value and handle it
+properly.
+
+10. How do you share resources safely between threads? How would you share an integer value vs user defined type?
+    To safely share resources between threads, critical sections may require some thread
+synchronization like mutex locks to ensure that value is not updated by a thread while another one
+is reading it (or updating it too). Although integer types can have atomic operations, only some
+basic operations are supported and not all architectures support them, failing back on mutexes.
+Therefore, even though atomic types can be used to safely share integer values, some kind of lock
+can be required (for instance, doing a simple multiplication as there is no atomic multiplication,
+thus doing this operation without lock can lead to race conditions).
+
 11. What are the some of the principles of object-oriented programming?
+    The four basic principles of Object Oriented Programming are Encapsulation, Abstraction,
+Inheritance and Polymorphism.
+    Encapsulation is the mechanism of hiding data implementation by restricting access to public
+methods only, keeping internal data private to its own object, so each object is responsible for
+controlling its own state.
+    Abstraction is a concept that states that each object should only expose a high-level mechanism
+for using it, hiding away implementation details.
+    Inheritance is a mechanism for combining similar classes of objects into a single, more general
+class (increasing reusability from common logic) while extracting the unique logic into separate
+classes.
+    Polymorphism is the ability of types in the same inheritance chains to be able to do different
+things for the same call.
+
 12. Explain inheritance vs composition vs aggregation?
-13. Should you always initialize variables? 
+    Inheritance is a tightly coupled relationship between classes in which a child class inherits
+data and methods from a parent class, usually when the derived class has an “is a” relationship to
+the base class. On the other hand, Composition and Aggregation are loosely coupled relationships
+between classes in which a class has another class (as opposite as “is a”), not sharing resources
+between them. The difference between the last two is that the Composition implies a relationship
+where the child cannot exist independent of the parent whereas in Aggregation the child can exist
+independently of the parent. In other words, Composition is when one object owns another while
+Aggregation is when one object uses another object.
+
+13. Should you always initialize variables?
+    Yes, it’s important to initialize variables to avoid using it without proper initialization,
+which leads the program to be non-deterministic.
+
 14. What concept(s) in C++ would you use to manage resources automatically?
-	a. How important are these concepts? 	
-	b. What tools are you familiar with for tracking resource allocations? 
+	a. How important are these concepts?
+	b. What tools are you familiar with for tracking resource allocations?
+    The main concept related to automatic resource management is called RAII (Resource Acquisition
+is Initialization), which binds the resource management to a scope (so local objects are preferred
+over heap-allocated objects). It states that resources should be initialized on a wrapper class’
+constructor and cleaned up on class destructor, ensuring that resources will be released when this
+wrapper object goes out of scope (once the destructor is called during the stack unwinding). This is
+very important once it avoids resource leaks (memory, file handlers, network sockets, etc) when the
+program does not follow the happy path until resource releasing, for instance when some exception is
+thrown before it. Two typical examples of RAII are locks (which wrap mutexes) and smart points
+(which manage memory).
+    I’m familiar with Valgrind Memcheck and Clang LeakSanitizer tools.
+
 15. What security concerns have you come across in the past and how have you addressed them?
+    I don’t remember any particular security concerns I come across besides the common ones (buffer
+overflow, uninitialized pointer usage, integer overflow and underflow and incorrect type
+conversion). To avoid them, it’s preferred to use objects with bounds checking (like the containers
+available in the standard library), always initialize variables at declaration and try to avoid
+mixing signedness and unsigned types.
+
 16. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
-17. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
-18. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
-	a. Consider both a long term and short-term solutions. 
+    For development, I think a good code editor (VS Code) or IDE (Eclipse) and a version control
+system (Git) are very helpful. Also, containers (Docker) helps code development by allowing to have
+a standard compilation and test environments. Lastly, a technique that I find to be helpful is to
+talk with pairs, for instance on Agile meetings or doing pair programming, knowledge transfer
+sessions and hackathons.
+
+17. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.
+    I think a central point in code maintenance is to have most part of code covered by unit tests
+and integration tests, allowing refactors, patches and updates to be securely performed (avoiding
+unintentional behavior changes). Also, creating well-defined functions and classes with a single
+purpose is key to allow future refactors and extensions.
+
+18. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution.
+	a. Consider both a long term and short-term solutions.
+	A short-term solution would be to implement what you were required and do a smoke test to check
+if this change didn’t break other features. It’s not a good approach, but sometimes it’s needed due
+to deadline requirements.
+    A long-term solution would be to add unit tests to legacy code before changing it. After that,
+the required change could be implemented and tested against the unit tests, reducing unintentional
+behavior changes.
+
 19. What concerns do you had supporting legacy operating systems? (If any)
-20. Tell us about a project you worked on that you found to be interesting or unusual. 
+    I think the main concerns about supporting legacy operating systems are outdated and
+non-compatible APIs, security issues and technical debt.
+
+20. Tell us about a project you worked on that you found to be interesting or unusual.
+    I think a very interesting project I worked on was the development of an event-driven
+multi-threaded application which communicates with Redis database and dynamically loads shared
+library files to change its behaviour depending on these files, like a plugin.
