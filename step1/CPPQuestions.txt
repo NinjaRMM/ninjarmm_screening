@@ -1,9 +1,32 @@
 1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
+A: 
+Sequence containers: A Sequential Container is an ordered collection of the same type of data in which each element is stored in a specific position. The position of an element depends on the place and time of insertion of that element.
+Container adaptors: Container adaptors are not full container classes, but classes that provide a specific interface relying on an object of one of the container classes to handle the elements.
+Associative containers: Associative containers are those containers in which the location of an element depends on the element's value. The order of insertion of elements is not considered in determining the position of the element. The elements of an associative container are accessed via keys.
+Unordered associative containers: Unordered containers or unordered associative containers are those containers in which the position of elements does not matter. The elements in unordered containers are not stored according to the order of their insertion or their values. If n elements are stored in an unordered container, the order of their positions will be undefined, and it might even change over time. The elements of these containers can be accessed using hash.
+
 2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
+A:
+sort: Sorts the elements in the range [first,last) into ascending order. Equivalent elements are not guaranteed to keep their original relative order
+stable_sort: Sorts the elements in the range [first,last) into ascending order, like sort, but stable_sort preserves the relative order of the elements with equivalent values.
+partial_sort: Rearranges the elements in the range [first,last), in such a way that the elements before middle are the smallest elements in the entire range and are sorted in ascending order, while the remaining elements are left without any specific order.
+
 3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
+A: A virtual destructor ensures that when derived subclasses go out of scope or are deleted the order of destruction of each class in a hierarchy is carried out correctly. If the destruction order of the class objects is incorrect, in can lead to a memory leak.
+
 4. Explain the keyword: static. What does it mean in each context?
+A: 
+Static variables in a Function: When a variable is declared as static, space for it gets allocated for the lifetime of the program. Even if the function is called multiple times, space for the static variable is allocated only once and the value of variable in the previous call gets carried through the next function call.
+Static variables in a class: As the variables declared as static are initialized only once as they are allocated space in separate static storage so, the static variables in a class are shared by the objects. There can not be multiple copies of same static variables for different objects.
+Class objects as static: Just like variables, objects also when declared as static have a scope till the lifetime of program.
+Static functions in a class: Just like the static data members or static variables inside the class, static member functions also does not depend on object of class. Static member functions are allowed to access only the static data members or other static member functions, they can not access the non-static data members or member functions of the class.
+
 5. When are static member variables initialized? 
+A: they are initialized as part of the declaration process and will receive 0 unless another value is designated.
+
 6. What is the difference between R-Values and L-Values?
+A: An L-value is an object that has an identifiable location on memory. R-value are values whose address cannot be obtained by dereferencing them, either because they are literals or because they are temporary in nature.
+
 7. Is this code safe? If so why? If not why?
 	std::string foo()
 	{
@@ -12,14 +35,40 @@
 	}
 	
 	Bonus: What would most compilers do with this code?
+A: This code is not safe as it returns the pointer for the first element of a string that goes out of scope. As the string is a constant some compillers might optimize and return the constant value.
+
 8. Why would you use new rather than malloc when allocating an object? Likewise, what's the difference between free and delete?
+A: Both malloc() and new are used to allocate the memory dynamically in heap. But “new” does call the constructor of a class whereas “malloc()” does not.
+free() frees memory but doesn’t call Destructor of a class whereas “delete” frees the memory and also calls the Destructor of the class.
+New is an operator while malloc is a function, so new is faster than malloc. new is used with deleted while malloc is used with free.
+
 9. Explain the purpose of std::move, and std::forward. 
+A:
+std::move: This is a helper function to force move semantics on values, Although note that -in the standard library- moving implies that the moved-from object is left in a valid but unspecified state.
+std::forward: This is a helper function to allow perfect forwarding of arguments taken as rvalue references to deduced types, preserving any potential move semantics involved.
+
 10. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
+A: By using a Mutex. A mutex is a synchronization mechanism and stands for mutual exclusion. Its usage is simple and yet elegant. Before you enter a critical section (the set of sub-operations that need to be atomically executed), a thread locks the mutex if the mutex is not already locked otherwise it waits, until the mutex becomes lockable again. This way, we are sure that only the thread that successfully acquired the mutex can operate on the critical section of the code and modify the critical data.
+what is needed to be done in order to protect our critical section is to wrap our code in a pair of lock() and unlock()
+
 11. What are the some of the principles of object-oriented programming?
+A: Abstraction, encapsulation, inheritance, and polymorphism are four of the main principles of object-oriented programming.
+
 12. Explain inheritance vs composition vs aggregation?
+A:
+Inheritance: extend the functionality of a class by creating a subclass. Override superclass members in the subclasses to provide new functionality. Make methods abstract/virtual to force subclasses to "fill-in-the-blanks" when the superclass wants a particular interface but is agnostic about its implementation.
+Aggregation: create new functionality by taking other classes and combining them into a new class. Attach an common interface to this new class for interoperability with other code.
+Composition: The instantiation of the linked object is often hard coded inside the constructor of the object. It cannot be set from outside the object. Composition implies that the contained class cannot exist independently of the container. If the container is destroyed, the child is also destroyed.
+
 13. Should you always initialize variables? 
+A: A variable must always be initialized before use. Normally, the compiler gives a warning if a variable is undefined. It is then sufficient to take care of such cases. Instances of a class are usually initialized even if no arguments are provided in the declaration. Uninitialized variables are a common source of bugs. To avoid such bugs initialize variables upon definition.
+
 14. What concept(s) in C++ would you use to manage resources automatically?
+A: RAII "Resource Acquisition is Initialization"
+
 	a. How important are these concepts? 	
+A: RAII guarantees that the resource is available to any function that may access the object (resource availability is a class invariant, eliminating redundant runtime tests). It also guarantees that all resources are released when the lifetime of their controlling object ends, in reverse order of acquisition. Likewise, if resource acquisition fails (the constructor exits with an exception), all resources acquired by every fully-constructed member and base subobject are released in reverse order of initialization. This leverages the core language features (object lifetime, scope exit, order of initialization and stack unwinding) to eliminate resource leaks and guarantee exception safety. Another name for this technique is Scope-Bound Resource Management (SBRM), after the basic use case where the lifetime of an RAII object ends due to scope exit.
+
 	b. What tools are you familiar with for tracking resource allocations? 
 15. What security concerns have you come across in the past and how have you addressed them?
 16. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
