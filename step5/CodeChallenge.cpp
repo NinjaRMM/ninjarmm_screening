@@ -1,3 +1,4 @@
+
 /*
 
 NINJARMM Code Challenge
@@ -36,6 +37,15 @@ OBJ_STR objStr;
 //Here's a template function that can accept a sample object and 3 integer parameters. It checks if the sum of the integer params is positive or not.
 //The third integer param is optional so it's declared as a default param
 //Inside the function is some existing code that needs to exist, but not relevant to this exercise. 
+
+template <typename T, typename U>
+T checkIfPositive(const U& u, const int& param1, const int& param2, int param3, int& total)
+{
+    total = param1 + param2 + param3;
+    return u.getResult(param1, param2, param3);
+}
+
+
 template <typename T, typename U>
 T checkIfPositive(const U& u, const int& param1, const int& param2, int param3 = 0)
 {
@@ -57,6 +67,8 @@ int main()
     //<<<<<<<< START OF NON-EDITABLE SECTION OF CODE <<<<<<<<<<<
 
     //The following calls are already coded in a lot of places throughout the project so you can't change these
+    int total = 0;
+    
     int iResult = checkIfPositive<bool, OBJ_INT>(objInt, 1, 2);
     std::cout << iResult << std::endl;
     iResult = checkIfPositive<bool, OBJ_INT>(objInt, 1, -2);
@@ -70,6 +82,9 @@ int main()
     std::cout << sResult << std::endl;
     sResult = checkIfPositive<std::string, OBJ_STR>(objStr, 1, -2, 3);
     std::cout << sResult << std::endl;
+    
+    sResult = checkIfPositive<std::string, OBJ_STR>(objStr, 1, 2, 3, total); //<-- Total is output param
+    std::cout << sResult << " " << total << std::endl;
 
     //<<<<<<<< END OF NON-EDITABLE SECTION OF CODE <<<<<<<<<<<
 
