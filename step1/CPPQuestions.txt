@@ -1,30 +1,96 @@
-1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
-2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
-3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
-4. Explain the keyword: static. What does it mean in each context?
-5. When are static member variables initialized? 
-6. What is the difference between R-Values and L-Values?
-7. Is this code safe? If so why? If not why?
-	std::string foo()
-	{
-		std::string something = "avalue";
-		return something;
-	}
-	
-	Bonus: What would most compilers do with this code?
-8. Why would you use new rather than malloc when allocating an object? Likewise, what's the difference between free and delete?
-9. Explain the purpose of std::move, and std::forward. 
-10. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
-11. What are the some of the principles of object-oriented programming?
-12. Explain inheritance vs composition vs aggregation?
-13. Should you always initialize variables? 
-14. What concept(s) in C++ would you use to manage resources automatically?
-	a. How important are these concepts? 	
-	b. What tools are you familiar with for tracking resource allocations? 
-15. What security concerns have you come across in the past and how have you addressed them?
-16. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
-17. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
-18. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
-	a. Consider both a long term and short-term solutions. 
-19. What concerns do you had supporting legacy operating systems? (If any)
-20. Tell us about a project you worked on that you found to be interesting or unusual. 
+1.
+
+a) Sequential Containers: holds data structures that can be accessed sequentialy.
+Those are commonly used to store non unique unsorted data.
+
+b) Associative Container: holds sorted data structures that can be quickly searched by association.
+Those data structures holds keys that are associated to the values, making it faster to find desired elements. The elements are usually recovered by using binary search.
+
+c) Unordered Associative Container: holds unsorted data structures that can be quickly searched by association.
+Those data structures implement the concept of hash tables that are the fastest way to recover a single element, but are costly memory wise. 
+
+d) Container adapters: holds data structures that are sequential but provides a different interface.
+Those data structures can be adapted to provide LIFO (Last-in-first-out) and FIFO (First-in-first-out) and also implement priority over elements.
+
+2.
+
+Quick sort, Merge sort and Counting sort.
+
+Quick sort and Merge sort are based on the same concept of divide and conquer, although their implementations are different making their uses more or less efficient depending on the dataset chosen. Quick sort is generally considered faster than Merge sort on most common occasions because it shines on small datasets, also it’s an in-place algorithm, meaning it won’t allocate additional memory resources for the sorting process, whereas Merge Sort and Counting sort, both allocating additional chunks of memory. Merge sort will allocate another data chunk equivalent of its original size while Counting sort will allocate a chunk of size equivalent to the element of highest numerical order. It is important to note that Counting sort only can be used on special conditions, where you have only natural numbers on the dataset. Counting sort will be the fastest if used on a dataset that has a low range of possible numbers and a lot of repeated elements, this way we just “count” the times the elements are repeated on a separated array and then sort the dataset based on this principle. Another difference between them is that Merge sort is a stable algorithm while Quick sort isn’t, meaning if we want the original order of the equal elements we must always choose Merge Sort.
+
+3.
+
+The purpose of a virtual destructor is to free memory space allocated by a derived class object or instance using a base class pointer. If not used correctly, the derived instances won’t be deleted and it might lead to memory leaks.
+
+4.
+
+The keyword static has two different meanings depending if it is either inside or outside a class definition. Inside a class definition, the keyword static refers to members that aren’t bound to instances, meaning that whenever a new instance of a class is created it will not store a new value for this member, it will otherwise look upon the previously defined value if needed. Outside classes, static members are members that are only accessible within the file, they are seen by internal linkage only and are acessible exclusively within the translation unit that contain their definitions.
+
+5.
+
+Static members are initialized before the program starts. If there is more than one static member, the order of initialization depends on the order of their definitions. 
+
+6.
+
+L-Values have an address in memory while R-Values doesn’t.
+
+7.
+
+It is safe because most of the compilers will return the value of the string.
+
+8.
+
+Because new is an operator while malloc is a function, and operators are superior speed wise. Also new returns the exact data type while malloc will return a void pointer. Same as the new keyword, the delete keyword is also an operator being faster than the free keyword which is a function. The delete keyword also calls the destructor for the class the element is contained instead of just freeing the memory allocated on the heap.
+
+9.
+
+The std::move function is used to call functions that support move semantics with an argument that is not an rvalue. The std::forward call functions with either lvalues or rvalues preserving their category.
+
+10.
+
+If the data is being modified (write operations) the use of a mutex or a semaphore is needed to prevent race conditions. If the value is an integer, it is possible to use std::atomic to share the value, since it is thread-safe and it is a primitive type. For user defined types, generally is better to protect the thread accessible values with locks than using functions from the std::atomic library.
+
+11.
+
+Abstraction, encapsulation, polymorphism and inheritance.
+
+12.
+
+Inheritance is the process of acquiring the characteristics through a parent class, it then become a copy of the original class with some space for new features, for example by overriding methods. The aggregation and composition processes work in a way that you might get characteristics from other classes without necessarily being a copy of the parent, as there is no such concept for those processes. While in the composition process a class is part of something, adding to the whole, the aggregation process relies on having multiple classes contributing to it, without them being necessarily a part of this class.
+
+13.
+
+Yes. It may increase the performance and stability of the code.
+
+14.
+
+The use of resource handles and RAII
+
+a) Very important, it may prevent memory leaks, that are very difficult bugs to find.
+b) The use of objects such as autoptr and shared_ptr
+
+15.
+
+As an embedded software developer I’ve come across several security problems concerning the voltage that would be sent to the processor, and most of them were addressed by using optocouplers on the embedded system, this way the inductance would not cause a reverse peak voltage that could harm the processor.
+
+16.
+
+Docker, GCC, Cmake, Bash, VS Code and Valgrind.
+
+17.
+
+Meld
+
+18.
+
+Short-term solution: Search through the files, ask someone with more experience for advice, do the desired change, and try to compile one object at a time.
+
+Long-term solution: Create some documentation and test cases for each module.
+
+19.
+
+Takes too much time and requires a lot of communication (that can add greatly to the amount of time)
+
+20.
+
+I once worked on a project using a simulator for autonomous driving, that required a good amount of thread safety to receive the correct values from the simulator. The system was also an RTOS and the project involved a lot of serial communication that needed to be synced, and the results were really satisfying.
