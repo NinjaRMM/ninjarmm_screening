@@ -1,30 +1,84 @@
 1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
+	Vector:
+		-Secuence of elements of a given type stored contiguosly in memory.
+		-Elements can be acceced through subscripting
+		-Can be copied in assignments and initilizations.
+	Linked list:
+		- Secuence where we want to insert and delete elements with-out moving other elements.
+		- Don't use of subscripting. Instead, search the list looking for an element with a given value.
+	Map or unordered_map:
+		- Is a container of pair of values optimized for lookup.
 2. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
+	sort(b,e) : sort [b,:e)
+	sort(b,e,f) : sort [b:e) using f(*p,*q) as the sorting criterion
+	quicksort
 3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
+	- An object usually manipulated throught the interface provived by a base class is often also DELETED, through that inferface, with the 
+	purpose of free the memory space and preventing the memory leaks.
+
 4. Explain the keyword: static. What does it mean in each context?
+	Is a tyoe if storage duration. The storage for the object is allocated when the program begins and deallocated when the program ends. 
+	Only one instance of the object exists. All objects declared at namespace scope (including global namespace) have this storage duration, 
+	plus those declared with static or extern. 
+
 5. When are static member variables initialized? 
+	- Are initialized the first time control passes through their declaration (unless their initialization is zero- or constant-initialization, 
+	which can be performed before the block is first entered).
+
 6. What is the difference between R-Values and L-Values?
+	R-Values: Doesn't have memory address
+	L-Values: Have memory address
+
 7. Is this code safe? If so why? If not why?
 	std::string foo()
 	{
 		std::string something = "avalue";
 		return something;
 	}
+
+	**It is secure. The code will return the value of the string.
 	
-	Bonus: What would most compilers do with this code?
+	Bonus: What would most compilers do with this code? Returns the value of the string. 
+
 8. Why would you use new rather than malloc when allocating an object? Likewise, what's the difference between free and delete?
+	For memory management. Objects allocated by new are said to be on the free store. free doesn't invoque destructors. delete calls destructors instead just free the memory and usually is used
+	with new.
 9. Explain the purpose of std::move, and std::forward. 
+	std::move
+		Traditional way of getting a value from a to b.
+	std::forward
+		Forwards lvalues as either lvalues or as rvalues, depending on.
 10. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
+
 11. What are the some of the principles of object-oriented programming?
+	Parts of the analogy of the real life. It has the more important characteristics: encapsulation, inheritance and polymorphism
 12. Explain inheritance vs composition vs aggregation?
+	Inheritance: share or get characteristics depending on a parent class.
+	Composition and aggregation: get characteristics from other class not nedded a parent class.
+
 13. Should you always initialize variables? 
+	Yes. But sometimes constructors eliminates the problem of uninitialize variables.
+
 14. What concept(s) in C++ would you use to manage resources automatically?
 	a. How important are these concepts? 	
 	b. What tools are you familiar with for tracking resource allocations? 
 15. What security concerns have you come across in the past and how have you addressed them?
+	If you have to insert some credential use a cypher standar as base64 to code and decode credentials.
+
 16. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
-17. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
+	Linux terminal, Postman, QT, VSCode.
+
+17. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance. 
+	Linux terminal, git. CI/CD.
+
 18. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
-	a. Consider both a long term and short-term solutions. 
+	a. Consider both a long term and short-term solutions.
+	Long term: Trace the data and functions. Tested. Add info to the wiki or README file about how to test, maintenance and change.
+	Short term: Verify if there is some tickets related. Ask to someone who propably knows more about the system.
+
 19. What concerns do you had supporting legacy operating systems? (If any)
+	Read about it(See throught the documentations or wiki). Do a lot of verifications.  
+
 20. Tell us about a project you worked on that you found to be interesting or unusual. 
+	I worked on a router's firewall, in that year the cypher end to end for whatsapp was not implemented yet, so I cath some unespected packages
+	with the whatsapp messages from the clients on the firewall filters.
