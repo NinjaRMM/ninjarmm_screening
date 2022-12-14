@@ -28,16 +28,6 @@ class Pilot : public Job {
     public:
     Pilot(){};
     ~Pilot(){};
-
-    QString getJobName(){
-        return ("");
-    }
-    QString getJobDescription(){
-        return ("");
-    }
-    QString getJobHours(){
-        return ("");
-    }
 };
 
 Job::~Job()
