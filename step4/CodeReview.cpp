@@ -10,6 +10,23 @@ Comments are encouraged.
 
 */
 
+// 1. Try to maintain a consistent format, for example UpperCamelCase for functions and lowerCamelCase for variables
+// 2. Try to be consistent with the names, in one point we have DefinitionStatus and in other definitionState
+// 3. Use nullptr, not NULL
+// 4. If the Name field is the Key of the map, we could consider to remove it from the struct, because we could get
+//  the name from the key map, but maybe, if we don't have space issues, it could be more comfortable maintain the field
+//  in the struct
+//  5. If we don't need to maintain the thirdPartyAVSoftwareMap ordered by the Name, we could consider to use a unordered_map,
+//  which provides better insertion and searching times.
+// 6. Try to use a Logger system instead of basic couts (also add \n or newlines after the traces)
+// 7. Try to use empty() instead of size() for STL containers; In general empty() function is constant time, but some 
+// implementations of size() require O(n) time complexity
+// 8. The fields ProductState and Description stores the same vale, try to use only one 
+// 9. Local ProductStatus variable  should be renamed by signatureStatus
+// 10. In a comparison like this one "if (productState == WSC_SECURITY_PRODUCT_STATE_ON)" it is a good practice to set the constant first, like this:
+// "if (WSC_SECURITY_PRODUCT_STATE_ON == productState)", in this way, if you have a typo like this "if (WSC_SECURITY_PRODUCT_STATE_ON = productState)"
+// where you forget, by mistake, a "=" in the operator, the compiler will warn you and you do not execute an assigment by mistake
+// 11. It could be interesting define a specific type for the map argument, like "typedef std::map<....> ThirdPartyAvSoftwareMap_t"
 
 struct ThirdPartyAVSoftware
 {

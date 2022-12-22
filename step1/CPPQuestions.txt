@@ -1,11 +1,51 @@
 1. What is your full name?
+My full name is Santiago Carmona Meco
+
 2. Any repositories you wish to share with us? 
+This repository may be a bit old, but there it is https://code.google.com/archive/p/my-cplusplus-code/
+I used to use it mainly as a wiki when I was a student.
+
 3. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
+In the standard library we cand find different types of data structures to manage data. We could categorize them in:
+•	list: Double linked list.
+•	vector: Dynamic array which allows to resize itself after insertion and deletion operations.
+•	array: Like a classic C static array, but with extra methods that allows having more secure and control about the managing (manage limits, for example).
+•	queues:
+	o	queue: Basically, is a FIFO structure, and it only allows to insert from one side and remove elements from the other.
+	o	deque: Like the queue, but it allows you to insert and remove from both sides.
+•	stack: Basically, is a LIFO structure which allows insert and extract elements only from the end.
+•	maps type:
+	o	map: It is implemented as a self-balancing binary search tree, due to this design the inserted data is ordered.
+	o	unordered_map: It is implemented as a hash table, so it is more efficient for direct access.
+•	sets type: Like a map, but it only stores the key value; This could be useful when you need to store a collection of 
+       information that cannot be repeated. We have two different types:
+	o	set: In terms of design and performance, same advantages and disadvantages that the map.
+	o	unordered_set: In terms of design and performance, same advantages and disadvantages that the map
+
 4. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
+Some of the most popular sorting algorithms can be:
+•	Bubble Sort.
+•	Insertion Sort.
+•	Quick Sort.
+And I must be honest, since I was in the university (more than 10 years ago) I have never had to implement any of this 
+mechanisms, so I could not remember their details without googling.
+
 5. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
+The main purpose for a virtual destructor is to allow calling the destructor of the parent classes when we use objects design as polymorphism classes. The main issue is, as I said, miss the calling of the destructors of the parents classes and this behavior is not desirable because we can have memory leaks due to don't release attributes initialized from the parents.
+
 6. Explain the keyword: static. What does it mean in each context?
+The static word has different meanings depending on the context: 
+•	When we define and initialize a static local variable, the variable will be initialized only once, no matter how many times the functions which contain it call the initialization; this can be useful, for example, when we want to define a singleton.
+•	When we declare a static member function (also known as method) inside of a class, we are declaring that the member function is a class function, and can be called withtout instantiate an object; These types of member functions cannot use non static data members (also known as attributes)
+•	When we declare a static data member (attribute) inside of a class, we are declaring that the data member is a class data, and, similar to the static member function, can be used without an object (so it is a common attribute for all objects of the same class).
+•	When we declare a static function (non-member function of a class) in a c or cpp file, we are declaring that is a function private for that unit.
+
 7. When are static member variables initialized? 
+When they are defined, before the beginning of the program.
+
 8. What is the difference between R-Values and L-Values?
+A R-Value is a temporary expression which is not associated with any object or reference (for example a literal) and it does not have any address associated. In the other hand, a L-Value is an expression associated with a memory location, as an object.
+
 9. Is this code safe? If so why? If not why?
 	std::string foo()
 	{
@@ -13,20 +53,67 @@
 		return something;
 	}
 	
-	Bonus: What would most compilers do with this code?
+Yes, it is, because it returns a copy of the object instantiated inside the function. 
+	
+Bonus: What would most compilers do with this code?
+An optimization, such as directly return "avalue" without instantiate "something" object.	
+
 10. Why would you use new rather than malloc when allocating an object? Likewise, what's the difference between free and delete?
+In my case I would use "new" rather than malloc because is a operation associated directly with C++ and it always calls the constructor associated with the object that we are going to instantiate. Malloc only gives the requested memory and does not initialize, which can be unsafe.
+
 11. Explain the purpose of std::move, and std::forward. 
+std::move is used to move the memory from an object to another. 
+
 12. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
+The main mechanism to share resources safely between threads is protecting them using mutex. The type of the mutex and the way of locking it, it will depend on the specific scenario. 
+
+In this moment I don't see any difference in the way of protecting a basic value, as an integer, compared with a more complex type such an user defined type. 
+
 13. What are the some of the principles of object-oriented programming?
+Polymorphism, inheritance, abstraction and encapsulation.
+
 14. Explain inheritance vs composition vs aggregation?
-15. Should you always initialize variables? 
+•	Inheritance: A child class derives method and attributes from a parent class.
+•	Composition: An object contains other objects as part of its internal structure.
+•	Aggregation: An object contains a reference to another object but does not own it.
+
+15. Should you always initialize variables?
+In my opinion, the safest practice is always initializing variables, but I'm aware that if in the first use of the variable (after definition) you are directly reassigning the initial value, the initialization is not really necessary.
+
 16. What concept(s) in C++ would you use to manage resources automatically?
+Since C++ 11, the STL allows to use smart pointers, like shared_ptr and unique_ptr, which allows us to manage dynamic memory elements using objects which encapsulates the pointers. 
+
 	a. How important are these concepts? 	
+Thanks to this encapsulation, the allocation and release of the memory will be managed by the constructor and the destructor of the object, and we will avoid memory leaks, so I could say that nowadays it is very important to use these types of pointers to try to avoid having an application with leaks of memory. 
+
 	b. What tools are you familiar with for tracking resource allocations? 
+Mainly Valgrind. Sometimes I have used alternatives as Heaptrack.
+	
 17. What security concerns have you come across in the past and how have you addressed them?
+Most of the security concerns that I have come across has been related with the thread safe policy when I have been working with concurrency and shared resources. In these scenarios I have been to learn a lot about the safest ways to use exclusion mechanisms, as mutex and conditional variables, and which types of mutex (shared, recursive...) and different ways to use them (for example types guards).
+
+Other concern could be if the performance achieved for my code is good enough for the time requirements. To analyze this, I usually instrument my code to be able to obtain time stamps of the different critical functions over stress situations, which will allow to analyze the performance.
+
 18. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
+In my opinion, the main tool for a C++ developer is gdb (and gdbserver). Also, as I mentioned before, Valgrind (and its different integrated tools) is a very important, which allows analyzing different aspect related with the memory of the program. 
+There are other extra tools such as tsan (for thread analyzer).
+
 19. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
+Sonarqube is a very good one to improve the code quality.
+
 20. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
 	a. Consider both a long term and short-term solutions. 
+To understand the purpose of the code:
+1.	First, I would try to identify colleagues who have worked with that project and try to get some initial indications on the purpose and design of the project.
+2.	After that, I will analyze it carefully, trying to identify the different modules, the purpose of each module and how interacts with the rest.
+3.	For a short-term, I would try to execute some basic scenarios and cases, trying to execute the functions of the module that requires the change. Make the changes and try again, being sure that the previous functions are not broken.
+4.	For a long-term, I would try to design unit tests for the functions of each identified module, then some integration tests to test the behavior of the modules, and finally functional tests to test the high level functions of the app.
+
+
 21. What concerns do you had supporting legacy operating systems? (If any)
+Mainly, the frustration associated with the difficulty of understanding projects with, sometimes, decades of development, where countless developers have inserted different functionalities, each one following, mixing and contradicting the initial design pattern of the application, and usually projects lacking documentation.
+
 22. Tell us about a project you worked on that you found to be interesting or unusual. 
+When I was working designing and developing a Bus Controller Communication Driver (for a Mil-1553 device), for the Euclid satellite of the European Space Agency, this communication device had a very complex hardware in a FPGA.
+MIL-1553 is a real time communication protocol which uses a Master-Slave pattern. The Bus Controller works as Master and the Remote Terminal as Slave. The hardware chip defined its own ADOC assembly language for the sending of the messages, so my driver had to be able to transform the messages made by the user of the driver API into the assembly language of the hardware and deploy the generated code in a specific memory address and notify the hardware, which should send the real message to the Remote Terminal. 
+This design was a mix of low- and high-level approaches and it was very interesting to deal with the API for the user and the communication with the HW at the same time.
