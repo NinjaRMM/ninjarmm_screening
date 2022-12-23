@@ -14,7 +14,7 @@ class Job{
     public:
         Job(int _hours, std::string _name, std::string _description);
         
-        virtual ~Job(){ std::cout << "calling job destructor " << std::endl;};
+        virtual ~Job(){};
         
         std::string get_name() ;
         std::string get_description();
@@ -26,16 +26,16 @@ class Programmer:public Job
 {    
     public:     
         Programmer(int hours=10, std::string name="Programmer", std::string description="Software Developer"):
-                    Job(hours,name,description){ std::cout << "calling programmer constructior " << std::endl; }
-        ~Programmer(){std::cout << "calling programmer destructor " << std::endl;};
+                    Job(hours,name,description){}
+        ~Programmer(){};
 };
 /* c */
 class Pilot:public Job
 {
     public:
         Pilot(int hours=20, std::string name="Pilot", std::string description="Airplane Pilot"):
-                Job(hours,name,description){ std::cout << "calling pilot constructior " << std::endl; }
-        ~Pilot(){std::cout << "calling pilot destructor " << std::endl;};
+                Job(hours,name,description){}
+        ~Pilot(){};
 };
 
 class FactoryJob

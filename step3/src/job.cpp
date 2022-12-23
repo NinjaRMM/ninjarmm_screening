@@ -112,7 +112,6 @@ void test_range(std::ostream& os = std::cout){
 
     os << outresult.str();
 }
-
 void test_count(std::ostream& os = std::cout)
 { 
     os << "Testing match string function.."<< std::endl; 

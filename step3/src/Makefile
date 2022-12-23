@@ -1,4 +1,4 @@
-PRJ_NAME=step5
+PRJ_NAME=step3
 
 C_SRC=$(wildcard *.cpp)
 H_SRC=$(wildcard *.hpp)
