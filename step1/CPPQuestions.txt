@@ -32,15 +32,25 @@
 	It's safe. Local String is copied on function return.
 
 10. Why would you use new rather than malloc when allocating an object? Likewise, what's the difference between free and delete?
+	new    : allocates memory at runtime and initialize the object by calling constructor ( delete )
+	malloc : allocates memory at runtime and return a void pointer (free)
+	free   : only release memory.
+	delete : free memory and call destructor
 
 11. Explain the purpose of std::move, and std::forward. 
+	move : transfers resource from object to another
+	forward : used to cast a templated parameter in a function, it can be r-value or l-value.
 
 12. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
+	mutex, semaphores.
 
 13. What are the some of the principles of object-oriented programming?
 	SOLID
 
 14. Explain inheritance vs composition vs aggregation?
+inheritance : members of one class are transferred to another class
+composition:  both objects are dependent of each other.
+aggregation : one object owns another object
 
 15. Should you always initialize variables? 
 16. What concept(s) in C++ would you use to manage resources automatically?
@@ -49,11 +59,24 @@
 		valgrind
 
 17. What security concerns have you come across in the past and how have you addressed them?
+   - authorization to access data.   
 
-18. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
+18. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.	
+	- debug
+	- unit test
+	- memory debugging
+
 19. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
+	- version control
+	- software documentation
+
 20. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
 	a. Consider both a long term and short-term solutions. 
+	- Checking code dynamic by running it.
+	- Starting code documentation.
+
 21. What concerns do you had supporting legacy operating systems? (If any)
-	Regression tests
+	- Regression tests
+	
 22. Tell us about a project you worked on that you found to be interesting or unusual. 
+	Backend system.
