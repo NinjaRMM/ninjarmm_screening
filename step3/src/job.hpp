@@ -49,13 +49,6 @@ class FactoryJob
      static std::shared_ptr<Job> create(Job_types type, int hours, std::string name, std::string description);
 };
 
-class testString{
-    private:
-        std::string toBeTested;
-    public:
-        testString(std::string s):(toBeTested(s)) {};
-        ~testString();        
-        bool ContainsTheString(const std::string &s) { return ( s== toBeTested); };
-}
+
 
 #endif

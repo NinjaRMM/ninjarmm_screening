@@ -10,10 +10,10 @@ CC_FLAGS= -std=c++20 -c -W -Wall
 
 .PHONY: all clean
 
+all: $(PRJ_NAME)
+
 clean: 
 	rm $(PRJ_NAME) $(OBJS)
-
-all: $(PRJ_NAME)
 
 $(PRJ_NAME): $(OBJS)	
 	@$(CC) $(OBJS)  -o $@

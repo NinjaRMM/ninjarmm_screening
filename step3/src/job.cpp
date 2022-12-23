@@ -1,5 +1,8 @@
 #include "job.hpp"
 #include <algorithm>
+#include <sstream>
+
+#define IS_TRUE_TEST_COUNT(d,x,y) { int a; if ( (a=(x)) != y ) os << __FUNCTION__ << " failed. Result should be "<< y << " but got "<<a << std::endl;else os<<d<< " test passed" << std::endl; }
 
 /* a */
 Job::Job( int _hours, 
@@ -75,32 +78,58 @@ void IsInBounds(T code, T min, T max)
     }    
 }
 
-bool ContainsTheString( const std::string &input) {
-    if( input == "test"){
+bool ContainsTheString( const std::string &input, const std::string &toTest) {
+    if( toTest == input){
         return true;
     }else{
         return false;
     }
 }
 
-int count_match( std::vector<std::string> &theStrings , bool (*func)(const std::string&) )
-{
-    
-    auto count= std::count_if(theStrings.begin(), theStrings.end(), [func](std::string &s) {  return (*func)(s); }  );
-
+int count_match( std::vector<std::string> &theStrings , bool (*func)(const std::string&, const std::string&) , const std::string &toTest)
+{    
+    auto count= std::count_if(theStrings.begin(), theStrings.end(), [func, toTest](std::string &s) {  return (*func)(s,toTest ); }  );
     return count;
 }
-void test_count()
-{
-    auto theStrings = std::vector<std::string> { "one", "two", "test", "test"}; 
-    
-    std::cout << " count " << count_match( theStrings, ContainsTheString) << std::endl;
+
+void test_range(std::ostream& os = std::cout){
+   os << "Testing range function.."<< std::endl; 
+   auto test = [](std::ostringstream& os,std::string desc, std::stringstream &in, std::string exp){ if ( in.str().compare(exp) ==0 ) os <<"Test " <<desc << " passed"<< std::endl; else os <<"Test " <<desc << " failed"<< std::endl;};
+
+    std::stringstream buffer;    
+    std::ostringstream outresult;
+    std::streambuf* prevcoutbuf = std::cout.rdbuf( buffer.rdbuf() );
+       
+    IsInBounds<int>(1,2,3);
+    test(outresult,"integer",buffer, "The input value [1] is within range [2][3]\n"); 
+
+    buffer.str("");
+  
+    IsInBounds<char>('e','a','b');
+    test(outresult,"char",buffer, "The input value [e] is lower than mininum range. Range [a][b]\n"); 
+
+    std::cout.rdbuf(prevcoutbuf);
+
+    os << outresult.str();
+}
+
+void test_count(std::ostream& os = std::cout)
+{ 
+    os << "Testing match string function.."<< std::endl; 
+    auto theStrings = std::vector<std::string> {};
+    IS_TRUE_TEST_COUNT( "Empty vector", count_match( theStrings, ContainsTheString, ""),0 );
+    theStrings ={ "one", "two"};
+    IS_TRUE_TEST_COUNT( "No value", count_match( theStrings, ContainsTheString, "test"),0 );
+    theStrings.push_back("test");    
+    IS_TRUE_TEST_COUNT( "One value", count_match( theStrings, ContainsTheString, "test"),1 );  
 }
 
 int main(){
-    allocate_jobs();
-    IsInBounds<int>(1,2,3);
-    IsInBounds<char>('e','a','b');
-    test_count();
+  
+   test_range();
+   test_count();
+
+   allocate_jobs();
+  
     return 0;
 }
