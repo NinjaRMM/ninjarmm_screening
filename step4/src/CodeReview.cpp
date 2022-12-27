@@ -11,6 +11,14 @@ Comments are encouraged.
 */
 
 
+#include <wtypesbase.h>
+#include <iwscapi.h>
+#include <wscapi.h>
+#include <string>
+#include <oleauto.h>
+#include <map>
+#include <iostream>
+
 struct ThirdPartyAVSoftware
 {
     std::wstring Name;
@@ -20,10 +28,12 @@ struct ThirdPartyAVSoftware
     std::wstring Version;
     std::wstring ProductState;
 };
-/*  1)  Missing IWscProduct, IWSCProductList, WSC_SECURITY_PRODUCT_STATE,WSC_SECURITY_SIGNATURE_STATUS definition. 
+/* Missing IWscProduct, IWSCProductList, WSC_SECURITY_PRODUCT_STATE,WSC_SECURITY_SIGNATURE_STATUS definition. 
 Maybe 'iwscapi.h' file should de included */
 
-/*  2)  Missing BSTR definition. Maybe 'WTypes.h' should be included*/
+/* Missing BSTR definition. Maybe 'WTypes.h' should be included*/
+/* Missing map definition. Maybe 'map' should be included*/
+/* Missing wstring definition. Maybe 'string' should be included*/
 bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftware>& thirdPartyAVSoftwareMap)
 {
     HRESULT hr = S_OK;
@@ -40,11 +50,12 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
     hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&PtrProductList));
     if (FAILED(hr))
     {
+        /* Missing cout definition. Maybe iostream should be included */
         std::cout << "Failed to create WSCProductList object. ";
         return false;
     }
 
-    /* 3) Missing WSC_SECURITY_PROVIDER_ANTIVIRUS definition. Maybe 'wscapi.h' file should de included */
+    /* Missing WSC_SECURITY_PROVIDER_ANTIVIRUS definition. Maybe 'wscapi.h' file should de included */
     hr = PtrProductList->Initialize(WSC_SECURITY_PROVIDER_ANTIVIRUS);
     if (FAILED(hr))
     {
