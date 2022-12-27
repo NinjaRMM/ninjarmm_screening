@@ -4,7 +4,7 @@
 
 #define IS_TRUE_TEST_COUNT(d,x,y) { int a; if ( (a=(x)) != y ) os << __FUNCTION__ << " failed. Result should be "<< y << " but got "<<a << std::endl;else os<<d<< " test passed" << std::endl; }
 
-/* a */
+/* a Creating Job class base */
 Job::Job( int _hours, 
           std::string _name,
           std::string _description):
@@ -29,6 +29,7 @@ std::string Job::DoWork(){
     return work;
 }
 
+/*Factory for programmer, pilot object creation*/
 std::shared_ptr<Job> FactoryJob::create(Job_types type, int hours, std::string name, std::string description){
     switch (type)
     {
@@ -47,6 +48,7 @@ std::shared_ptr<Job> FactoryJob::create(Job_types type, int hours, std::string n
     }
 }
 /* e,f,g */
+/*Create job objects and allocate them into vector*/
 void allocate_jobs()
 {
     std::vector<std::shared_ptr<Job> > jobs;    
@@ -65,7 +67,8 @@ void allocate_jobs()
     }
 }
 
-/* h */
+/* h */\
+/*Check if value 'code' is within min and max range*/
 template<typename T>
 void IsInBounds(T code, T min, T max)
 {
@@ -78,6 +81,7 @@ void IsInBounds(T code, T min, T max)
     }    
 }
 
+/* Check if string 'input' is equal to string 'toTest' */
 bool ContainsTheString( const std::string &input, const std::string &toTest) {
     if( toTest == input){
         return true;
@@ -85,13 +89,15 @@ bool ContainsTheString( const std::string &input, const std::string &toTest) {
         return false;
     }
 }
-
+/* Count how many strings equal to 'toTest' there are in vector of string 'theStrings.
+The 'func' parameter is a function pointer which compare 2 strings, returning true if
+they are equal.*/
 int count_match( std::vector<std::string> &theStrings , bool (*func)(const std::string&, const std::string&) , const std::string &toTest)
 {    
     auto count= std::count_if(theStrings.begin(), theStrings.end(), [func, toTest](std::string &s) {  return (*func)(s,toTest ); }  );
     return count;
 }
-
+/* Unit test that test 'IsInBounds' function.*/
 void test_range(std::ostream& os = std::cout){
    os << "Testing range function.."<< std::endl; 
    auto test = [](std::ostringstream& os,std::string desc, std::stringstream &in, std::string exp){ if ( in.str().compare(exp) ==0 ) os <<"Test " <<desc << " passed"<< std::endl; else os <<"Test " <<desc << " failed"<< std::endl;};
@@ -112,6 +118,8 @@ void test_range(std::ostream& os = std::cout){
 
     os << outresult.str();
 }
+
+/* Unit test that test 'count_match' function.*/
 void test_count(std::ostream& os = std::cout)
 { 
     os << "Testing match string function.."<< std::endl; 
@@ -122,6 +130,7 @@ void test_count(std::ostream& os = std::cout)
     theStrings.push_back("test");    
     IS_TRUE_TEST_COUNT( "One value", count_match( theStrings, ContainsTheString, "test"),1 );  
 }
+
 
 int main(){
   
