@@ -1,32 +1,290 @@
 1. What is your full name?
+
+    Samuel Thomsen
+
 2. Any repositories you wish to share with us? 
-3. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
+
+    None of my current projects are public right now. I could provide a tour of 
+    one or more of them via shared session if interestd. 
+
+3. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each. 
+
+    vector: 
+
+    Single block of memory with contiguous elements. Can grow and shrink. 
+    Provides random access. Loads quickly, especially if size is known before 
+    loading. Must be careful as iterators and element pointers are invalidated 
+    if container is reallocated. 
+
+    map: 
+
+    Key-value paired elements. Great for indexes, lookups and hashtables. Keys 
+    are sorted, so traversing via iterator will be key-orderd. Updating value 
+    for existing key replaces existing value. 
+
+    set: 
+
+    Single value sorted entries. Great for keeping track of observed values as 
+    re-adding an existing value is efficiently ignored. Traversing via iterator 
+    will be element value ordered. 
+
+    stack 
+
+    Last in first out (LIFO). Great when a system state changes, but needs to be 
+    able to return to the prior state. This could include variable scoping in a 
+    scripting language, or device context in a graphics system (selected pens 
+    etc.) 
+
+    array: 
+
+    Single block of memory with contiguous elements. Cannot change size. Random 
+    access. Can be faster than std::vector. 
+
+    multimap: 
+
+    Key-value pairs allowing multiple values per key. 
+
+    list 
+
+    Not randomly accessible. Stable validity of iterators and pointers to 
+    elements. Fast insertion and deletion. Iterator based access. Useful when 
+    persistent object pointer validity is important. 
+
+    queue 
+
+    First in first out (FIFO). Great for mult-threaded scenarios where one 
+    thread submits units of work and another thread processes them in the order 
+    they were submitted. 
+
+    deque (double ended queue) 
+
+    Allows efficient insertion and deletion from front and back. 
+
+    unordered_map 
+
+    Same as map, but can be faster and traversing via iterator is not 
+    key-ordered. 
+
+    unordered_set 
+
+    Same as set, but can be faster and traversing via iterator is not element 
+    value ordered. 
+
 4. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
+
+    Note: The C++ Standard library provides a number of sort routines, the most 
+    commonly used being std::sort, std::partial_sort and std::stable_sort. 
+    Depending on the compiler, these can use combinations of the following 
+    underlying sort routines. 
+
+    selection_sort 
+
+    O(n^2). Provides an in-place, stable sort. Simple and can be fine for 
+    smaller data-sets. Walks unsorted data to find smallest item and saves in 
+    next sorted position. Repeats until all data is sorted. 
+
+    heap_sort 
+
+    O(nLogn). Similar to selection_sort, but first builds a heap structure to 
+    optimize next element search. Slower startup, but faster overall. Also 
+    provides a stable sort. Requires additional memory for heap. 
+
+    quick_sort 
+
+    O(n^2) to 0(nLogn). Works by recursively partitioning the data by value. It 
+    is not stable. 
+
+    merge_sort 
+
+    Works by recursively dividing the unsorted list in to sublists, then merging 
+    the lists together until complete. 
+
 5. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
-6. Explain the keyword: static. What does it mean in each context?
+
+    Virtual destructors ensure proper destruction of a derived object when 
+    deleted through a base class pointer or reference. If not used, the 
+    destructor of a derived object that is deleted through a base pointer or 
+    reference will not be called, likely resulting in memory leaks and other 
+    issues. 
+
+6. Explain the keyword: static. What does it mean in each context? 
+
+    Variables declared static inside a function are initialized once at module 
+    startup and maintain their values across all calls to the function. 
+
+    Module variables & functions declared static inside a module have local 
+    link-scope. In other words, the same name can be reused across multiple 
+    modules without collision. 
+
+    Member functions and variables declared static inside a class definition 
+    exist separately from any instance of the class and do not implicitly refer 
+    to any instance. Can be used to implement a singleton pattern. 
+
 7. When are static member variables initialized? 
-8. What is the difference between R-Values and L-Values?
+
+    At module startup. 
+
+8. What is the difference between R-Values and L-Values? 
+
+    L-Values are object references that have defined storage. R-Values are not 
+    object references, but can be the literals function call returns or the 
+    results of some operators. You cannot assign a value to an R-Value. 
+
 9. Is this code safe? If so why? If not why?
 	std::string foo()
 	{
 		std::string something = "avalue";
 		return something;
 	}
-	
+
+    Yes. The code is safe. This is because 'something' is 'copied' to the 
+    function result before going out of scope. 
+
 	Bonus: What would most compilers do with this code?
+
+    Modern C++ compliers, when copying the result, will reduce the number of 
+    temp objects and move or directly construct the result into the caller's 
+    frame. 
+
 10. Why would you use new rather than malloc when allocating an object? Likewise, what's the difference between free and delete?
+
+    Using new to allocate an object does 2 things: it allocates the object's 
+    memory and it calls the object's constructor; malloc only allocates the 
+    memory. 
+
+    Likewise, delete does 2 things: it calls an object's destructor and it 
+    deallocates the object's memory; free only deallocates the memory. 
+
 11. Explain the purpose of std::move, and std::forward. 
+
+    std::move is used to cast an lvalue object to an rvalue reference, thereby 
+    activating possible move semantics when passing the object. 
+
+    std::forward is used in a templated function to preserve a parameter's 
+    reference type (lvalue or rvalue). 
+
 12. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
+
+    The standard library has atomic versions of the basic integer types, which 
+    can be safely read or modified by multiple threads without additional 
+    protection. 
+
+    More complex types need to be protected with locks on mutexes or with 
+    critical sections. These syncronization objects ensure that only a single 
+    thread can access an object or run certain code at the same time. 
+
 13. What are the some of the principles of object-oriented programming?
+
+    Abstraction: Interface (behavior) definitions without any implementation. 
+
+    Polymorphism: Different classes with the same interface (behavior) but 
+    varying underlying implementation. 
+
+    Inheritance: Polymorphism achieved through base/derived class hierarchies, 
+    enabling code-reuse and selective re-implementation. 
+
+    Encapsulation: Providing a separation of concerns regarding an object's 
+    public interface and private implementation. 
+
 14. Explain inheritance vs composition vs aggregation?
+
+    All three terms describe relationships between different classes. 
+
+    When class B inherits from class A it means B "is a" type of A. 
+
+    When class A's composition includes class B, it means an object of class A 
+    contains an object of class B (or a collection of objects of class B). 
+
+    When class B is an aggregation of class A, it means an object of class A is 
+    the owner of an object of class B (or a collection of objects of class B). 
+
 15. Should you always initialize variables? 
+
+    It is generally best practice to initialize variables when they are 
+    declared, except in rare cases when initialization is excessivly costly. 
+
 16. What concept(s) in C++ would you use to manage resources automatically?
+
+    Modern C++ code should have very few (if any) raw calls to new. Instead, 
+    objects allocated on the heap should be wrapped by smart pointers, including 
+    std::unique_ptr and std::shared_ptr. This ensures deletion when the pointers 
+    go out of scope. 
+    
 	a. How important are these concepts? 	
+
+    It is very important to avoid raw pointers, especially when code paths can 
+    be affected by unexpected exception handling. Without smart pointers, it is 
+    almost impossible to avoid memory and other resource leaks. 
+
 	b. What tools are you familiar with for tracking resource allocations? 
+
+   Visual C++ provides runtime heap checking as well as an integrated profiler & 
+   diagnostic tools. 
+
 17. What security concerns have you come across in the past and how have you addressed them?
+
+    It is vital to make sure publicly facing network services are only accessed 
+    by authorized users and systems. To accomplish this, SSL with client 
+    certificates can provide secure transport. Adding additional user 
+    authentication (hashed passwords) further protects from unauthorized access. 
+
 18. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
+
+    It's tough to beat Visual Studio tools for building and testing C++ on 
+    Windows. For Mac, XCode is good. Linux command line tools are a little less 
+    user-friendly, but get the job done. 
+
+    I also have used some proprietary tools for generating code from high level 
+    XML. This is great for complex schema definitions that need to be 
+    implemented on different platforms. 
+
+    Also valuable are the standard Unix tools awk, sed, grep etc. 
+
 19. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
+
+    A powerful SCM platform like Git is essential. 
+
+    A good diff/merge tool is also important. I have used Araxis Merge for many 
+    years. 
+
 20. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
-	a. Consider both a long term and short-term solutions. 
+
+    Assuming the code is working as is, except for the needed fix or change, I 
+    would take a minimalist approach and change as little as possible. If I am 
+    required to add new functionality I would keep that new code together as 
+    much as possible. 
+
+a. Consider both a long term and short-term solutions. 
+
+    I would also create a new test harness and start by adding unit tests for 
+    the new functionality I was adding. 
+
+    Longer term, I would execute an incremental plan to go section by section, 
+    documenting the existing functionality and creating unit tests. 
+
 21. What concerns do you had supporting legacy operating systems? (If any)
+
+    One challenge in supporting code targeting older operating systems, is 
+    maintaining the old OS images and build tools. As a project's code-base 
+    develops over time, it may make use of new techniques not supported by the 
+    older tools running on older environments. 
+
+    There may come a point where a legacy version of a current product has to be 
+    conditionally compiled to leave out newer features unsupported by the legacy 
+    OS or build tools. 
+
 22. Tell us about a project you worked on that you found to be interesting or unusual. 
+
+    One of my most recent and interesting projects required me to create a 
+    custom embedded Linux image (Yocto) targeting a single board computer. The 
+    solution includes a simple package manager with a package manager service 
+    running in the cloud. (Qt/C++) 
+
+    Running on the device, launched by the package manager, I created a 
+    self-service point of sale GUI application (Qt/C++) 
+
+    The system also includes a Windows GUI application that interacts with the 
+    PoS application over TCP, and also with QuickBooks via COM. (Qt/C++) 
+
+    It's the very definition of "Full Stack" development. 
+
