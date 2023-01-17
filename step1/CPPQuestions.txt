@@ -112,13 +112,13 @@
     Variables declared static inside a function are initialized once at module 
     startup and maintain their values across all calls to the function. 
 
-    Module variables & functions declared static inside a module have local 
+    Module variables & functions declared static inside a module have private 
     link-scope. In other words, the same name can be reused across multiple 
     modules without collision. 
 
     Member functions and variables declared static inside a class definition 
     exist separately from any instance of the class and do not implicitly refer 
-    to any instance. Can be used to implement a singleton pattern. 
+    to any instance. This can be used to implement a singleton pattern. 
 
 7. When are static member variables initialized? 
 
@@ -160,7 +160,7 @@
     std::move is used to cast an lvalue object to an rvalue reference, thereby 
     activating possible move semantics when passing the object. 
 
-    std::forward is used in a templated function to preserve a parameter's 
+    std::forward is used in a templated function to pass on a parameter's 
     reference type (lvalue or rvalue). 
 
 12. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
@@ -262,16 +262,22 @@ a. Consider both a long term and short-term solutions.
     Longer term, I would execute an incremental plan to go section by section, 
     documenting the existing functionality and creating unit tests. 
 
-21. What concerns do you had supporting legacy operating systems? (If any)
+21. What concerns do you had supporting legacy operating systems? (If any) 
 
-    One challenge in supporting code targeting older operating systems, is 
-    maintaining the old OS images and build tools. As a project's code-base 
-    develops over time, it may make use of new techniques not supported by the 
-    older tools running on older environments. 
+    There are challenges maintaining code that targets older operating systems including, 
+    maintaining the old OS images, possibly maintaining old hardware and the limited 
+    functionality of old build tools. 
+
+    Often, old OS images can be preserved as VMs. However, some operating systems must run 
+    on specific legacy hardware that can't be virtualized, so there may be a need to 
+    preserve old hardware. This can become impractical. 
+
+    As a project's code-base develops, it may make use of new techniques and capabilities 
+    not supported by older build tools running in older environments. 
 
     There may come a point where a legacy version of a current product has to be 
-    conditionally compiled to leave out newer features unsupported by the legacy 
-    OS or build tools. 
+    conditionally compiled to leave out newer features unsupported by the legacy OS or 
+    build tools. 
 
 22. Tell us about a project you worked on that you found to be interesting or unusual. 
 

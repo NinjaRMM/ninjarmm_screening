@@ -6,7 +6,7 @@
 		i. Get the name of the job
 		ii. Get the description of the job. 
 		iii. Get the number of hours required by the job
-		iv. A DoWork function that prints out “My work involves ” + the description.  
+		iv. A DoWork function that prints out “My work involves ” + the description.
 	e. Dynamically allocate each type of job.
 	f. Store each instance in a collection.
 	g. Iterate the collection and call each of the available interface functions.
@@ -18,4 +18,5 @@
 	j. Write any other code you feel would show off your understanding of C/C++ and programming in general. Bonus: Variadic Template /w usage. 
 	k. Please add passing unit tests. 
 	l. All The source can be in 1 file, it should compile and there should be no runtime errors, and no memory leaks. Use built in types freely to help you manage resources. 
+		
 
