@@ -1,0 +1,22 @@
+default: \
+	si_build \
+	si_run
+
+si_build:
+	@echo
+	@echo ----------------------------------------------
+	@echo Building AVList
+	@echo ----------------------------------------------
+	@echo
+	@cl -nologo main.cpp CodeReview.cpp -Feavlist.exe -I. -EHsc Ole32.lib OleAut32.lib Wuguid.lib
+
+si_run:
+	@echo
+	@echo ----------------------------------------------
+	@echo Running AVList
+	@echo ----------------------------------------------
+	@echo
+	@avlist
+
+
+
