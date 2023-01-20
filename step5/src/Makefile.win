@@ -1,0 +1,22 @@
+default: \
+	si_build \
+	si_run
+
+si_build:
+	@echo
+	@echo ----------------------------------------------
+	@echo Building Challenge
+	@echo ----------------------------------------------
+	@echo
+	@cl -nologo CodeChallenge.cpp -Fechallenge.exe -I. -EHsc
+
+si_run:
+	@echo
+	@echo ----------------------------------------------
+	@echo Running Challenge
+	@echo ----------------------------------------------
+	@echo
+	@challenge
+
+
+
