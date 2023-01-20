@@ -1,0 +1,22 @@
+default: \
+	si_build \
+	si_run
+
+si_build:
+	@echo
+	@echo ----------------------------------------------
+	@echo Building Step3
+	@echo ----------------------------------------------
+	@echo
+	@g++ main.cpp -std=c++17 -o step3
+
+si_run:
+	@echo
+	@echo ----------------------------------------------
+	@echo Running Step3
+	@echo ----------------------------------------------
+	@echo
+	@./step3
+
+
+
