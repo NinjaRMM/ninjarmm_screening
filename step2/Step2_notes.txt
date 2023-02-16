@@ -1,0 +1,6 @@
+Notes from Joao Ferreira (devcicerojr@gmail.com):
+
+
+I validated the code for STEP 2 in my local Windows system, and validated the Linux behavior on website www.onlinegdb.com . I couldn't validate the MAC behavior, but I believe the code should work.
+
+If I were to build a multiplatform application for commercial purpose, I would create a CMAKE build environment and implement a Object Oriented design to the classes responsible for running the system info algorithms, so that each OS (WINDOWS, LINUX, MAC) would have their own derived class that implements the logic for the target system, and that behavior would be abstracted from the upper layer (client layer). I would also have a GUI implemented in QT to show the output data in a beautiful UI, requiring another layer for the application (presentation layer).

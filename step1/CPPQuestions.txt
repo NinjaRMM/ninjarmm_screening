@@ -1,11 +1,53 @@
 1. What is your full name?
-2. Any repositories you wish to share with us? 
+Joao Cicero Ferreira Junior
+
+2. Any repositories you wish to share with us?
+No.
+
 3. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
+- Sequence Containers: Provide linear storage of data from the same type. These containers provide functions to place elements in a sequence, and also provide a way to access the last element. They provide functions such as "back()" , "push_back()" and "pop_back()".
+Examples of Sequence Containers: - vector, array, forward_list, list
+   Use cases:  Array -        Used to store sequence of elements of the same type in a contiguous memory region. Recommended when the size of the data to be stored is known and when the elements won't be searched for too often.
+               Vector -       Similar to Arrays, but they can be easily resized (it costs multiple copy operations). Recommended for dynamic sized sequence of data.
+               Forward List - Used to store sequence of elements of the same type in a non-contiguous memory region. Elements have pointers to the next element in sequence. It's useful when the final number of elements is unknown and when easy/fast removal or insertion of elements is required. It doesn't cost copy operations to grow in size. However, accessing a specific element in the list requires traversing it from the first element, increasing cost of searching an element.
+               List -         Similar to Forward list, however, every element has a pointer to its next and to its previous element, making it possible to traverse it in both directions.
+               Deque -        Similar to vectors, but deques can have elements added to the front and to the back.
+
+- Container Adapters: Provide specific implementation on top of the sequence containers, providing specific behavior.
+Examples of Container Adapters: stack , queue
+   Use cases: Stack -         When the order of insertion and removal of elements follows the FILO (First In - Last Out) pattern.
+              Queue -         Qhen the order of insertion and removal of elements follows the FIFO (First In - First Out) pattern.
+
+- Associative Containers: Used to store a sequence of elements of the same type, where the elements are stored in a non-contiguous region of memory, and each element has pointer(s) to its neighbour(s).
+Examples of Associative Containers: set, map, multiset, multimap
+   Use cases: Set - Stores a collection of keys, automatically sorted, internally organized as a balanced tree, which provides faster lookup. It is recommended when the collection won't have duplicates and when the frequency of lookups is higher than the insertion/deletion operations.
+              Map - Stores a collection of pairs (key , value) sorted by their keys. Similarly to Set, the keys cannot be duplicated.
+              MultiSet - Similar to Set, with support to duplicate keys.
+              MultiMap - Similar to Map, with support to pairs with same key.
+   
+
 4. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
-5. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
+   - Bubble Sort: Each element is shifted through the container until it finds a bigger one (in terms of it's 'less than' operator implementation). When it finds, the bigger element becomes the one to be shifted. It guarantees that for each iteration, one element (the biggest one) will be in place. The operation should repeat N times (N is the number of elements). Time complexity: O(N²).
+   - Merge Sort: It works on the basic idea of divide-and-conquer strategy, by dividing the array or list into two smaller sub-arrays. The process is applied recursively until the sub-arrays have a single element. Then, the elements are compared (two by two), and the smallest element is moved to the final sorted array or list.
+   - Quick Sort: It works on the idea of choosing a 'pivot' element that will have all remaining elements placed to its left or right side. If the element is smaller than the pivot, it is placed to it's left side, otherwise, it is placed on it's right side. After that, the process is performed in again in the container, by spliting it in two sub parts and choosing new pivots in each side. Quick sort can be O(n²) in worst case, when the pivot is always the least optimal one, but in general, quick sort is a bit faster than merge sort, and it has O(1) space complexity, differently from merge sort, which requires additional memory to store the sub-arrays. However, merge sort is a stable sort, keeping the order of elements that share the same key, while Quick sort is not stable.
+
+5. What is the purpose of virtual destructors? What types of issues can arise if not used correctly.
+   - Virtual Destructors are required for every Class that should be derived (inherited) from. It assures that the derived class' destructor will be called before the parent class' destructor when a derived object is being managed through a base class pointer. Not using virtual destructors in classes that serve as base class to derived ones could cause memory leak, as the members of the derived classes may not be destroyed properly.
+ 
 6. Explain the keyword: static. What does it mean in each context?
-7. When are static member variables initialized? 
-8. What is the difference between R-Values and L-Values?
+   When static is applied to a member variable of a class, it means that all instances of that class will share the same object for that variable. 
+   When static is applied to a variable in a function, it means that this variable will be initialized only once, when that function is called the first time, and it will be simply updated on the next calls, keeping the value it had during previous execution.
+   When static is applied to a member function of a class, it means that this function can only deal with static member variables, and can be called from the Class name, without needing an instance.
+
+
+7. When are static member variables initialized?
+   They are initialized before the first time the control passes through the declaration or definition of it, and depending on the compiler, they're initialized at the initialization of the program.
+ 
+8. What is the difference between R-Values and L-Values? 
+   L-Values are the expressions that are stored in memory (stack or heap), while R-values are the expressions that are temporarily stored (usually in some register) in order to be used on a command or equation, but do not have a memory location.
+   Example:  
+            In "x = y + 5;"  'x' and 'y' are L-values, while '5' and also the result of 'y + 5' are R-values.
+
 9. Is this code safe? If so why? If not why?
 	std::string foo()
 	{
@@ -14,19 +56,70 @@
 	}
 	
 	Bonus: What would most compilers do with this code?
+
+Answer: Yes. Even though the code is returning a local object 'something', most compilers will simply return a copy of it. Some compilers may even use the 'move assignment' operator instead of the 'copy assignment', increasing the code performance.
+
+
 10. Why would you use new rather than malloc when allocating an object? Likewise, what's the difference between free and delete?
+    When using 'new' the programmer tells what is the class of the object, allowing the compiler to call the appropriate constructur, that will appropriately initialize all members of that object and allocate the exact amout of memory needed, while malloc doesn't do that automatically. Similarly, the 'delete' command on an object will call it's class destructor, that in turn will free the memory used by it's members, preventing memory leak, while 'free' doesn't do that. 
+
+
 11. Explain the purpose of std::move, and std::forward. 
-12. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
+   std::move is used to transfer ownership of a resource, transforming an L-value source into an R-value, that can be reused by a destination variable, leaving the source in an unspecified state.
+   std::forward is used for 'perfect forwarding', allowing a template function or class, to forward an argument with it's original l-value or r-value to an internal function, called from that template.
+
+12. How do you share resources safely between threads? How would you share an integer value vs user defined type?
+   If at least one thread writes to the resource, that resource should have some thread safety strategy applied. In case of integer value, a simple mutex can be used to controll access to that resource. 
+   When we talk about user defined types, there's some strategies that should be considered:
+    - Use mutex for the shared member variables. Calling 'lock()' and 'unlock()' to protect sections of code.
+    - Using std::atomic to make a class member thread-safe
+    - Using std::shared_ptr and std::unique_ptr to guarantee correct destruction of the objects
+
+
 13. What are the some of the principles of object-oriented programming?
+   - Encapsulation
+   - Abstraction 
+   - Inheritance
+   - Polymorphism
+
+
 14. Explain inheritance vs composition vs aggregation?
-15. Should you always initialize variables? 
+   Inheritance is the principle that allows one class to inherit properties and methods of another clas, providing a 'is-a' relationship.
+   Composition is a principle that allows objects of one class to have member variables that are essentially objects from another class, providing a 'has-a' relationship.
+   Aggregation is a weaker version of composition. While the Composition relationship requires that the members exist, in Aggregation, the internal member may be destroyed at some point, and the object that contained it remains a valid object. Example: A 'Person' may have one or more 'PetAnimal', but a 'Person' can exist independently of its 'PetAnimal'.  
+
+15. Should you always initialize variables?
+   Yes. It's a good practice to do so. Initializing variables when they are declared ensures a well-defined behavior.
+ 
 16. What concept(s) in C++ would you use to manage resources automatically?
 	a. How important are these concepts? 	
-	b. What tools are you familiar with for tracking resource allocations? 
+	b. What tools are you familiar with for tracking resource allocations?
+    RAII concept: Resource Allocation is Initialization.
+    a: These concepts are really important in every programming language, specially in C++, which doesn't have a Garbage Collector. Bad allocation may cause unpredicted behaviors, crashing the application and causing bugs that are difficult to track.
+    b: Smart Pointers ;  Valgrind
+
+ 
 17. What security concerns have you come across in the past and how have you addressed them?
+    I had to implement an encrypted log, so that the end user of the application won't be able to read all information in that log, and only the authorized agents (in the OEM side) would be able to decrypt the log and see full data in there. I used 'cryptopp' library to encrypt the contents using RSA algorithm and with a public key. The private key was owned by the OEM only.
+
 18. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
-19. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
+    When talking about software design, I like to follow "Domain Driven Development", where the application is centered in the 'Domain' part, also called the 'Core', and all other layers of the application depend on it.
+    Another technique I like is TDD (Test Driven Development), ensuring the the code behaves as expected, by implementing the test cases first, before the actual logic.
+
+19. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.
+    - Google Test for Unit tests.
+    - VCS , version control system, such as Git
+    - Code review
+    - CICD (Continuous Integration, Continuous Deployment)
+
+   
 20. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
-	a. Consider both a long term and short-term solutions. 
+	a. Consider both a long term and short-term solutions.
+   I would spend some time understanding the code. After that I would document what I understood of it, by creating a Class Diagram and a Sequence Diagram (at least). Only then I wold create a test suit for the feature I'm about to change, starting from small changes.
+   If it's a long term solution, I would try to refactor the code.
+ 
 21. What concerns do you had supporting legacy operating systems? (If any)
+   I had some experience with that when I had to write diagnostics software for GPUs in a multiplatform application. The software had to rely on Directx9 because we should support running on Windows XP at the time, we also had to implement the same diagnostics using OpenGL, to run on Debian based OSes. Another aspect that I should be concerned about what the Linux Kenel versions, and the drivers available. At the time, some of the newest video cards weren't supported on old Kernel versions. Usually the drivers for Windows peripherals were easy to find and get them running, when compared to the Linux ones.
+
 22. Tell us about a project you worked on that you found to be interesting or unusual. 
+   I worked on a Laptop Battery diagnostics for Lenovo Laptops, where the only way to communicate with the battery drivers was by using specific IO ports, as the battery information (battery health, how many charge cycles, manufacturing date, etc) resided in a UEFI driver that exported the information through SMM interruptions. I had to exchange e-mails with the Lenovo employees who had access to the confidential documents that explained how to retrieve battery data by writing specific values to those specific IO ports.
