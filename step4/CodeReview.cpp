@@ -44,13 +44,16 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         return false;
     }
 
+/*What do you think about adding section comments like the following?*/
+    //Query the antivirus product list
     hr = PtrProductList->Initialize(WSC_SECURITY_PROVIDER_ANTIVIRUS);
     if (FAILED(hr))
     {
         std::cout << "Failed to query antivirus product list. ";
         return false;
     }
-
+	
+    //Get the product count
     hr = PtrProductList->get_Count(&ProductCount);
     if (FAILED(hr))
     {
@@ -67,6 +70,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
             continue;
         }
 
+/*What would you think about using a more meaningful name than PtrVal - How about something like "AvProductName" ?*/
         hr = PtrProduct->get_ProductName(&PtrVal);
         if (FAILED(hr))
         {
@@ -106,6 +110,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
 
         definitionState = (ProductStatus == WSC_SECURITY_PRODUCT_UP_TO_DATE) ? "UpToDate" : "OutOfDate";
 
+/*What would you think about using a new pointer for this product timestamp, rather than re-using the PtrVal pointer used to get the product name?*/
         hr = PtrProduct->get_ProductStateTimestamp(&PtrVal);
         if (FAILED(hr))
         {
@@ -124,6 +129,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         thirdPartyAVSoftwareMap[thirdPartyAVSoftware.Name] = thirdPartyAVSoftware;
 
         PtrProduct->Release();
+		/*Good job releasing this pointer.  Do you need to also release the other pointers such as PtrVal?*/
     }
 
     if (thirdPartyAVSoftwareMap.size() == 0)
