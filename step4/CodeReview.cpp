@@ -10,6 +10,9 @@ Comments are encouraged.
 
 */
 
+/*Dear programmer, good job overall but I noticed a lot of the pointers have names like "PtrVal", which makes it kind of confusing for the reader. Have you thought about naming them with
+more distinct names that have more to do with what they are pointing at?*/
+
 
 struct ThirdPartyAVSoftware
 {

@@ -1,32 +1,114 @@
 1. What is your full name?
+Leila Anne Plummer
 2. Any repositories you wish to share with us? 
+No
 3. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
+There are 3 types of containers:
+--sequence - Implement data structures which are accessed in order (sequentially), such as arrays, vectors, etc.
+They are typically traversed from start to finish.
+--associative - Implement data structures that are already sorted, such as a map
+This lowers sort time because you can just easily access the item by a key etc, so you don't have to do an n or n-squared sort, etc
+These have an O(log n) access time.
+--unordered associative - implement data sturctures that are hashed (unsorted) that can be quickly searched
+These have O(1) average, O(n) worst case.
 4. What are some sorting algorithms, list at least 3? What are their differences and give use cases for each.
+Examples:
+Bubble: Swaps adjacent elements if they are in the wrong order.  Array will be traversed/passed many times until the array is completely sorted. This is O(N-squared).
+Works better when there is a small number of elements to be sorted.
+Merge: Divide and subdivide array into smaller arrays, and then when the smallest subarrays are sorted, merge them back together to get the final sorted version.
+This is O(N log (N)).  
+This works better when there is a large data set.
+Quick Sort: Similar to Merge Sort in that the array is subdivided,  but instead of doing more-or-less equal particians, a pivot index is picked, and that partitians the array,
+and then the sub-array on either side of the pivot is sorted, then the subdivisions are pieces back together.
+Complexity is ok at O(n long n) but worst case is bad at n-squared.
 5. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
+If a base class has a non-virtual destructor, then when the derived class is destructed then the behavior is undefined.  So, we use a virtual destructor to define the behavior.  
+This guarantees that the derived object is properly destructed, as now both the derived and base destructors can be called.
 6. Explain the keyword: static. What does it mean in each context?
+"static" when refering to variables in a function means that the variable will just have space allocated for it one time, even if the function is called many times.
+"static" variables for a class are similar in that the variable will just be initialized 1x, but in this case it will be shared for all the instances of the class, and separate copies
+  will not be created for each class.
+"static" when attached to a function such as "static int GetNumber()" will cause the function/method to not need to have an object instantiated for a class - it belongs to the class
+   in general and it can be called even if no instances of the class have been instantiated.
 7. When are static member variables initialized? 
+When the first object of the class is created.
 8. What is the difference between R-Values and L-Values?
+An L-Value  points to a specific memory location, and an R-Value doesn't point anywhere.  
+Example of L-value: int x = 45; <--x has a memory location and its value can be changed
+Example of R-value: 1009 <--1009 doesn't have a memory location as its a constant, and it can't be changed
 9. Is this code safe? If so why? If not why?
 	std::string foo()
 	{
 		std::string something = "avalue";
 		return something;
 	}
-	
+I would say this might be safer if we cast "avalue" to std::string, like this:
+	std::string something = <std::string>("avalue");
 	Bonus: What would most compilers do with this code?
 10. Why would you use new rather than malloc when allocating an object? Likewise, what's the difference between free and delete?
+new causes the constructor to be called, but malloc doesn't, and new returns an exact data type.  Also new() will cause the compiler to calculate the amount of memory, but malloc() won't - 
+malloc() will require us to manually calculate the memory amount.
+Free doesn't invoke the destructor, so Delete is preferred as it causes the destructor to be called.
 11. Explain the purpose of std::move, and std::forward. 
+Both are cases.  std::move casts the lvalue (has memory alocation) to an rvalue (no memory allocation).  std::forward lets you select the destination by casting the lvalue expression to 
+that of another type.
 12. How do you share resources safely between threads? How would you share an integer value vs user defined type? 
+Use semaphores to know when a thread is using a shared resource, so a second thread doesn't try to write to that shared resource while the first thread is using it.
 13. What are the some of the principles of object-oriented programming?
+Abstraction - Hide complexity and only show what is needed to the User.  For example, as many variables as possible should be made private so that the User only has access  
+  to the minimal interface needed.  This protects from the User changing member data that it doesn't need to be able to change and prevents bugs and complexity.
+Inheritance - The idea of having a base class with simple functionality, and extending it to child classes with more specific functionality.
+   An example would be a base animal class that doesn't do much, but it has a name member variable, and a sleep function and an awake function.
+   A child class inheriting from that base animal class could be the mammal class, which would have a nurse function, and a fish class, which would have a swim function.
+Encapsulation - Put together similar data in a single class.  This keeps everything in one place, and makes it easier to debug.
+Polymorphism - Basically using the same name to do different things. For instance the eat() method might look different for a dolphin and for a bird.
 14. Explain inheritance vs composition vs aggregation?
+Inheritance - extend the class's functionality by creating a subclass.
+  This is commonly used when we can say a child "is an example of" a parent, such as the mammal child being a type of the animal parent above.
+  This is also useful when the parent class does not do much, and we want to extend functionality down into the child classes.
+Aggregation - create new functionality by taking several classes and creating a new class.
+  This is useful when the functionality for the new class does not fit neatly into being a child of a parent - it's not really extending the parent's functionality but it has a lot of 
+    differences and needs its own class
+Composition - This is a type of Aggregation.  Here if the parent is destroyed then the child object is also destroyed.  Ex: a piggy bank has coin objects; if the piggy bank is 
+   destroyed then so are the coins
 15. Should you always initialize variables? 
+In general initiliazing variables is a good idea, but realistically sometimes it may not be practical, depending on when the variable is initialized.
 16. What concept(s) in C++ would you use to manage resources automatically?
-	a. How important are these concepts? 	
+Create destructors for all objects.
+Delete all arrays, clear all vectors, etc.  
+Don't leave dangling pointers. If you have a pointer with an object associated with it, eventually you should delete what the pointer points to.
+	a. How important are these concepts? 
+Pretty important as you don't want memory leaks.
 	b. What tools are you familiar with for tracking resource allocations? 
+WinDBG, Deleader, etc.
 17. What security concerns have you come across in the past and how have you addressed them?
+Buffer overflow, integer overflow/underflow, pointer initialization, wrong type conversion, strng format vulnerability
+Addressing them: bounds checking, range checking, checking for 0, add format argument, etc
+Also More generally, speaking about security, a project I worked on for EFI was for an ink security system.  This was to prevent a Customer from trying to use their own generic (cheaper) ink and cause the User to use our (more expensive but better quality) ink.
+This required decrypting and re-encrypting RFID tags, and also thinking about ways the User might try to get around the system, such as trying to scan a barcode of our ink multiple times but actually pouring in their generic ink, checking IoT sensors in the ink tank to see what the actual ink level was in the tank, checking expiration dates, etc.
 18. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
-19. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.   
+Visual Studio is my bread and butter for regular development.  However as far as additional tools or techniques, here are some that I use.  
+My favorite for doing Diffs is DiffMerge.  Also WinDbg can be used in the case of crashes.
+Sometimes using windows task manager or the windows event monitor is also helpful.
+19. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.
+Keeping the team in sync doing regular checkins and merges in source control such as Git is useful, rather than trying to keep massive separate repositories for each project or branch.
+Continuous Integration Development tools like TeamCity or Jenkins are helpful, especially when there are unit tests that can be run and test builds that can be run, to sanity-check the developers and make sure the code has not broken in an easy-to-check way.
+Code reviews by peers can help to support the stability of the code.
+Different linting tools can be helpful; C++ has one called C++ linter although I haven't used that particular ones.
 20. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
 	a. Consider both a long term and short-term solutions. 
+Short-term, it is important to understand the legacy code's purpose and structure, so as not to accidentally break something.  If a developer is around that was involved in the legacy code before, you can approach them and interview them. But either way, one will have to study the code oneself.	
+Typically in the short-term, you want to make small changes without disrupting the overall structure and functionality of the legacy code.
+Sometimes, it is helpful to add comments to the legacy code as you go, to help a future person reading the code, and/or create separate documentation for the future.
+Then, you will need to do extra testing yourself, after you have made your changes.
+For the long-term, depending on the company's vision and budget and plans, it may be wise to re-architect some of the legacy code, or even to modernize it. For instance, legacy code commonly grows bulky with a lot of if/else statements as different situations are added. Sometimes these different situations can be extracted into some other structure such as a SQLite DB, and the base code can be refactored to pull out common situations into their own functions or microservices.
 21. What concerns do you had supporting legacy operating systems? (If any)
+Old security holes that were never filled, difficulty in finding windows API calls, bugs that might only happen in old O/Ss.  Sometimes Microsoft etc might also stop
+supporting an old version and this can also lead to security gaps and functionality gaps.  It also can become hard to test, as for instance if your team is supporting 5
+O/S versions then that becomes hard to thoroughly test; it increases developer testing time and also increases QA time, etc.
 22. Tell us about a project you worked on that you found to be interesting or unusual. 
+One of my favorite projects was working at KLA on a C++ legacy system that we were adding features to. I was leading a team in adding a thin-film classification feature.
+This feature was for wafers that had different layers on them. Everything needed to be created, from the backend objects to the front-end GUI changes.  I broke the feature
+down into pieces, did a lot of the backend coding (as well as some front-end coding), and as the scrum master and team lead kept the team on track, helped the junior developers
+to grow, and we delivered the project on time.  This was using old MFC features and the legacy code also contained some memory leaks, so we cleaned up the memory leaks as well.
+The customer was pleased with the final result.
