@@ -10,7 +10,7 @@ Comments are encouraged.
 
 */
 
-
+// The DefinitionStatus field in ThirdPartyAVSoftware is being represented as a std::string, while the other fields use std::wstring. It would be better to be consistent and use std::wstring throughout.
 struct ThirdPartyAVSoftware
 {
     std::wstring Name;
@@ -31,6 +31,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
     WSC_SECURITY_PRODUCT_STATE ProductState;
     WSC_SECURITY_SIGNATURE_STATUS ProductStatus;
 
+    // There are a few redundant variables that could be eliminated to simplify the code, such as versionNumber and PtrVal.
     std::wstring displayName, versionNumber, state, timestamp;
     std::string definitionState;
 
@@ -81,6 +82,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
             continue;
         }
 
+        // The state variable is being used to represent both the ProductState and Description fields in ThirdPartyAVSoftware, which seems like an error. It would be better to use a separate variable for each field.
         if (ProductState == WSC_SECURITY_PRODUCT_STATE_ON)
         {
             state = L"On";
@@ -112,6 +114,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         timestamp = std::wstring(PtrVal, SysStringLen(PtrVal));
         SysFreeString(PtrVal);
 
+        // The DefinitionStatus field is being represented as "UpToDate" or "OutOfDate", but this may not be accurate for all antivirus products. It would be better to use a more generic name for the field, such as SignatureStatus.
         ThirdPartyAVSoftware thirdPartyAVSoftware;
         thirdPartyAVSoftware.Name = displayName;
         thirdPartyAVSoftware.DefinitionStatus = definitionState;
@@ -127,5 +130,6 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
     {
         return false;
     }
+    // The code is returning true if the map contains any entries, but it would be better to return the actual number of entries instead, so that the caller can determine whether the operation succeeded and how many entries were retrieved.
     return true;
 }
