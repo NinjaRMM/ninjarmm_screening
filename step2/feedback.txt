@@ -1,0 +1,9 @@
+First of all, the function is very large, I strongly recommend rewrite in small functions and classes.
+The function contains code to call methods of a COM class, that could be entirely wrapped in a different class.
+All variables are defined at the beginning of the code, I suggest defining them when used.
+There are too much non-normal code, like the code to check errors, I suggest work with C++ exceptions to have a better view of normal code.
+CoCreateInstance is a function that creates a pointer to a COM object that should have to be released. In this case I strongly recommend use a smart pointer to handle the pointer.
+get_Item is a method that have the same situation above, the result has to be released, and again I recommend use RAII concept to manage this resource.
+Many methods handle BSTR objects that have same situation of a resource that could result in a memory leak, I strongly recommend use a class to manage the resource. We can use _bstr_t or CComBSTR in this case.
+I do not recommend use bracket operator to insert in the thirdPartyAVSoftwareMap, I would use insert_or_assign method or emplace, in this last case we case use move semantics to improve performance.
+I would return directly from the method size instead of make if/else.

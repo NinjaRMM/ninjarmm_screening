@@ -23,8 +23,5 @@ Once you feel you have everything in a good spot, please submit your answer as a
 Please make sure all of the following are checked:
 1. The code compiles and runs without errors. 
 2. There should be meaningful feedback provided for the sample code in the code review.
-3. Provide a README.txt in the base folder with your full name and anything you would like us to know. This helps us to correlate your resume to your screening. 
-
-We will close out your pull request once we notice your submission and begin review as quickly as possible. 
 
 Happy coding!
