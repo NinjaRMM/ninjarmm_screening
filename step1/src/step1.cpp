@@ -4,6 +4,12 @@
 #include <list>
 #include <functional>
 
+//Memory leak detection
+#include "windows.h"
+#define _CRTDBG_MAP_ALLOC 
+#include <stdlib.h>  
+#include <crtdbg.h>  
+
 class IJob : public std::enable_shared_from_this<IJob> {
 private:
 	std::weak_ptr<IJob> parent;
@@ -278,7 +284,11 @@ void outputHelper(const std::vector<std::string>& stringList, std::string* outpu
 
 
 int main() {
-	// Tip: take memory snapshot before entering client code scope
+	// Taking memory snapshot before entering client code scope
+	_CrtMemState sOld;
+	_CrtMemState sNew;
+	_CrtMemState sDiff;
+	_CrtMemCheckpoint(&sOld);
 	{
 		// Client code... Step 1: itens a, b, c, d, e, f, and g;
 		std::cout << "====== Step 1: itens a, b, c, d, e, f, and g =======\n\n";
@@ -300,13 +310,13 @@ int main() {
 		jobs.at(3)->addSupervisedJob(jobs.at(2));
 
 		for (auto& j : jobs) {
-			std::cout << "Hi, my name is " << j->getName() << "\n";
-			std::cout << "My job description: " << j->getDescription() << "\n";
-			std::cout << "Hours required by the job " << j->getHours() << " h\n";
+			std::cout << "- Hi, my name is " << j->getName() << "\n";
+			std::cout << "- My job description: " << j->getDescription() << "\n";
+			std::cout << "- Hours required by the job " << j->getHours() << " h\n- ";
 			j->DoWork();
 			auto s = j->getParent().lock();
 			if (s != nullptr) {
-				std::cout << "My supervisor is: " << s->getName() << "\n";
+				std::cout << "- My supervisor is: " << s->getName() << "\n";
 			}
 			std::cout << "\n";
 		}
@@ -320,7 +330,7 @@ int main() {
 
 		const auto res = IsInBounds(httpResponse, lo, up);
 		auto resStr = res ? "true" : "false";
-		std::cout << "IsInBounds(" << httpResponse << ", " << lo << ", " << up << ") = " << resStr << "\n\n";
+		std::cout << "IsInBounds(" << httpResponse << ", " << lo << ", " << up << ") = " << resStr << "\n";
 		std::cout << "----------------------------------------------------\n\n\n";
 		
 		// Client code... Step 1: item i;
@@ -343,10 +353,23 @@ int main() {
 		auto constCountStr = countStr.c_str();
 		auto constTargetStr = targetString.c_str();
 
-		printOutput("Strings vector: [", constOutputStr, "] has ", constCountStr, " ocourrence(s) of \"", constTargetStr, "\" string\n\n");
+		printOutput("Strings vector: [", constOutputStr, "] has ", constCountStr, " ocourrence(s)\nof \"", constTargetStr, "\" string\n");
 		std::cout << "----------------------------------------------------\n\n";
 	}
-	// Tip: take memory another snapshot after leaving client code scope
+	// Taking memory another snapshot after leaving client code scope
 	// We should not have any memory leaks here, since memory allocation done via smart pointers (RAII)
+	_CrtMemCheckpoint(&sNew);
+	if (_CrtMemDifference(&sDiff, &sOld, &sNew))
+	{
+		OutputDebugString(L"-----------_CrtMemDumpStatistics ---------");
+		_CrtMemDumpStatistics(&sDiff);
+		OutputDebugString(L"-----------_CrtMemDumpAllObjectsSince ---------");
+		_CrtMemDumpAllObjectsSince(&sOld);
+		OutputDebugString(L"-----------_CrtDumpMemoryLeaks ---------");
+		_CrtDumpMemoryLeaks();
+	}
+	else {
+		OutputDebugString(L"----------- NO MEMORY LEAKS FOUND ---------\n");
+	}
 	return 0;
 }
