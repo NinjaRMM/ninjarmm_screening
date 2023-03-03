@@ -1,18 +1,30 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <list>
 #include <functional>
 
-class IJob {
+class IJob : public std::enable_shared_from_this<IJob> {
+private:
+	std::weak_ptr<IJob> parent;
 
 public:
+
 	IJob() noexcept {}
 
 	IJob(const std::string& _name, const std::string& _description, const unsigned int& _hours) noexcept {}
 
+	IJob(const IJob&) noexcept {}
+
+	IJob(IJob&&) noexcept {}
+
+	IJob& operator=(const IJob&) = delete;
+
+	IJob& operator=(const IJob&&) = delete;
+
 	virtual ~IJob() {}
 
-	// Default interface (step1, item d: requirements)
+	// Default interface (step1 requirements)
 	virtual std::string getName() const = 0;
 
 	virtual std::string getDescription() const = 0;
@@ -20,6 +32,23 @@ public:
 	virtual unsigned int getHours() const = 0;
 
 	virtual void DoWork() = 0;
+
+	// Composite pattern
+	virtual void setParent(std::weak_ptr<IJob> _parent) noexcept {
+		this->parent = _parent;
+	}
+
+	virtual std::weak_ptr<IJob> getParent() const noexcept {
+		return this->parent;
+	}
+
+	virtual bool isSupervisor() const noexcept {
+		return false;
+	}
+
+	virtual bool addSupervisedJob(std::shared_ptr<IJob> _component) = 0;
+
+	virtual bool removeSupervisedJob(std::shared_ptr<IJob> _component) = 0;
 
 };
 
@@ -38,6 +67,14 @@ public:
 	Job(const std::string& _name, const std::string& _description, const unsigned int& _hours) :
 		name{ _name }, description{ _description }, hours{ _hours } {	}
 
+	Job(const Job&) = delete;
+
+	Job(Job&&) = delete;
+
+	Job& operator=(const Job&) = delete;
+
+	Job& operator=(const Job&&) = delete;
+
 	virtual ~Job() {}
 
 	std::string getName() const override {
@@ -55,6 +92,15 @@ public:
 	void DoWork() override {
 		std::cout << "My work involves " << description << '\n';
 	}
+
+	bool addSupervisedJob(std::shared_ptr<IJob> _component) override {
+		return false;
+	}
+
+	bool removeSupervisedJob(std::shared_ptr<IJob> _component) override {
+		return false;
+	}
+
 };
 
 class Programmer : public Job {
@@ -63,6 +109,14 @@ public:
 	Programmer() noexcept {}
 
 	Programmer(const std::string& _name, const std::string& _description, const unsigned int& _hours) : Job(_name, _description, _hours) { }
+
+	Programmer(const Programmer&) = delete;
+
+	Programmer(Programmer&&) = delete;
+
+	Programmer& operator=(const Programmer&) = delete;
+
+	Programmer& operator=(const Programmer&&) = delete;
 
 	virtual ~Programmer() {}
 
@@ -78,6 +132,14 @@ public:
 	Pilot(const std::string& _name, const std::string& _description, const unsigned int& _hours) : Job(_name, _description, _hours) {
 	}
 
+	Pilot(const Pilot&) = delete;
+
+	Pilot(Pilot&&) = delete;
+
+	Pilot& operator=(const Pilot&) = delete;
+
+	Pilot& operator=(const Pilot&&) = delete;
+
 	virtual ~Pilot() {}
 
 	void DoWork() override {
@@ -85,10 +147,74 @@ public:
 		Job::DoWork();
 	}
 };
+
+class Supervisor : public Job {
+	std::list<std::shared_ptr<IJob>> supervisedJobs;
+
+public:
+
+	Supervisor() noexcept {}
+
+	Supervisor(const std::string& _name, const std::string& _description, const unsigned int& _hours) : Job(_name, _description, _hours) { }
+
+	Supervisor(const Supervisor&) = delete;
+
+	Supervisor(Supervisor&&) = delete;
+
+	Supervisor& operator=(const Supervisor&) = delete;
+
+	Supervisor& operator=(const Supervisor&&) = delete;
+
+	virtual ~Supervisor() {}
+
+	void DoWork() override {
+		Job::DoWork();
+
+		const auto childenIsNotEmpty = !supervisedJobs.empty();
+
+		if (childenIsNotEmpty) {
+
+			std::cout << "And I supervise the following people:\n";
+
+			std::string output = "";
+
+			for (const auto& j : supervisedJobs) {
+				if (!output.empty()) {
+					output += "\n";
+				}
+				output += j->getName();
+			}
+
+			std::cout << output;
+		}
+	}
+
+	bool addSupervisedJob(std::shared_ptr<IJob> _component) override {
+		if (_component != nullptr) {
+			this->supervisedJobs.push_back(_component);
+			_component->setParent(shared_from_this());
+			return true;
+		}
+		return false;
+	}
+
+	bool removeSupervisedJob(std::shared_ptr<IJob> _component) override {
+		if (_component != nullptr) {
+			this->supervisedJobs.remove(_component);
+			return true;
+		}
+		return false;
+	}
+
+	bool isSupervisor() const noexcept override {
+		return true;
+	}
+};
+
 // Extra "Factory" pattern to help us creating jobs
 class JobFactory {
 public:
-	enum class JobType { programmer = 0, pilot, standardJob };
+	enum class JobType { programmer = 0, pilot, supervisor, standardJob };
 
 	static std::shared_ptr<IJob> createJob(const JobType& type, const std::string& _name, const std::string& _description, const unsigned int& _hours) {
 		std::shared_ptr<IJob> job;
@@ -99,6 +225,10 @@ public:
 			}
 			case JobType::pilot: {
 				job = std::make_shared<Pilot>(_name, _description, _hours);
+				break;
+			}
+			case JobType::supervisor: {
+				job = std::make_shared<Supervisor>(_name, _description, _hours);
 				break;
 			}
 			default: {
@@ -153,20 +283,31 @@ int main() {
 		// Client code... Step 1: itens a, b, c, d, e, f, and g;
 		std::cout << "====== Step 1: itens a, b, c, d, e, f, and g =======\n\n";
 		auto jobs = std::vector<std::shared_ptr<IJob>>();
+		jobs.reserve(4);
 
 		auto pr = JobFactory::createJob(JobFactory::JobType::programmer, "Jeremias", "programming in C++", 40);
 		auto pi = JobFactory::createJob(JobFactory::JobType::pilot, "Jeremiah", "flying a Boeing", 12);
 		auto jo = JobFactory::createJob(JobFactory::JobType::standardJob, "Jerry", "cleaning everything up", 8);
+		auto su = JobFactory::createJob(JobFactory::JobType::supervisor, "Josh", "supervising everyone", 60);
 
 		jobs.push_back(pr);
 		jobs.push_back(pi);
 		jobs.push_back(jo);
+		jobs.push_back(su);
+
+		jobs.at(3)->addSupervisedJob(jobs.at(0));
+		jobs.at(3)->addSupervisedJob(jobs.at(1));
+		jobs.at(3)->addSupervisedJob(jobs.at(2));
 
 		for (auto& j : jobs) {
 			std::cout << "Hi, my name is " << j->getName() << "\n";
 			std::cout << "My job description: " << j->getDescription() << "\n";
 			std::cout << "Hours required by the job " << j->getHours() << " h\n";
 			j->DoWork();
+			auto s = j->getParent().lock();
+			if (s != nullptr) {
+				std::cout << "My supervisor is: " << s->getName() << "\n";
+			}
 			std::cout << "\n";
 		}
 		std::cout << "----------------------------------------------------\n\n\n";
