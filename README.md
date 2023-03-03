@@ -1,18 +1,24 @@
 # Hello! #
-My name is **Pietro Martins de Oliveira**, and I'm glad to participate at this NinjaOne's code challenge.
+My name is **Pietro Martins de Oliveira**, and I'm glad to participate at this NinjaOne's NinjaRMM code challenge.
 
 - Linked-in: https://www.linkedin.com/in/profpietromartins/
 - Instagram: http://instragram.com/profpietromartins
 - Youtube: https://www.youtube.com/@profpietromartins
 - E-mail: profpietromartins@gmail.com or contato@profpietro.com
 -----------
-
-# Code Challenge - Relevant Informations #
-
 ## Microsoft Visual Studio Solution Setup ##
 
 I had to commit some Visual Studio specific artifacts like \*.sln, \*.vcxproj.\* files, etc. One would just have to open the *ninjarmm_screening.sln* at VS 2022 and it should be 'good to go'.
 
+### Developtment system environment specifications ###
+- **IDE:**
+	- Visual Studio Community 2022;
+	- Visual C++ 2022 - 00482-90000-00000-AA412;
+	- Microsoft Visual C++ 2022;
+
+- **OS:**
+	- Microsoft Windows [Version 10.0.19044.2604] OS.
+-----------
 ## **Step 1** ##
 
 **Relevant commits** (bottom-up):
@@ -37,18 +43,16 @@ I had to commit some Visual Studio specific artifacts like \*.sln, \*.vcxproj.\*
 
 ## **Step 2** ##
 
+**Relevant commits**:
+1) [d83fca2](https://github.com/pietromartinso/ninjarmm_screening/tree/d83fca2175af8538bce68d3e7427d6120aee2fdb/step2/src) - Code running on Windows 10;
+
+2) [7cb81ea](https://github.com/pietromartinso/ninjarmm_screening/tree/7cb81ea2f1c8574482c3ef057639156c97fbf24c/step2/src) - Revision + feedback text;
 
 
 ## **Step 3** ##
 
 * Only one relevant commit: [d1915b0](https://github.com/pietromartinso/ninjarmm_screening/tree/d1915b01ff525c402e0625dbcd7a9d20c78349ef/step3/src).
 
-### Developtment system environment specifications ###
-- **IDE:**
-	- Visual Studio Community 2022;
-	- Visual C++ 2022 - 00482-90000-00000-AA412;
-	- Microsoft Visual C++ 2022;
+----------
 
-- **OS:**
-	- Microsoft Windows [Version 10.0.19044.2604] OS.
 
