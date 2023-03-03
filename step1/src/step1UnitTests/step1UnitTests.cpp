@@ -357,4 +357,113 @@ namespace step1UnitTests
 			Assert::AreEqual(result, false);
 		}
 	};
+
+	TEST_CLASS(stringVectorUnitTests)
+	{
+	public:
+		TEST_METHOD(TestEmptyVectorContainsZeroEmptyString) {
+
+			auto targetString = std::string("");
+			auto theStrings = std::vector<std::string>{};
+
+			auto count = ContainsTheString(
+				[targetString](const std::string& tested) {
+					return tested == targetString;
+				},
+				theStrings
+					);
+
+			Assert::AreEqual(count, static_cast<unsigned int>(0));
+		}
+
+		TEST_METHOD(TestOneEmptyStringVectorContainsOneEmptyString) {
+
+			auto targetString = std::string("");
+			auto theStrings = std::vector<std::string>{ "" };
+
+			auto count = ContainsTheString(
+				[targetString](const std::string& tested) {
+					return tested == targetString;
+				},
+				theStrings
+					);
+
+			Assert::AreEqual(count, static_cast<unsigned int>(1));
+		}
+
+		TEST_METHOD(TestEmptyVectorContainsZeroTestString) {
+
+			auto targetString = std::string("test");
+			auto theStrings = std::vector<std::string>{ };
+
+			auto count = ContainsTheString(
+				[targetString](const std::string& tested) {
+					return tested == targetString;
+				},
+				theStrings
+					);
+
+			Assert::AreEqual(count, static_cast<unsigned int>(0));
+		}
+
+		TEST_METHOD(TestVectorWithNoTestStringContainsZeroEmptyString) {
+
+			auto targetString = std::string("");
+			auto theStrings = std::vector<std::string>{ "one", "two", "three" };
+
+			auto count = ContainsTheString(
+				[targetString](const std::string& tested) {
+					return tested == targetString;
+				},
+				theStrings
+					);
+
+			Assert::AreEqual(count, static_cast<unsigned int>(0));
+		}
+
+		TEST_METHOD(TestVectorWithNoTestStringContainsZeroTestString) {
+
+			auto targetString = std::string("test");
+			auto theStrings = std::vector<std::string>{ "one", "two", "three" };
+
+			auto count = ContainsTheString(
+				[targetString](const std::string& tested) {
+					return tested == targetString;
+				},
+				theStrings
+					);
+
+			Assert::AreEqual(count, static_cast<unsigned int>(0));
+		}
+
+		TEST_METHOD(TestVectorWithOneTestStringContainsOneTestString) {
+
+			auto targetString = std::string("test");
+			auto theStrings = std::vector<std::string>{ "one", "two", "test" };
+
+			auto count = ContainsTheString(
+				[targetString](const std::string& tested) {
+					return tested == targetString;
+				},
+				theStrings
+					);
+
+			Assert::AreEqual(count, static_cast<unsigned int>(1));
+		}
+
+		TEST_METHOD(TestVectorWithThreeTestStringContainsThreeTestString) {
+
+			auto targetString = std::string("test");
+			auto theStrings = std::vector<std::string>{ "one", "test", "two", "test", "test" };
+
+			auto count = ContainsTheString(
+				[targetString](const std::string& tested) {
+					return tested == targetString;
+				},
+				theStrings
+					);
+
+			Assert::AreEqual(count, static_cast<unsigned int>(3));
+		}
+	};
 }
