@@ -1,14 +1,3 @@
-#include <map>
-#include <string>
-#include <iostream>
-
-#include <atlbase.h>
-#include <iwscapi.h>
-#include <wscapi.h>
-
-#include "stdio.h"
-#include "windows.h"
-
 /*
 
 NINJARMM Code Review
@@ -46,7 +35,6 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
     std::string definitionState;
 
     hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&PtrProductList));
-
     if (FAILED(hr))
     {
         std::cout << "Failed to create WSCProductList object. ";
@@ -132,20 +120,6 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         thirdPartyAVSoftware.ProductState = state;
         thirdPartyAVSoftwareMap[thirdPartyAVSoftware.Name] = thirdPartyAVSoftware;
 
-        std::wcout << L"displayName: " << displayName << L"\n";
-        std::cout << "definitionState: " << definitionState << "\n";
-        std::wcout << L"timestamp: " << timestamp << L"\n";
-        std::wcout << L"Description: " << state << L"\n";
-        std::wcout << L"ProductState: " << state << L"\n";
-
-        // Execution output:
-        //displayName: Microsoft Defender Antivirus
-        //definitionState : UpToDate
-        //timestamp : Tue, 21 Feb 2023 13 : 26 : 50 GMT
-        //Description : On
-        //ProductState : On
-        //Resultado : true
-
         PtrProduct->Release();
     }
 
@@ -154,24 +128,4 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         return false;
     }
     return true;
-}
-
-int
-__cdecl
-wmain(
-    _In_              int     argc,
-    _In_reads_(argc)  LPCWSTR argv[]
-)
-{
-    int     ret = 0;
-    HRESULT hr = S_OK;
-    std::map<std::wstring, ThirdPartyAVSoftware> mySoftwareMap;
-
-    CoInitializeEx(0, COINIT_APARTMENTTHREADED);
-
-    bool res = queryWindowsForAVSoftwareDataWSC(mySoftwareMap);
-    std::cout << "Resultado: " << (res ? "true" : "false") << "\n";
-
-    CoUninitialize();
-    return ret;
 }
