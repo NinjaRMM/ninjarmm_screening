@@ -78,9 +78,10 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         return false;
     }
 
+    // 15) This comparision is being made between signed vs unsigned data types. Couldn't we face any problem here?
     for (uint32_t i = 0; i < ProductCount; i++)
     {
-        // 15) Maybe the instantiation of PtrProduct should be made, also, using SBRM (RAII) technique
+        // 16) Maybe the instantiation of PtrProduct should be made, also, using SBRM (RAII) technique
         hr = PtrProductList->get_Item(i, &PtrProduct);
         if (FAILED(hr))
         {
@@ -91,7 +92,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         hr = PtrProduct->get_ProductName(&PtrVal);
         if (FAILED(hr))
         {
-            // 16) In case we opt by not using SBRM (RAII), should this be really the only place where we invoke "PtrProduct->Release();" ?
+            // 17) In case we opt by not using SBRM (RAII), should this be really the only place where we invoke "PtrProduct->Release();" ?
             PtrProduct->Release();
             std::cout << "Failed to query AV product name.";
             continue;
@@ -141,7 +142,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         thirdPartyAVSoftware.Name = displayName;
         thirdPartyAVSoftware.DefinitionStatus = definitionState;
         thirdPartyAVSoftware.DefinitionUpdateTime = timestamp;
-        // 17) Here, shouldn't we be atributing a proper "description" into the thirdPartyAVSoftware.Description field, instead of its "state"?
+        // 18) Here, shouldn't we be atributing a proper "description" into the thirdPartyAVSoftware.Description field, instead of its "state"?
         // The way we made it, seems redundant. Is it usefull?
         thirdPartyAVSoftware.Description = state;
         thirdPartyAVSoftware.ProductState = state;
