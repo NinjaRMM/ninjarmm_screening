@@ -1,30 +1,58 @@
-# Welcome!
-Thank you for considering NinjaRMM as your future home. In this repository you'll find some of our screening materials that we expect you to complete. The folder structure is explained below. 
+# Hello! #
+My name is **Pietro Martins de Oliveira**, and I'm glad to participate at this NinjaOne's NinjaRMM code challenge.
 
-Take your time when completing these test materials as accuracy is important. Feel free to use whatever reference materials you need in order to complete and answer all of the questions. Incomplete submissions will not be considered. You should begin by creating a fork that contains your name as you'll need to submit this as a pull-request once you are done. 
+- Linked-in: https://www.linkedin.com/in/profpietromartins/
+- Instagram: http://instragram.com/profpietromartins
+- Youtube: https://www.youtube.com/@profpietromartins
+- E-mail: profpietromartins@gmail.com or contato@profpietro.com
+-----------
+## Microsoft Visual Studio Solution Setup ##
 
-# Overview
-The repository is broken down into the individual steps we would like for you to complete. Each subfolder step1 -> stepN contains an individual piece of test material. We expect that the solution for each step will be contained as a subfolder, for example for step2 we ask you to write some basic C++ code for us. Ideally you would structure that folder so that the source code is contained in a subfolder called "src" so {root}/step2/src/* would contain your answer. 
+I had to commit some Visual Studio specific artifacts like \*.sln, \*.vcxproj.\* files, etc. One would just have to open the *ninjarmm_screening.sln* at VS 2022 and it should be 'good to go'.
 
-You are free to use whatever compiler/platform you are most comfortable with. You may also use an online C++ compiler such as http://cpp.sh/ if you wish, if you do so please be sure to make a note of it as a comment in your code. 
+### Developtment system environment specifications ###
+- **IDE:**
+	- Visual Studio Community 2022;
+	- Visual C++ 2022 - 00482-90000-00000-AA412;
+	- Microsoft Visual C++ 2022;
 
-### Step 1 
-Take a look at the `Requirements.txt` file in the `step1/` directory. The document will contain an explanation of the code that we are expecting to see. It involved writing some basic classes and demonstrating your understanding of class hierarchies, virtual methods, templates, standard containers, and resource managment. 
+- **OS:**
+	- Microsoft Windows [Version 10.0.19044.2604] OS.
+-----------
+## **Step 1** ##
 
-### Step 2
-Take a look at the `CodeReview.cpp` file in the `step2/` directory. In this step we ask you to review some code that came directly from the code you'll be working with if you join the team. Look over it carefully and provide feedback as you would in a standard code review.
+**Relevant commits** (bottom-up):
 
-### Step 3
-Take a look at the `CodeChallenge.cpp` file in the `step3/` directory. This contains the last and final coding challenge. We expect that you will modify the code in CodeChallenge.cpp to meet the requirements outlined in the comments contained within that file. 
+1) [31151f6](https://github.com/pietromartinso/ninjarmm_screening/tree/31151f6eb0723acabc8143f6cab88f7854ec644e/step1) - First version of ``Job`` class hierarchy;
 
-# Submission
-Once you feel you have everything in a good spot, please submit your answer as a pull-request against this repository and notify your contact that you are complete. We'll review it as soon as possible and get back to you.
+2) [2a6a5d8](https://github.com/pietromartinso/ninjarmm_screening/tree/2a6a5d8088dd8d788060b2ac61317af9eb462720/step1) - First and only version of ``IsInBound()`` function;
 
-Please make sure all of the following are checked:
-1. The code compiles and runs without errors. 
-2. There should be meaningful feedback provided for the sample code in the code review.
-3. Provide a README.txt in the base folder with your full name and anything you would like us to know. This helps us to correlate your resume to your screening. 
+3) [485398a](https://github.com/pietromartinso/ninjarmm_screening/tree/485398ac2f4b6a4fcecc23d0aab6a49014952acc/step1) - First and only version of ``ContainsTheString()`` function;
 
-We will close out your pull request once we notice your submission and begin review as quickly as possible. 
+4) [221431c](https://github.com/pietromartinso/ninjarmm_screening/tree/221431cb720e6651f94d5a6aa58354f3192d93fc/step1) - Upgrading code to include Factory Method Design Pattern on ``Job`` ierarchy;
 
-Happy coding!
+5) [5e517ef](https://github.com/pietromartinso/ninjarmm_screening/tree/5e517ef286287fd190ba70c7c84aea2637d45d85/step1) - Upgrading code to include Composite Design Pattern ``Job`` hierarchy;
+
+6) [950a53d](https://github.com/pietromartinso/ninjarmm_screening/tree/950a53de1cbd68e5c09e7a6500750df1ff9ece6a/step1) - Upgrading code to automatically check for possible *memory leaks* at the whole code
+
+7) [07e0f2a](https://github.com/pietromartinso/ninjarmm_screening/tree/07e0f2a86d074f806fc360fb7a3587db737f7d71/step1/src/step1UnitTests) - Some passing unit tests for the ``Job`` hierarchy;
+
+8) [bfcacce](https://github.com/pietromartinso/ninjarmm_screening/tree/bfcacce361841acff09cdc3448c959f819918fef/step1/src/step1UnitTests) - Some passing unit tests for ``IsInBound()`` function;
+
+8) [bd3f7f2](https://github.com/pietromartinso/ninjarmm_screening/tree/bd3f7f29ecd13b844b35a892462b7e134f3085d1/step1/src/step1UnitTests) - Some passing unit tests for ``ContainsTheString()`` function;
+
+## **Step 2** ##
+
+**Relevant commits**:
+1) [d83fca2](https://github.com/pietromartinso/ninjarmm_screening/tree/d83fca2175af8538bce68d3e7427d6120aee2fdb/step2/src) - Code running on Windows 10;
+
+2) [7cb81ea](https://github.com/pietromartinso/ninjarmm_screening/tree/7cb81ea2f1c8574482c3ef057639156c97fbf24c/step2/src) - Revision + feedback text;
+
+
+## **Step 3** ##
+
+* Only one relevant commit: [d1915b0](https://github.com/pietromartinso/ninjarmm_screening/tree/d1915b01ff525c402e0625dbcd7a9d20c78349ef/step3/src).
+
+----------
+
+
