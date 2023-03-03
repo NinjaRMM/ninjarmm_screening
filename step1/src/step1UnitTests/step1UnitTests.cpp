@@ -341,4 +341,20 @@ namespace step1UnitTests
 			Assert::AreEqual(expected, buffer.str());
 		}
 	};
+
+	TEST_CLASS(inBoundsUnitTests)
+	{
+	public:
+		TEST_METHOD(TestTruthyIsInBounds) {
+			auto result = IsInBounds(501, 500, 599);
+
+			Assert::AreEqual(result, true);
+		}
+
+		TEST_METHOD(TestFalsyIsInBounds) {
+			auto result = IsInBounds(404, 500, 599);
+
+			Assert::AreEqual(result, false);
+		}
+	};
 }
