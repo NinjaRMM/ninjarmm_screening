@@ -35,6 +35,7 @@ I had to commit some Visual Studio specific artifacts like \*.sln, \*.vcxproj.\*
 
 ## **Step 3** ##
 
+* Only one relevant commit: [d1915b0](https://github.com/pietromartinso/ninjarmm_screening/tree/d1915b01ff525c402e0625dbcd7a9d20c78349ef/step3/src).
 
 ### Developtment system environment specifications ###
 - **IDE:**
