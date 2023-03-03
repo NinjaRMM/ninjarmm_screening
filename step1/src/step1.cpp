@@ -1,6 +1,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <functional>
 
 class IJob {
 
@@ -71,15 +72,6 @@ public:
 	}
 };
 
-//===========================================================================
-template<typename T>
-bool IsInBounds(T value, T lowerBound, T upperBound) noexcept {
-	return lowerBound <= value && value <= upperBound;
-}
-
-
-//===========================================================================
-
 class Pilot : public Job {
 public:
 
@@ -93,6 +85,42 @@ public:
 		Job::DoWork();
 	}
 };
+
+//===========================================================================
+
+template<typename T>
+bool IsInBounds(T value, T lowerBound, T upperBound) noexcept {
+	return lowerBound <= value && value <= upperBound;
+}
+
+//===========================================================================
+
+unsigned int ContainsTheString(std::function<int(const std::string&)> func, const std::vector<std::string>& strings) {
+	unsigned int counter = 0;
+	for (auto& i : strings) {
+		const bool isEqual = func(i);
+		if (isEqual) counter++;
+	}
+	return counter;
+}
+
+template<class... Args>
+void printOutput(const Args&... args) {
+	for (auto& s : { args... }) {
+		std::cout << s;
+	}
+}
+
+void outputHelper(const std::vector<std::string>& stringList, std::string* output) {
+	if (output != nullptr) {
+		for (auto& s : stringList) {
+			if (!(*output).empty()) {
+				*output += ", ";
+			}
+			*output += s;
+		}
+	}
+}
 
 
 int main() {
@@ -128,8 +156,30 @@ int main() {
 		const auto res = IsInBounds(httpResponse, lo, up);
 		auto resStr = res ? "true" : "false";
 		std::cout << "IsInBounds(" << httpResponse << ", " << lo << ", " << up << ") = " << resStr << "\n\n";
-		std::cout << "----------------------------------------------------\n\n";
+		std::cout << "----------------------------------------------------\n\n\n";
 		
+		// Client code... Step 1: item i;
+		std::cout << "================= Step 1: item i; ==================\n\n";
+		const auto targetString = std::string("test");
+		const auto theStrings = std::vector<std::string>{ "one", "two", "test" };
+
+		const auto count = ContainsTheString(
+			[targetString](const std::string& tested) noexcept {
+				return tested == targetString;
+			},
+			theStrings
+		);
+
+		auto output = std::string("");
+		outputHelper(theStrings, &output);
+
+		auto constOutputStr = output.c_str();
+		auto countStr = std::string(std::to_string(count));
+		auto constCountStr = countStr.c_str();
+		auto constTargetStr = targetString.c_str();
+
+		printOutput("Strings vector: [", constOutputStr, "] has ", constCountStr, " ocourrence(s) of \"", constTargetStr, "\" string\n\n");
+		std::cout << "----------------------------------------------------\n\n";
 	}
 	// Tip: take memory another snapshot after leaving client code scope
 	// We should not have any memory leaks here, since memory allocation done via smart pointers (RAII)
