@@ -27,7 +27,13 @@ I had to commit some Visual Studio specific artifacts like \*.sln, \*.vcxproj.\*
 
 5) [5e517ef](https://github.com/pietromartinso/ninjarmm_screening/tree/5e517ef286287fd190ba70c7c84aea2637d45d85/step1) - Upgrading code to include Composite Design Pattern ``Job`` hierarchy;
 
-6) [950a53d](https://github.com/pietromartinso/ninjarmm_screening/tree/950a53de1cbd68e5c09e7a6500750df1ff9ece6a/step1) - Upgrading code to automatically check for possible *memory leaks* at the whole code.
+6) [950a53d](https://github.com/pietromartinso/ninjarmm_screening/tree/950a53de1cbd68e5c09e7a6500750df1ff9ece6a/step1) - Upgrading code to automatically check for possible *memory leaks* at the whole code
+
+7) [07e0f2a](https://github.com/pietromartinso/ninjarmm_screening/tree/07e0f2a86d074f806fc360fb7a3587db737f7d71/step1/src/step1UnitTests) - Some passing unit tests for the ``Job`` hierarchy;
+
+8) [bfcacce](https://github.com/pietromartinso/ninjarmm_screening/tree/bfcacce361841acff09cdc3448c959f819918fef/step1/src/step1UnitTests) - Some passing unit tests for ``IsInBound()`` function;
+
+8) [bd3f7f2](https://github.com/pietromartinso/ninjarmm_screening/tree/bd3f7f29ecd13b844b35a892462b7e134f3085d1/step1/src/step1UnitTests) - Some passing unit tests for ``ContainsTheString()`` function;
 
 ## **Step 2** ##
 
