@@ -85,6 +85,30 @@ public:
 		Job::DoWork();
 	}
 };
+// Extra "Factory" pattern to help us creating jobs
+class JobFactory {
+public:
+	enum class JobType { programmer = 0, pilot, standardJob };
+
+	static std::shared_ptr<IJob> createJob(const JobType& type, const std::string& _name, const std::string& _description, const unsigned int& _hours) {
+		std::shared_ptr<IJob> job;
+		switch (type) {
+			case JobType::programmer: {
+				job = std::make_shared<Programmer>(_name, _description, _hours);
+				break;
+			}
+			case JobType::pilot: {
+				job = std::make_shared<Pilot>(_name, _description, _hours);
+				break;
+			}
+			default: {
+				job = std::make_shared<Job>(_name, _description, _hours);
+				break;
+			}
+		}
+		return job;
+	}
+};
 
 //===========================================================================
 
@@ -130,9 +154,9 @@ int main() {
 		std::cout << "====== Step 1: itens a, b, c, d, e, f, and g =======\n\n";
 		auto jobs = std::vector<std::shared_ptr<IJob>>();
 
-		auto pr = std::make_shared<Job>(Programmer{ "Jeremias", "programming in C++", 40 });
-		auto pi = std::make_shared<Job>(Pilot{ "Jeremiah", "flying a Boeing", 12 });
-		auto jo = std::make_shared<Job>(Job{ "Jerry", "cleaning everything up", 8 });
+		auto pr = JobFactory::createJob(JobFactory::JobType::programmer, "Jeremias", "programming in C++", 40);
+		auto pi = JobFactory::createJob(JobFactory::JobType::pilot, "Jeremiah", "flying a Boeing", 12);
+		auto jo = JobFactory::createJob(JobFactory::JobType::standardJob, "Jerry", "cleaning everything up", 8);
 
 		jobs.push_back(pr);
 		jobs.push_back(pi);
