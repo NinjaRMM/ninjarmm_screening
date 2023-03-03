@@ -17,4 +17,9 @@
   <ItemGroup>
     <Text Include="Requirements.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\step1.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
 </Project>
