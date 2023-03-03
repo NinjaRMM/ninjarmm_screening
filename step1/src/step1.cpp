@@ -71,6 +71,15 @@ public:
 	}
 };
 
+//===========================================================================
+template<typename T>
+bool IsInBounds(T value, T lowerBound, T upperBound) noexcept {
+	return lowerBound <= value && value <= upperBound;
+}
+
+
+//===========================================================================
+
 class Pilot : public Job {
 public:
 
@@ -90,6 +99,7 @@ int main() {
 	// Tip: take memory snapshot before entering client code scope
 	{
 		// Client code... Step 1: itens a, b, c, d, e, f, and g;
+		std::cout << "====== Step 1: itens a, b, c, d, e, f, and g =======\n\n";
 		auto jobs = std::vector<std::shared_ptr<IJob>>();
 
 		auto pr = std::make_shared<Job>(Programmer{ "Jeremias", "programming in C++", 40 });
@@ -107,6 +117,19 @@ int main() {
 			j->DoWork();
 			std::cout << "\n";
 		}
+		std::cout << "----------------------------------------------------\n\n\n";
+
+		// Client code... Step 1: item h;
+		std::cout << "================= Step 1: item h; ==================\n\n";
+		auto constexpr httpResponse = std::uint32_t{ 501 };
+		auto constexpr lo = std::uint32_t{ 500 };
+		auto constexpr up = std::uint32_t{ 599 };
+
+		const auto res = IsInBounds(httpResponse, lo, up);
+		auto resStr = res ? "true" : "false";
+		std::cout << "IsInBounds(" << httpResponse << ", " << lo << ", " << up << ") = " << resStr << "\n\n";
+		std::cout << "----------------------------------------------------\n\n";
+		
 	}
 	// Tip: take memory another snapshot after leaving client code scope
 	// We should not have any memory leaks here, since memory allocation done via smart pointers (RAII)
