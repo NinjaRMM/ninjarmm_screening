@@ -1,15 +1,14 @@
 /*
 
 NINJARMM Code Review
- 
-Please review the below code. 
-We do not expect you to execute this code, but you are welcome to try. 
 
-Make any code updates that you see fit (If any). 
+Please review the below code.
+We do not expect you to execute this code, but you are welcome to try.
+
+Make any code updates that you see fit (If any).
 Comments are encouraged.
 
 */
-
 
 struct ThirdPartyAVSoftware
 {
@@ -21,20 +20,28 @@ struct ThirdPartyAVSoftware
     std::wstring ProductState;
 };
 
-bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftware>& thirdPartyAVSoftwareMap)
+bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftware> &thirdPartyAVSoftwareMap)
 {
     HRESULT hr = S_OK;
-    IWscProduct* PtrProduct = nullptr;
-    IWSCProductList* PtrProductList = nullptr;
+    IWscProduct *PtrProduct = nullptr;
+    IWSCProductList *PtrProductList = nullptr;
     BSTR PtrVal = nullptr;
     LONG ProductCount = 0;
     WSC_SECURITY_PRODUCT_STATE ProductState;
     WSC_SECURITY_SIGNATURE_STATUS ProductStatus;
 
-    std::wstring displayName, versionNumber, state, timestamp;
-    std::string definitionState;
+    std::wstring state;
 
-    hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&PtrProductList));
+    hr = CoInitialize(nullptr);
+    {
+        if (FAILED(hr))
+        {
+            std::cout << "CoInitialize failed ";
+            return false;
+        }
+    }
+
+    hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID *>(&PtrProductList));
     if (FAILED(hr))
     {
         std::cout << "Failed to create WSCProductList object. ";
@@ -72,7 +79,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
             continue;
         }
 
-        displayName = std::wstring(PtrVal, SysStringLen(PtrVal));
+        const std::wstring displayName = std::wstring(PtrVal, SysStringLen(PtrVal));
 
         hr = PtrProduct->get_ProductState(&ProductState);
         if (FAILED(hr))
@@ -89,6 +96,10 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         {
             state = L"Off";
         }
+        else if (ProductState == WSC_SECURITY_PRODUCT_STATE_SNOOZED)
+        {
+            state = L"Snoozed";
+        }
         else
         {
             state = L"Expired";
@@ -101,31 +112,26 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
             continue;
         }
 
-        definitionState = (ProductStatus == WSC_SECURITY_PRODUCT_UP_TO_DATE) ? "UpToDate" : "OutOfDate";
-
         hr = PtrProduct->get_ProductStateTimestamp(&PtrVal);
         if (FAILED(hr))
         {
             std::cout << "Failed to query AV product definition state.";
             continue;
         }
-        timestamp = std::wstring(PtrVal, SysStringLen(PtrVal));
+        const std::string definitionState = (ProductStatus == WSC_SECURITY_PRODUCT_UP_TO_DATE) ? "UpToDate" : "OutOfDate";
+        const std::wstring timestamp = std::wstring(PtrVal, SysStringLen(PtrVal));
         SysFreeString(PtrVal);
 
-        ThirdPartyAVSoftware thirdPartyAVSoftware;
-        thirdPartyAVSoftware.Name = displayName;
-        thirdPartyAVSoftware.DefinitionStatus = definitionState;
-        thirdPartyAVSoftware.DefinitionUpdateTime = timestamp;
-        thirdPartyAVSoftware.Description = state;
-        thirdPartyAVSoftware.ProductState = state;
-        thirdPartyAVSoftwareMap[thirdPartyAVSoftware.Name] = thirdPartyAVSoftware;
+        thirdPartyAVSoftwareMap.emplace(displayName, ThirdPartyAVSoftware{displayName, state, timestamp, definitionState, std::wstring(), state});
 
         PtrProduct->Release();
     }
 
+    // TODO: not finding any query should not be considered a failure. This check can be removed and give the responsability of it to the called of this function
     if (thirdPartyAVSoftwareMap.size() == 0)
     {
         return false;
     }
+
     return true;
 }
