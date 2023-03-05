@@ -19,7 +19,11 @@ struct ThirdPartyAVSoftware
     std::wstring Version;
     std::wstring ProductState;
 };
-
+/// <summary>
+///  Retrieves AV software information using WinAPIs
+/// </summary>
+/// <param name="thirdPartyAVSoftwareMap"> Output: the AV softtware information will be stored in this map</param>
+/// <returns> Whether the query succeded</returns>
 bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftware> &thirdPartyAVSoftwareMap)
 {
     HRESULT hr = S_OK;
