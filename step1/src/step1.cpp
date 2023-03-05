@@ -49,7 +49,7 @@ public:
 class Programmer : public Job
 {
 public:
-    Programmer() : Job("Programmer", "Writting amazing programs", 8)
+    Programmer(int requiredHours) : Job("Programmer", "Writting amazing programs", requiredHours)
     {
     }
 };
@@ -57,7 +57,7 @@ public:
 class Pilot : public Job
 {
 public:
-    Pilot() : Job("Pilot", "Flying planes", 6)
+    Pilot(int requiredHours) : Job("Pilot", "Flying planes", requiredHours)
     {
     }
 };
@@ -95,8 +95,8 @@ int main(int argc, char const *argv[])
 {
     // e.Dynamically allocate each type of job.
     std::shared_ptr<Programmer>
-        programmer = std::make_shared<Programmer>();
-    std::shared_ptr<Pilot> pilot = std::make_shared<Pilot>();
+        programmer = std::make_shared<Programmer>(10);
+    std::shared_ptr<Pilot> pilot = std::make_shared<Pilot>(6);
 
     //	f. Store each instance in a collection.
     std::vector<std::shared_ptr<Job>> jobs = {std::move(programmer), std::move(pilot)};
