@@ -1,0 +1,9 @@
+I noticed that the challenge has changed, being the step 1 and step 2 erased, and steps 3 to 5, became the new steps 1 to 3.
+I made the "old" steps 1 and 2. Looking forward to work at NO \o/
+
+ OLD        NEW
+STEP1    STEP1(OLD)
+STEP2    STEL2(OLD)
+STEP3      STEP1
+STEP4      STEP2
+STEP5      STEP3
