@@ -30,14 +30,13 @@ typedef struct SampleObject2
 OBJ_INT objInt;
 OBJ_STR objStr;
 
-
 //<<<<<<<< START OF EDITABLE SECTION OF CODE <<<<<<<<<<<
 
-//Here's a template function that can accept a sample object and 3 integer parameters. It checks if the sum of the integer params is positive or not.
-//The third integer param is optional so it's declared as a default param
-//Inside the function is some existing code that needs to exist, but not relevant to this exercise. 
+// Here's a template function that can accept a sample object and 3 integer parameters. It checks if the sum of the integer params is positive or not.
+// The third integer param is optional so it's declared as a default param
+// Inside the function is some existing code that needs to exist, but not relevant to this exercise.
 template <typename T, typename U>
-T checkIfPositive(const U& u, const int& param1, const int& param2, int param3 = 0)
+T checkIfPositive(const U &u, const int &param1, const int &param2, int param3 = 0)
 {
 
     // Assume there's already some existing code in here, some business logic that we are not interested in this exercise. 
@@ -46,8 +45,13 @@ T checkIfPositive(const U& u, const int& param1, const int& param2, int param3 =
     SOME EXISTING CODE
 
     */
-
     return u.getResult(param1, param2, param3);
+}
+template <typename T, typename U>
+T checkIfPositive(const U &u, const int &param1, const int &param2, int param3, int &output)
+{
+    output = param1 + param2 + param3;
+    return checkIfPositive<T, U>(u, param1, param2, param3);
 }
 
 //<<<<<<<< END OF EDITABLE SECTION OF CODE <<<<<<<<<<<
