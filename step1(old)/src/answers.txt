@@ -1,0 +1,86 @@
+1. Explain the different types of containers available in the standard library, what are their differences? Explain use cases for each.
+There are several containers, from the standard libraries, like list, vector, deque, map, etc. Each one has its own set of features, and are suitable for different purposes.
+Basically, there are the 3 types of containers:
+-Sequence - deals with ordered collections. Example: store data in an array;
+-Associative - deals with sorted collections. Example: store data in an ordered map
+-Unordered (associative) - same as the previous, but the position of an element doesn't matter. Example: store data in an unordered map.
+
+2.What are some sorting algorithms? List at least 3? What are their differences and give use cases for each.
+ -Bubble - compares elements, 2 by 2, until the sorting is complete. Simple but not very efficient. Use cases: when memory is limited (as it requires only one memory space) and graphics (filling of polygon edges and such). Inefficient for large datasets.
+ -Selection - sorts the smallest elements to the beginning of the list, until it's done. More efficient than bubble. Use cases: data structures with finite (and known) size, linear, like arrays.
+ -Quick - Uses a pivot element, sorting values before and after it. Also divides the array into 2 parts, joining them at the end. Usually, this is the most efficient sorting method. Use cases: nearly any, but doesn't work well on large datasets.
+There is also the built-in sorting in C++ library, which will choose the most appropriate technique automatically.
+
+3. What is the purpose of virtual destructors? What types of issues can arise if not used correctly. 
+To clear objects and their unused data from the memory, to avoid leaks, which may represent privacy vulnerabilities and can cause errors.
+
+4. Explain the keyword: static. What does it mean in each context?
+-When used for a variable, it's space is allocated for the whole program execution.
+
+5. When are static member variables initialized?
+-They can be initialized at compiling (constant initialization) or at runtime (dynamic initialization)
+
+6. What is the difference between R-Values and L-Values?
+-L-values are object references, and can be modified (ex: variables), and R-values are non-modifiabe values, such as literals. Also, they can referred to left and right side of the statements, in C++.
+
+7. Is this code safe? If so why? If not why?
+	std::string foo()
+	{
+		std::string something = "avalue";
+		return something;
+	}
+	Bonus: What would most compilers do with this code?
+
+Regarding privacy, it's unsafe to return a local variable. This can work in most compilers, for a small code, but it's a bad practice once the variable dissapears, leading to all sorts of potential problems.
+However, when regarding data keeping, it's safe because the string "something" is returned by value, creating a copy of the original content before returning it. This way, the original string is not altered or erased.
+Bonus: the variable "something" is not needed in this case and would be eliminated.
+
+8. Why would you use new rather than malloc when allocating an object? Likewise, what's the difference between free and delete?
+
+Because "new" calls the class constructor, and malloc(legacy C functionality) does not. Also, new provides better type checking. Likewise, "free" is also a legacy C function, and does not call the class destructor, while "delete" does, beside freeing the memory.
+
+9. Explain the purpose of std::move, and std::forward. 
+Move is used to transfer the contents of one memory position to another (ie. assign values between variables, without creating copies in the memory, but swaping instead). Forward is used for perfect forwarding (since it can convert var types - R and L values etc).
+
+10. How do you share resources safely between threads? How would you share an integer value vs user defined type?
+Using mutex and lock_guard functions, to prevent random accesses on each thread by locking and unlocking at the proper moments. As for integers, atomic variables are the best, for safety concerns.
+
+
+11. What are the some of the principles of object-oriented programming?
+Encapsulation, abstraction, inheritance and polyphormism.
+
+
+12. Explain inheritance vs composition vs aggregation?
+-Association - Objects are related, but not dependent;
+-Composition - One object owns and controls the other.
+-Aggregation - One object "borrows" the other, which can be used also by other objects. Like a weaker form of composition;
+Ps: aggregation and composition are also types of association.
+
+13. Should you always initialize variables? 
+Yes, always. Otherwise, depending on the compiler, random values can be assumed for any variables, creating avoidable risks.
+
+14. What concept(s) in C++ would you use to manage resources automatically?
+	a. How important are these concepts? 	
+	b. What tools are you familiar with for tracking resource allocations? 
+RAII and resource handles. This is very important, since C++ don't have any means to release heap memory and other resources. Failure to do so will cause memory leaks and other resource management issues. I have used Deleaker and Valgrind.
+
+15. What security concerns have you come across in the past and how have you addressed them?
+Aside extensive debugging, mostly ensuring there are no memory leaks. When i developed embedded systems, the biggest concern was about the remote access. Aside from using smart pointers and OpenSSL libraries, multi-factor authentication was implemented.
+
+16. Name some tools and/or techniques that you personally find to be the most helpful surrounding development.
+Visual Studio, Git, PVS Studio and Valgrind.
+
+
+17. Name some tools and/or techniques that you personally find to be the most helpful surrounding code maintenance.
+Crucible and ReSharper.
+
+18. Scenario: You are dealing with legacy code containing no test suites nor documented requirements, and are required to make a change. Describe your expected process for how you may approach the solution. 
+	a. Consider both a long term and short-term solutions. 
+I create test scenarios, based mostly in limit-situations. Extensive testing scripts, trying to exaust as many outputs as possible, and automate output check as well, when appliable. The priority is to identify potential issues. Sometimes, refactoring is made necessary.
+
+19. What concerns do you had supporting legacy operating systems? (If any)
+Personally, i like the idea of mantaining backwards compatibility, since i started way back in windows 95 and. However, on most professional projects, the support on legacy systems can present security vulnerabilities.
+
+20. Tell us about a project you worked on that you found to be interesting or unusual.
+Integration of 4 different data plataforms into one, for buiding automation. Thought the APIs, i've made an interface (with dashboards) in VBA to display all available data, in real time.
+
