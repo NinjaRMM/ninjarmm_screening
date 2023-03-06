@@ -13,8 +13,6 @@
 #include <stdlib.h>  
 #include <crtdbg.h>  
 
-std::mutex mtx;
-
 class IJob : public std::enable_shared_from_this<IJob> {
 private:
 	std::weak_ptr<IJob> parent;
@@ -290,8 +288,11 @@ void outputHelper(const std::vector<std::string>& stringList, std::string* outpu
 //===========================================================================
 
 class JobHierarchyService {
+private:
+	std::mutex& _mtx;
+
 public:
-	JobHierarchyService(){}
+	JobHierarchyService(std::mutex& m) : _mtx{ m }  {}
 
 	~JobHierarchyService(){}
 
@@ -314,7 +315,7 @@ public:
 		jobs.at(3)->addSupervisedJob(jobs.at(1));
 		jobs.at(3)->addSupervisedJob(jobs.at(2));
 
-		std::lock_guard<std::mutex> lockit(mtx);
+		std::lock_guard<std::mutex> lockit(_mtx);
 		std::cout << "====== Step 1: itens a, b, c, d, e, f, and g =======\n\n";
 		for (auto& j : jobs) {
 			std::cout << "- Hi, my name is " << j->getName() << "\n";
@@ -332,8 +333,11 @@ public:
 };
 
 class InBoundsService {
+private:
+	std::mutex& _mtx;
+
 public:
-	InBoundsService() { }
+	InBoundsService(std::mutex& m) : _mtx{ m } { }
 	 
 	~InBoundsService() { }
 
@@ -346,7 +350,7 @@ public:
 		const auto res = IsInBounds(httpResponse, lo, up);
 		auto resStr = res ? "true" : "false";
 
-		std::lock_guard<std::mutex> lockit(mtx);
+		std::lock_guard<std::mutex> lockit(_mtx);
 		std::cout << "================= Step 1: item h; ==================\n\n";
 		std::cout << "IsInBounds(" << httpResponse << ", " << lo << ", " << up << ") = " << resStr << "\n";
 		std::cout << "----------------------------------------------------\n\n\n";
@@ -354,8 +358,11 @@ public:
 };
 
 class ContainsStringService {
+private:
+	std::mutex& _mtx;
+
 public:
-	ContainsStringService() { }
+	ContainsStringService(std::mutex& m) : _mtx{ m } { }
 
 	~ContainsStringService() { }
 
@@ -379,7 +386,7 @@ public:
 		auto constCountStr = countStr.c_str();
 		auto constTargetStr = targetString.c_str();
 
-		std::lock_guard<std::mutex> lockit(mtx);
+		std::lock_guard<std::mutex> lockit(_mtx);
 		std::cout << "================= Step 1: item i; ==================\n\n";
 		printOutput("Strings vector: [", constOutputStr, "] has ", constCountStr, " ocourrence(s)\nof \"", constTargetStr, "\" string\n");
 		std::cout << "----------------------------------------------------\n\n";
@@ -439,11 +446,12 @@ int main() {
 	// MemoryLeakWatcher will capture memory snapshots in order to search for memory leaks automatically
 	MemoryLeakWatcher mw;
 	{
+		std::mutex mtx;
 		ThreadDispatcher dispatcher;
 
-		dispatcher.addThread(JobHierarchyService());
-		dispatcher.addThread(InBoundsService());
-		dispatcher.addThread(ContainsStringService());
+		dispatcher.addThread(JobHierarchyService(mtx));
+		dispatcher.addThread(InBoundsService(mtx));
+		dispatcher.addThread(ContainsStringService(mtx));
 
 		dispatcher.joinThreads();
 	}
