@@ -282,14 +282,15 @@ void outputHelper(const std::vector<std::string>& stringList, std::string* outpu
 	}
 }
 
+//===========================================================================
 
-int main() {
-	// Taking memory snapshot before entering client code scope
-	_CrtMemState sOld;
-	_CrtMemState sNew;
-	_CrtMemState sDiff;
-	_CrtMemCheckpoint(&sOld);
-	{
+class JobHierarchyService {
+public:
+	JobHierarchyService(){}
+
+	~JobHierarchyService(){}
+
+	void execute() {
 		// Client code... Step 1: itens a, b, c, d, e, f, and g;
 		std::cout << "====== Step 1: itens a, b, c, d, e, f, and g =======\n\n";
 		auto jobs = std::vector<std::shared_ptr<IJob>>();
@@ -321,7 +322,16 @@ int main() {
 			std::cout << "\n";
 		}
 		std::cout << "----------------------------------------------------\n\n\n";
+	}
+};
 
+class InBoundsService {
+public:
+	InBoundsService() { }
+	 
+	~InBoundsService() { }
+
+	void execute() {
 		// Client code... Step 1: item h;
 		std::cout << "================= Step 1: item h; ==================\n\n";
 		auto constexpr httpResponse = std::uint32_t{ 501 };
@@ -332,7 +342,16 @@ int main() {
 		auto resStr = res ? "true" : "false";
 		std::cout << "IsInBounds(" << httpResponse << ", " << lo << ", " << up << ") = " << resStr << "\n";
 		std::cout << "----------------------------------------------------\n\n\n";
-		
+	}
+};
+
+class ContainsStringService {
+public:
+	ContainsStringService() { }
+
+	~ContainsStringService() { }
+
+	void execute() {
 		// Client code... Step 1: item i;
 		std::cout << "================= Step 1: item i; ==================\n\n";
 		const auto targetString = std::string("test");
@@ -343,7 +362,7 @@ int main() {
 				return tested == targetString;
 			},
 			theStrings
-		);
+				);
 
 		auto output = std::string("");
 		outputHelper(theStrings, &output);
@@ -356,20 +375,56 @@ int main() {
 		printOutput("Strings vector: [", constOutputStr, "] has ", constCountStr, " ocourrence(s)\nof \"", constTargetStr, "\" string\n");
 		std::cout << "----------------------------------------------------\n\n";
 	}
-	// Taking memory another snapshot after leaving client code scope
-	// We should not have any memory leaks here, since memory allocation done via smart pointers (RAII)
-	_CrtMemCheckpoint(&sNew);
-	if (_CrtMemDifference(&sDiff, &sOld, &sNew))
-	{
-		OutputDebugString(L"-----------_CrtMemDumpStatistics ---------");
-		_CrtMemDumpStatistics(&sDiff);
-		OutputDebugString(L"-----------_CrtMemDumpAllObjectsSince ---------");
-		_CrtMemDumpAllObjectsSince(&sOld);
-		OutputDebugString(L"-----------_CrtDumpMemoryLeaks ---------");
-		_CrtDumpMemoryLeaks();
+};
+
+class MemoryLeakWatcher {
+private:
+	_CrtMemState sOld;
+	_CrtMemState sNew;
+	_CrtMemState sDiff;
+
+public:
+	MemoryLeakWatcher(){
+		/*sOld = _CrtMemState();
+		sNew = _CrtMemState();
+		sDiff = _CrtMemState();*/
+		_CrtMemCheckpoint(&sOld);
 	}
-	else {
-		OutputDebugString(L"----------- NO MEMORY LEAKS FOUND ---------\n");
+
+	~MemoryLeakWatcher() {
+		_CrtMemCheckpoint(&sNew);
+		if (_CrtMemDifference(&sDiff, &sOld, &sNew))
+		{
+			OutputDebugString(L"-----------_CrtMemDumpStatistics ---------");
+			_CrtMemDumpStatistics(&sDiff);
+			OutputDebugString(L"-----------_CrtMemDumpAllObjectsSince ---------");
+			_CrtMemDumpAllObjectsSince(&sOld);
+			OutputDebugString(L"-----------_CrtDumpMemoryLeaks ---------");
+			_CrtDumpMemoryLeaks();
+		}
+		else {
+			OutputDebugString(L"----------- NO MEMORY LEAKS FOUND ---------\n");
+		}
+	}
+};
+
+class ThreadDispatcher {
+
+
+
+};
+
+int main() {
+	// MemoryLeakWatcher will capture memory snapshots in order to search for memory leaks automatically
+	MemoryLeakWatcher mw;
+	{
+		JobHierarchyService j;
+		InBoundsService i;
+		ContainsStringService c;
+
+		j.execute();
+		i.execute();
+		c.execute();		
 	}
 	return 0;
 }
