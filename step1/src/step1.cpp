@@ -3,12 +3,17 @@
 #include <vector>
 #include <list>
 #include <functional>
+#include <thread>
+#include <mutex>
+#include <atomic>
 
 //Memory leak detection
 #include "windows.h"
 #define _CRTDBG_MAP_ALLOC 
 #include <stdlib.h>  
 #include <crtdbg.h>  
+
+std::mutex mtx;
 
 class IJob : public std::enable_shared_from_this<IJob> {
 private:
@@ -290,9 +295,8 @@ public:
 
 	~JobHierarchyService(){}
 
-	void execute() {
+	void operator()() {
 		// Client code... Step 1: itens a, b, c, d, e, f, and g;
-		std::cout << "====== Step 1: itens a, b, c, d, e, f, and g =======\n\n";
 		auto jobs = std::vector<std::shared_ptr<IJob>>();
 		jobs.reserve(4);
 
@@ -310,6 +314,8 @@ public:
 		jobs.at(3)->addSupervisedJob(jobs.at(1));
 		jobs.at(3)->addSupervisedJob(jobs.at(2));
 
+		std::lock_guard<std::mutex> lockit(mtx);
+		std::cout << "====== Step 1: itens a, b, c, d, e, f, and g =======\n\n";
 		for (auto& j : jobs) {
 			std::cout << "- Hi, my name is " << j->getName() << "\n";
 			std::cout << "- My job description: " << j->getDescription() << "\n";
@@ -331,15 +337,17 @@ public:
 	 
 	~InBoundsService() { }
 
-	void execute() {
+	void operator()() {
 		// Client code... Step 1: item h;
-		std::cout << "================= Step 1: item h; ==================\n\n";
 		auto constexpr httpResponse = std::uint32_t{ 501 };
 		auto constexpr lo = std::uint32_t{ 500 };
 		auto constexpr up = std::uint32_t{ 599 };
 
 		const auto res = IsInBounds(httpResponse, lo, up);
 		auto resStr = res ? "true" : "false";
+
+		std::lock_guard<std::mutex> lockit(mtx);
+		std::cout << "================= Step 1: item h; ==================\n\n";
 		std::cout << "IsInBounds(" << httpResponse << ", " << lo << ", " << up << ") = " << resStr << "\n";
 		std::cout << "----------------------------------------------------\n\n\n";
 	}
@@ -351,9 +359,8 @@ public:
 
 	~ContainsStringService() { }
 
-	void execute() {
+	void operator()() {
 		// Client code... Step 1: item i;
-		std::cout << "================= Step 1: item i; ==================\n\n";
 		const auto targetString = std::string("test");
 		const auto theStrings = std::vector<std::string>{ "one", "two", "test" };
 
@@ -372,6 +379,8 @@ public:
 		auto constCountStr = countStr.c_str();
 		auto constTargetStr = targetString.c_str();
 
+		std::lock_guard<std::mutex> lockit(mtx);
+		std::cout << "================= Step 1: item i; ==================\n\n";
 		printOutput("Strings vector: [", constOutputStr, "] has ", constCountStr, " ocourrence(s)\nof \"", constTargetStr, "\" string\n");
 		std::cout << "----------------------------------------------------\n\n";
 	}
@@ -385,9 +394,6 @@ private:
 
 public:
 	MemoryLeakWatcher(){
-		/*sOld = _CrtMemState();
-		sNew = _CrtMemState();
-		sDiff = _CrtMemState();*/
 		_CrtMemCheckpoint(&sOld);
 	}
 
@@ -409,22 +415,37 @@ public:
 };
 
 class ThreadDispatcher {
+private:
+	std::vector<std::thread> threadQueue;
 
+public:
 
+	ThreadDispatcher() {}
+	
+	~ThreadDispatcher() {}
 
+	void addThread(std::function<void()> toRun) {
+		threadQueue.push_back(std::thread{ toRun });		
+	}
+
+	void joinThreads() {
+		for (auto& t : threadQueue) {
+			t.join();
+		}
+	}
 };
 
 int main() {
 	// MemoryLeakWatcher will capture memory snapshots in order to search for memory leaks automatically
 	MemoryLeakWatcher mw;
 	{
-		JobHierarchyService j;
-		InBoundsService i;
-		ContainsStringService c;
+		ThreadDispatcher dispatcher;
 
-		j.execute();
-		i.execute();
-		c.execute();		
+		dispatcher.addThread(JobHierarchyService());
+		dispatcher.addThread(InBoundsService());
+		dispatcher.addThread(ContainsStringService());
+
+		dispatcher.joinThreads();
 	}
 	return 0;
 }
