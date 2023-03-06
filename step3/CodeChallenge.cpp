@@ -1,10 +1,18 @@
 /*
+    Luis Marquez Ordaz                    luis.marquez.ordaz@gmail.com
+    Embedded System Engineer
 
+    Code designed and tested under Visual Studio.
+
+    Compiler: c++14
+
+*/
+
+/*
 NINJARMM Code Challenge
- 
-Please review the below code. 
-We do expect you to execute this code. 
 
+Please review the below code.
+We do expect you to execute this code.
 This file contains the 'main' function. Program execution begins and ends there.
 */
 
@@ -42,12 +50,27 @@ T checkIfPositive(const U& u, const int& param1, const int& param2, int param3 =
 
     // Assume there's already some existing code in here, some business logic that we are not interested in this exercise. 
     /*
-
     SOME EXISTING CODE
-
     */
 
     return u.getResult(param1, param2, param3);
+}
+
+
+//Overload the template and call the original function so that existing business code still executes without major issues
+//this overload expects 3 parameters to add
+template <typename T, typename U>
+T checkIfPositive(const U &u, const int &param1, const int &param2, const int &param3 , int &total)
+{
+
+    // Assume there's already some existing code in here, some business logic that we are not interested in this exercise. 
+    /*
+    SOME EXISTING CODE
+    */
+
+    total = param1 + param2 + param3;
+
+    return checkIfPositive<T, U>(u, param1, param2, param3);
 }
 
 //<<<<<<<< END OF EDITABLE SECTION OF CODE <<<<<<<<<<<
@@ -80,27 +103,38 @@ int main()
     //Hint, the following calls should now be valid moving forward:
     /*
     int total = 0;
-
     iResult = checkIfPositive<int, OBJ_INT>(objInt, 1, 2);
     std::cout << iResult <<  std::endl;
-
     iResult = checkIfPositive<int, OBJ_INT>(objInt, 1, 2, -3);
     std::cout << iResult << std::endl;
-
     iResult = checkIfPositive<int, OBJ_INT>(objInt, 1, 2, 3, total); //<-- Total is output param
     std::cout << iResult << " " << total << std::endl;
-
     sResult = checkIfPositive<std::string, OBJ_STR>(objStr, 1, 2);
     std::cout << sResult <<  std::endl;
-
     sResult = checkIfPositive<std::string, OBJ_STR>(objStr, 1, 2, -3);
     std::cout << sResult <<  std::endl;
-
     sResult = checkIfPositive<std::string, OBJ_STR>(objStr, 1, 2, 3, total); //<-- Total is output param
     std::cout << sResult << " " << total << std::endl;
     */
 
+    int total = 0;
+
+
+    iResult = checkIfPositive<int, OBJ_INT>(objInt, 1, 2);
+    std::cout << iResult << std::endl;
+    iResult = checkIfPositive<int, OBJ_INT>(objInt, 1, 2, -3);
+    std::cout << iResult << std::endl;
+    iResult = checkIfPositive<int, OBJ_INT>(objInt, 1, 2, 3, total); //<-- Total is output param
+    std::cout << iResult << " total: " << total << std::endl;
+    sResult = checkIfPositive<std::string, OBJ_STR>(objStr, 1, 2);
+    std::cout << sResult << std::endl;
+    sResult = checkIfPositive<std::string, OBJ_STR>(objStr, 1, 2, -3);
+    std::cout << sResult << std::endl;
+    sResult = checkIfPositive<std::string, OBJ_STR>(objStr, 1, 2, 3, total); //<-- Total is output param
+    std::cout << sResult << " " << total << std::endl;
+
+
+
     return 0;
 
 }
-
