@@ -1,0 +1,43 @@
+/*
+    Luis Marquez Ordaz                    luis.marquez.ordaz@gmail.com
+    Embedded System Engineer
+
+    Code review.
+
+
+    Overall pupose of the code: 
+
+            Query antivirus information through win api, WSC API library
+
+    Expected Output:
+           populate provided pointer variable, with data from succesful query
+
+            return 1 if succesful
+            return 0 otherwise
+
+
+    -Unsure if its related to the nature of the test, but there is a severe lack of comments that could improve readability. 
+    
+    -I would refactor al the hr tests into one liners with comments (just to keep the code clear to the anyone unfamiliar):
+
+                    //Initialize product list
+                    hr = PtrProductList->Initialize(WSC_SECURITY_PROVIDER_ANTIVIRUS);
+                        if (FAILED(hr)){ std::cout << "Failed to query antivirus product list. "; return false;}
+
+                    //Get product count
+                    hr = PtrProductList->get_Count(&ProductCount);
+                        if (FAILED(hr)){ std::cout << "Failed to query product count."; return false; }
+
+    -When code fails hr code should be added to the message might be helpful to debug,
+     currently we only provide a string to now where it failed but not why.
+
+    -On the loop, if the count of products is 30, and only the 30th is properly quearable, we get 29 error lines,
+     that provide no further context or insigth.
+
+    -It's not clear for me if this code is a stand alone script or part of a bigger codebase, 
+     I think a logger would help track of any exceptions hidden in the loop.
+
+
+
+
+*/
