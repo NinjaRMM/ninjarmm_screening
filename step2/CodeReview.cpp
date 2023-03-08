@@ -10,6 +10,14 @@ Comments are encouraged.
 
 */
 
+/* review comments:
+ * - Might consider throwing exception if thirdPartyAVSoftwareMap.size() == 0
+ * - Changed variable names to be consistent in style
+ * - Changed some strings to wstring
+ * - Set default values for all variables
+ * - thirdPartyAVSoftware.ProductState was set to state instead of productState
+ */
+
 
 struct ThirdPartyAVSoftware
 {
@@ -21,7 +29,7 @@ struct ThirdPartyAVSoftware
     std::wstring ProductState {};
 };
 
-bool queryWindowsForAVSoftwareDataWSC(map<std::wstring, ThirdPartyAVSoftware>& thirdPartyAVSoftwareMap)
+bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftware>& thirdPartyAVSoftwareMap)
 {
     HRESULT hr {S_OK};
     IWscProduct* ptrProduct {nullptr};
