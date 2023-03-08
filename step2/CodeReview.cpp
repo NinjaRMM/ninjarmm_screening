@@ -13,79 +13,78 @@ Comments are encouraged.
 
 struct ThirdPartyAVSoftware
 {
-    std::wstring Name;
-    std::wstring Description;
-    std::wstring DefinitionUpdateTime;
-    std::string DefinitionStatus;
-    std::wstring Version;
-    std::wstring ProductState;
+    std::wstring Name {};
+    std::wstring Description {};
+    std::wstring DefinitionUpdateTime {};
+    std::wstring DefinitionStatus {};
+    std::wstring Version {};
+    std::wstring ProductState {};
 };
 
-bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftware>& thirdPartyAVSoftwareMap)
+bool queryWindowsForAVSoftwareDataWSC(map<std::wstring, ThirdPartyAVSoftware>& thirdPartyAVSoftwareMap)
 {
-    HRESULT hr = S_OK;
-    IWscProduct* PtrProduct = nullptr;
-    IWSCProductList* PtrProductList = nullptr;
-    BSTR PtrVal = nullptr;
-    LONG ProductCount = 0;
-    WSC_SECURITY_PRODUCT_STATE ProductState;
-    WSC_SECURITY_SIGNATURE_STATUS ProductStatus;
+    HRESULT hr {S_OK};
+    IWscProduct* ptrProduct {nullptr};
+    IWSCProductList* ptrProductList {nullptr};
+    BSTR ptrVal {nullptr};
+    LONG productCount {0};
+    WSC_SECURITY_PRODUCT_STATE productState {};
+    WSC_SECURITY_SIGNATURE_STATUS productStatus {};
 
-    std::wstring displayName, versionNumber, state, timestamp;
-    std::string definitionState;
+    std::wstring displayName {}, state {}, timestamp {}, definitionState {};
 
-    hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&PtrProductList));
+    hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&ptrProductList));
     if (FAILED(hr))
     {
         std::cout << "Failed to create WSCProductList object. ";
         return false;
     }
 
-    hr = PtrProductList->Initialize(WSC_SECURITY_PROVIDER_ANTIVIRUS);
+    hr = ptrProductList->Initialize(WSC_SECURITY_PROVIDER_ANTIVIRUS);
     if (FAILED(hr))
     {
         std::cout << "Failed to query antivirus product list. ";
         return false;
     }
 
-    hr = PtrProductList->get_Count(&ProductCount);
+    hr = ptrProductList->get_Count(&productCount);
     if (FAILED(hr))
     {
         std::cout << "Failed to query product count.";
         return false;
     }
 
-    for (uint32_t i = 0; i < ProductCount; i++)
+    for (auto i = 0; i < productCount; i++)
     {
-        hr = PtrProductList->get_Item(i, &PtrProduct);
+        hr = ptrProductList->get_Item(i, &ptrProduct);
         if (FAILED(hr))
         {
             std::cout << "Failed to query AV product.";
             continue;
         }
 
-        hr = PtrProduct->get_ProductName(&PtrVal);
+        hr = ptrProduct->get_ProductName(&ptrVal);
         if (FAILED(hr))
         {
-            PtrProduct->Release();
+            ptrProduct->Release();
             std::cout << "Failed to query AV product name.";
             continue;
         }
 
-        displayName = std::wstring(PtrVal, SysStringLen(PtrVal));
+        displayName = std::wstring(ptrVal, SysStringLen(ptrVal));
 
-        hr = PtrProduct->get_ProductState(&ProductState);
+        hr = ptrProduct->get_ProductState(&productState);
         if (FAILED(hr))
         {
             std::cout << "Failed to query AV product state.";
             continue;
         }
 
-        if (ProductState == WSC_SECURITY_PRODUCT_STATE_ON)
+        if (productState == WSC_SECURITY_PRODUCT_STATE_ON)
         {
             state = L"On";
         }
-        else if (ProductState == WSC_SECURITY_PRODUCT_STATE_OFF)
+        else if (productState == WSC_SECURITY_PRODUCT_STATE_OFF)
         {
             state = L"Off";
         }
@@ -94,33 +93,33 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
             state = L"Expired";
         }
 
-        hr = PtrProduct->get_SignatureStatus(&ProductStatus);
+        hr = ptrProduct->get_SignatureStatus(&productStatus);
         if (FAILED(hr))
         {
             std::cout << "Failed to query AV product definition state.";
             continue;
         }
 
-        definitionState = (ProductStatus == WSC_SECURITY_PRODUCT_UP_TO_DATE) ? "UpToDate" : "OutOfDate";
+        definitionState = (productStatus == WSC_SECURITY_PRODUCT_UP_TO_DATE) ? "UpToDate" : "OutOfDate";
 
-        hr = PtrProduct->get_ProductStateTimestamp(&PtrVal);
+        hr = ptrProduct->get_ProductStateTimestamp(&ptrVal);
         if (FAILED(hr))
         {
             std::cout << "Failed to query AV product definition state.";
             continue;
         }
-        timestamp = std::wstring(PtrVal, SysStringLen(PtrVal));
-        SysFreeString(PtrVal);
+        timestamp = std::wstring(ptrVal, SysStringLen(ptrVal));
+        SysFreeString(ptrVal);
 
         ThirdPartyAVSoftware thirdPartyAVSoftware;
         thirdPartyAVSoftware.Name = displayName;
         thirdPartyAVSoftware.DefinitionStatus = definitionState;
         thirdPartyAVSoftware.DefinitionUpdateTime = timestamp;
         thirdPartyAVSoftware.Description = state;
-        thirdPartyAVSoftware.ProductState = state;
+        thirdPartyAVSoftware.ProductState = productState;
         thirdPartyAVSoftwareMap[thirdPartyAVSoftware.Name] = thirdPartyAVSoftware;
 
-        PtrProduct->Release();
+        ptrProduct->Release();
     }
 
     if (thirdPartyAVSoftwareMap.size() == 0)
