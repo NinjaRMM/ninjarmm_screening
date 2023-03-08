@@ -32,4 +32,5 @@
 *.app
 step2/~$quirements.docx
 
+#my ignores
 .project
