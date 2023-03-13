@@ -1,0 +1,63 @@
+C:\Users\thoma\CLionProjects\ninjastep1\cmake-build-debug\ninjastep1.exe
+testing Engineer Develop testing software 40
+My work involves Develop testing software
+Lead Pilot Fly 777 jet 60
+My work involves Fly 777 jet
+Hardware Engineer Develop Hardware 40
+My work involves Develop Hardware
+Co Pilot Fly 737 jet 50
+My work involves Fly 737 jet
+Java Software Engineer Develop Java Scripts 40
+My work involves Develop Java Scripts
+Fighter Pilot F22 Pilot 50
+My work involves F22 Pilot
+Match Count:3
+call with(99,99,99,99,99,99)
+call with(99,99,1,99,99,99)
+call with(99,99,1,2,99,99)
+call with(1,2,3,99,99,99)
+call with(99,1,2,3,4,99)
+call with(99,1,2,3,4,5)
+call with(1,2,3,4,5,6)
+call with(0,0,0,0,0,0)
+size 5
+99 98 97 96 95
+size 6
+99 98 1 97 96 95
+size 7
+99 98 1 2 97 96 95
+size 8
+99 98 1 2 3 97 96 95
+size 25
+99 98 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 97 96 95
+Range Check Value:505 Low Range:500 High Range:599
+1
+Calling Tiles Test
+Tile1 11133555, Complete Hand is True, Test Passed
+Tile2 111333555, Complete Hand is False, Test Passed
+Tile3 00000111, Complete Hand is True, Test Passed
+Tile4 13233121, Complete Hand is True, Test Passed
+Tile5 11223344555, Complete Hand is False, Test Passed
+Tile6 99999999, Complete Hand is True, Test Passed
+Tile7 999999999, Complete Hand is False, Test Passed
+Tile8 9, Complete Hand is False, Test Passed
+Tile9 99, Complete Hand is True, Test Passed
+Tile10 000022, Complete Hand is False, Test Passed
+Tile11 888889, Complete Hand is False, Test Passed
+Tile12 889, Complete Hand is False, Test Passed
+Tile13 88888844, Complete Hand is True, Test Passed
+Tile14 77777777777777, Complete Hand is True, Test Passed
+Tile15 1111111, Complete Hand is False, Test Passed
+Tile16 1111122222, Complete Hand is False, Test Passed
+Tile17 33324424111, Complete Hand is True, Test Passed
+Tile18 333244241115, Complete Hand is False, Test Passed
+All 8 Tiles 8 Tiles Passed
+Decoding Roma Numerials:
+        "I"                     1
+        "III"                   3
+        "IV"                    4
+        "XII"                   12
+        "XC"                    90
+        "MMXXII"                        2022
+
+Process finished with exit code 0
