@@ -21,9 +21,10 @@ Take a look at the `CodeChallenge.cpp` file in the `step3/` directory. This cont
 Once you feel you have everything in a good spot, please submit your answer as a pull-request against this repository and notify your contact that you are complete. We'll review it as soon as possible and get back to you.
 
 Please make sure all of the following are checked:
-1. The code compiles and runs without errors. 
+1. The code compiles and runs without errors
 2. There should be meaningful feedback provided for the sample code in the code review.
 3. Provide a README.txt in the base folder with your full name and anything you would like us to know. This helps us to correlate your resume to your screening. 
+Failure to complete the above will be treated as an incomplete submission.
 
 We will close out your pull request once we notice your submission and begin review as quickly as possible. 
 
