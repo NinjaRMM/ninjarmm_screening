@@ -31,3 +31,6 @@
 *.out
 *.app
 step2/~$quirements.docx
+
+# Step 1 CMake build folder
+step1/src/build
