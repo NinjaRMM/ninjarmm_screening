@@ -17,6 +17,7 @@ Comments are encouraged.
  * I would recommend against using variable defines for types and for values with the same structure: i.e: WSC_SECURITY_PRODUCT_STATE, WSC_SECURITY_PRODUCT_STATE_ON
  * Also the coding seems to mix a lot of snake case and camel case, however I am unsure of company policy
  * Capitalized / uncapitalized letters.
+ * No unit testing
  *****************************************************************************/
 
 // Lack of standard C++ headers
