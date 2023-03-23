@@ -25,28 +25,19 @@ class Job {
 
 class Programmer: public Job {
     public:
-    Programmer( std::string name, std::string description, int hoursRequired) :
+    explicit Programmer( std::string name, std::string description, int hoursRequired) :
         Job(name, description, hoursRequired){}
 };
 
 class Pilot: public Job {
     public:
-    Pilot( std::string name, std::string description, int hoursRequired) :
+    explicit Pilot( std::string name, std::string description, int hoursRequired) :
         Job(name, description, hoursRequired){}
 };
 
 template <typename T>
 std::unique_ptr<Job> factory(std::string name, std::string description, int hoursRequired)  {
-    if(name == "Programmer") {
-        return std::make_unique<Programmer>(name, description, hoursRequired);
-    }
-    else if(name == "Pilot")
-    {
-        return std::make_unique<Pilot>(name, description, hoursRequired);
-    }
-    else {
-        throw "Invalid name provided";
-    }
+    return std::make_unique<T>(name, description, hoursRequired);
 }
 
 template <typename UnaryFunction>

@@ -53,6 +53,9 @@ struct ResultTransformPolicy {
 
 template<>
 struct ResultTransformPolicy<OBJ_STR> {
+    using OBJ_RET = decltype(std::declval<OBJ_STR>().getResult(0,0,0));
+    static_assert(std::is_same_v<OBJ_RET, std::string>, "getResult() must return a std::string");
+
     std::string operator()(const bool is_gte_zero) noexcept {
         return (is_gte_zero ? "true" : "false");
     }
@@ -60,45 +63,38 @@ struct ResultTransformPolicy<OBJ_STR> {
 
 template<>
 struct ResultTransformPolicy<OBJ_INT> {
+    using OBJ_RET = decltype(std::declval<OBJ_INT>().getResult(0,0,0));
+    static_assert(std::is_same_v<OBJ_RET, int>, "getResult() must return an int");
+
     int operator()(const bool is_gte_zero) noexcept {
         return (is_gte_zero ? 1 : 0);
     }
 };
 
-template <typename T, typename U,
-typename ComparePolicy = GreaterPolicy,
-typename OpPolicy = SumPolicy,
-typename ResultPolicy =  ResultTransformPolicy<T> >
+template <
+    typename T,
+    typename U,
+    typename ComparePolicy = GreaterPolicy,
+    typename OpPolicy = SumPolicy,
+    typename ResultPolicy =  ResultTransformPolicy<U>
+>
 class performOp {
     public:
 
     T operator()(const int param1, const int param2, const int param3) noexcept {
-        return static_cast<T>(getResult(param1, param2, param3));
+        const auto total = OpPolicy()(param1, param2, param3);
+        const auto cmp_result = ComparePolicy()(total);
+        const auto retVal = ResultPolicy()(cmp_result);
+
+        return static_cast<T>(retVal);
     }
 
     T operator()(const int param1, const int param2, const int param3, int& total) noexcept {
-        return static_cast<T>(getResult(param1, param2, param3, total));
-    }
+        total = OpPolicy()(param1, param2, param3);
+        const auto cmp_result = ComparePolicy()(total);
+        const auto retVal = ResultTransformPolicy<U>()(cmp_result);
 
-    private:
-    using OBJ_RET = decltype(std::declval<U>().getResult(0,0,0));
-
-     int performOperation(const int param1, const int param2, const int param3) {
-        return OpPolicy()(param1, param2, param3);
-    }
-
-     OBJ_RET transformResult(const int total) noexcept {
-        return ResultTransformPolicy<U>()(ComparePolicy()(total));
-    }
-
-     OBJ_RET getResult(const int param1, const int param2, const int param3, int& total) noexcept {
-        total = performOperation(param1, param2, param3);
-        return transformResult(total);
-    }
-
-     OBJ_RET getResult(const int param1, const int param2, const int param3) noexcept {
-        const auto total = performOperation(param1, param2, param3);
-        return transformResult(total);
+        return static_cast<T>(retVal);
     }
 };
 
@@ -127,15 +123,19 @@ int main()
     //The following calls are already coded in a lot of places throughout the project so you can't change these
     int iResult = checkIfPositive<bool, OBJ_INT>(objInt, 1, 2);
     std::cout << iResult << std::endl;
+
     iResult = checkIfPositive<bool, OBJ_INT>(objInt, 1, -2);
     std::cout << iResult << std::endl;
+
     iResult = checkIfPositive<bool, OBJ_INT>(objInt, 1, -2, 3);
     std::cout << iResult << std::endl;
 
     std::string sResult = checkIfPositive<std::string, OBJ_STR>(objStr, 1, 2);
     std::cout << sResult << std::endl;
+
     sResult = checkIfPositive<std::string, OBJ_STR>(objStr, 1, -2);
     std::cout << sResult << std::endl;
+
     sResult = checkIfPositive<std::string, OBJ_STR>(objStr, 1, -2, 3);
     std::cout << sResult << std::endl;
 
@@ -149,22 +149,45 @@ int main()
 
     int total = 0;
 
+    // Duplicated bool return value results to conform to non-editable section
+    iResult = checkIfPositive<bool, OBJ_INT>(objInt, 1, 2);
+    std::cout << iResult << std::endl;
+    assert(iResult == 1);
+
+    iResult = checkIfPositive<bool, OBJ_INT>(objInt, 1, -2);
+    std::cout << iResult << std::endl;
+    assert(iResult == 0);
+
+    iResult = checkIfPositive<bool, OBJ_INT>(objInt, 1, -2, 3);
+    std::cout << iResult << std::endl;
+    assert(iResult == 1);
+    // end duplicated bool return value results
+
+    sResult = checkIfPositive<std::string, OBJ_STR>(objStr, 1, 2);
+    std::cout << sResult <<  std::endl;
+    assert(sResult == "true");
+
     iResult = checkIfPositive<int, OBJ_INT>(objInt, 1, 2);
     std::cout << iResult <<  std::endl;
+    assert(iResult == 1);
 
     iResult = checkIfPositive<int, OBJ_INT>(objInt, 1, 2, -3);
     std::cout << iResult << std::endl;
+    assert(iResult == 0);
 
     iResult = checkIfPositive<int, OBJ_INT>(objInt, 1, 2, 3, total); //<-- Total is output param
     std::cout << iResult << " " << total << std::endl;
-    sResult = checkIfPositive<std::string, OBJ_STR>(objStr, 1, 2);
-    std::cout << sResult <<  std::endl;
+    assert(iResult == 1);
+    assert(total == 6);
 
     sResult = checkIfPositive<std::string, OBJ_STR>(objStr, 1, 2, -3);
     std::cout << sResult <<  std::endl;
+    assert(sResult == "false");
 
     sResult = checkIfPositive<std::string, OBJ_STR>(objStr, 1, 2, 3, total); //<-- Total is output param
     std::cout << sResult << " " << total << std::endl;
+    assert(sResult == "true");
+    assert(total == 6);
 
     return 0;
 
