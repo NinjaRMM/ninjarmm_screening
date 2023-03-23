@@ -8,8 +8,9 @@ business strategy & alignment, and high performing teams.
 Big passion for innovation, pursuing change initiatives, aligning technical strategy to
 business objectives.
 
+Assumes local install of clang++ available on host system.
 ### Step 1
-Step 1 [Link](https://godbolt.org/z/coo5W4eaf)
+Step 1
 Local build:
     cd step1/src
     make
@@ -18,7 +19,7 @@ Local build:
 Review included in comments preceeded by "AAM"
 
 ### Step 3
-Step 3 [Link](https://godbolt.org/z/vKa9qfdj1)
+Step 3
 Local build:
     cd step3/src
     make

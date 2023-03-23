@@ -41,6 +41,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
     std::string definitionState;
 
     // There should probably be a comment explaining why this reinterpret_cast is safe - AAM
+    // Is WSCProductList a typo? Should it be IWSCProductList? - AAM
     hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&PtrProductList));
     // This is a lot of duplication code for error handling, can this be wrapped up in a macro of some error string? - AAM
     if (FAILED(hr))
