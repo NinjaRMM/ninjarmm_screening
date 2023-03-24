@@ -1,4 +1,5 @@
 Explanation for each item, so the interviewer can better understand my mindset:
+* All my comments is prefixed with the sequence: '->'
 
 
 1. Write a small program in C++ that will contain the following:
