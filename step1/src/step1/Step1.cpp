@@ -301,7 +301,7 @@ int main()
 	//count = ContainsTheString([]() { return true; }, theStrings); // Uncomment to test the static_assert on the method
 	printf("Calling ContainsTheString() with lambda: %d\n\n\n", count);
 
-	void DoUnitTests();
+	DoUnitTests();
 
 	// ==============================================
 	// My custom code part - using my Task class to
