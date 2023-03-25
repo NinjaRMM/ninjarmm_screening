@@ -34,3 +34,6 @@ step2/~$quirements.docx
 
 # VS code
 .vscode/*.*
+
+# Builds
+step1/build/*
