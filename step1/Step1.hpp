@@ -4,9 +4,6 @@
 #include <string>
 #include <functional>
 #include <type_traits>
-#include <gtest/gtest.h>
-
-
 
 template <typename T>
 std::enable_if_t<std::is_arithmetic_v<T>, bool>

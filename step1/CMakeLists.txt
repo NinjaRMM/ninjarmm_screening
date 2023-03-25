@@ -17,9 +17,16 @@ FetchContent_MakeAvailable(googletest)
 #project
 project (Step1)
 
-add_executable(Step1 "${CMAKE_CURRENT_SOURCE_DIR}/Step1.cpp")
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+add_executable(Step1 Step1.cpp)
 
 #tests
 enable_testing()
+add_executable(Step1Tests "${CMAKE_CURRENT_SOURCE_DIR}/Step1Tests.cpp")
 
+target_link_libraries(Step1Tests 
+	PRIVATE 
+		GTest::gtest_main)
 
+include(GoogleTest)
+gtest_discover_tests(Step1Tests)

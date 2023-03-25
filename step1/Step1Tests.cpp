@@ -1,99 +1,78 @@
-#include "gtest/gtest.h"
-#include "Step1.hpp"
+#include <gtest/gtest.h>
+#include <Step1.hpp>
 
-TEST(JobTest, Getters)
-{
-    Job job("Test Job", "Test Description", 5);
+class JobTestFixture : public ::testing::Test {
+protected:
+    void SetUp() override {
+        programmer_ptr_ = std::make_unique<Programmer>();
+        pilot_ptr_ = std::make_unique<Pilot>();
+    }
 
-    EXPECT_EQ(job.GetName(), "Test Job");
-    EXPECT_EQ(job.GetDescription(), "Test Description");
-    EXPECT_EQ(job.GetHoursRequired(), 5);
+    void TearDown() override {
+        programmer_ptr_.reset();
+        pilot_ptr_.reset();
+    }
+
+    std::unique_ptr<Programmer> programmer_ptr_;
+    std::unique_ptr<Pilot> pilot_ptr_;
+};
+
+TEST_F(JobTestFixture, TestProgrammer) {
+    EXPECT_EQ(programmer_ptr_->get_name(), "Programmer");
+    EXPECT_EQ(programmer_ptr_->get_description(), "writing code");
+    EXPECT_EQ(programmer_ptr_->get_hours_required(), 40);
+    EXPECT_NO_THROW(programmer_ptr_->DoWork());
 }
 
-TEST(JobTest, DoWork)
-{
-    Job job("Test Job", "Test Description", 5);
-
-    testing::internal::CaptureStdout();
-    job.DoWork();
-    std::string output = testing::internal::GetCapturedStdout();
-
-    EXPECT_EQ(output, "My work involves Test Description\n");
+TEST_F(JobTestFixture, TestPilot) {
+    EXPECT_EQ(pilot_ptr_->get_name(), "Pilot");
+    EXPECT_EQ(pilot_ptr_->get_description(), "flying a plane");
+    EXPECT_EQ(pilot_ptr_->get_hours_required(), 28);
+    EXPECT_NO_THROW(pilot_ptr_->DoWork());
 }
 
-TEST(ProgrammerTest, DoWork)
+// ********** ********** **********
+
+class IsInBoundsTestFixture : public ::testing::TestWithParam<std::tuple<uint32_t, uint32_t, uint32_t, bool>> 
 {
-    Programmer programmer;
+    ; // empty body
+};
 
-    testing::internal::CaptureStdout();
-    programmer.DoWork();
-    std::string output = testing::internal::GetCapturedStdout();
-
-    EXPECT_EQ(output, "My work involves Programming\n");
+TEST_P(IsInBoundsTestFixture, TestIsInBounds) {
+    auto [evaluated_value, lower_bound, upper_bound, expected] = GetParam();
+    EXPECT_EQ(is_in_bounds(evaluated_value, lower_bound, upper_bound), expected);
 }
 
-TEST(PilotTest, DoWork)
+INSTANTIATE_TEST_CASE_P(TestValues, IsInBoundsTestFixture,
+    testing::Values(
+        std::make_tuple(0, 0, 25, true),
+        std::make_tuple(5, 1, 8, true),
+        std::make_tuple(10, 0, 10, true),
+        std::make_tuple(11, 0, 10, false),
+        std::make_tuple(5, 5, 10, true),
+        std::make_tuple(1, 5, 10, false),
+        std::make_tuple(4, 5, 10, false),
+        std::make_tuple(11, 5, 10, false)
+    )
+);
+
+// ********** ********** **********
+
+class CountMatchesParametrizedTestFixture 
+    : public testing::TestWithParam<std::tuple<std::vector<std::string>, std::function<bool(const std::string&)>, int>>
 {
-    Pilot pilot;
+    ; // empty body
+};
 
-    testing::internal::CaptureStdout();
-    pilot.DoWork();
-    std::string output = testing::internal::GetCapturedStdout();
-
-    EXPECT_EQ(output, "My work involves Flying\n");
+TEST_P(CountMatchesParametrizedTestFixture, TestCountMatches)
+{
+    auto [operable_items, callback, expected_count] = GetParam();
+    int count = count_matches(operable_items, callback);
+    EXPECT_EQ(count, expected_count);
 }
 
-TEST(ContainsTheStringTest, EmptyCollection)
-{
-    std::vector<std::string> strings;
-    auto count = ContainsTheString([](const std::string& tested) { return tested == "test"; }, strings);
-    EXPECT_EQ(count, 0);
-}
-
-TEST(ContainsTheStringTest, NonEmptyCollectionNoMatches)
-{
-    std::vector<std::string> strings{"one", "two", "three"};
-    auto count = ContainsTheString([](const std::string& tested) { return tested == "test"; }, strings);
-    EXPECT_EQ(count, 0);
-}
-
-TEST(ContainsTheStringTest, NonEmptyCollectionOneMatch)
-{
-    std::vector<std::string> strings{"one", "two", "test"};
-    auto count = ContainsTheString([](const std::string& tested) { return tested == "test"; }, strings);
-    EXPECT_EQ(count, 1);
-}
-
-TEST(ContainsTheStringTest, NonEmptyCollectionMultipleMatches)
-{
-    std::vector<std::string> strings{"one", "test", "test"};
-    auto count = ContainsTheString([](const std::string& tested) { return tested == "test"; }, strings);
-    EXPECT_EQ(count, 2);
-}
-
-TEST(IsInBoundsTest, InBounds)
-{
-    uint32_t value = 550;
-    bool inBounds = IsInBounds<uint32_t>(value, 500, 599);
-    EXPECT_TRUE(inBounds);
-}
-
-TEST(IsInBoundsTest, BelowLowerBound)
-{
-    uint32_t value = 499;
-    bool inBounds = IsInBounds<uint32_t>(value, 500, 599);
-    EXPECT_FALSE(inBounds);
-}
-
-TEST(IsInBoundsTest, AboveUpperBound)
-{
-    uint32_t value = 600;
-    bool inBounds = IsInBounds<uint32_t>(value, 500, 599);
-    EXPECT_FALSE(inBounds);
-}
-
-int main(int argc, char** argv)
-{
-    testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}
+INSTANTIATE_TEST_CASE_P(CountMatchesParametrizedTest, CountMatchesParametrizedTestFixture,
+                        testing::Values(
+                            std::make_tuple(std::vector<std::string>{"heello!!!!", "world", "program"}, [](const std::string& str) { return str.size() > 5; }, 2),
+                            std::make_tuple(std::vector<std::string>{"night", "for", "fun"}, [](const std::string& str) { return str == "fun"; }, 1),
+                            std::make_tuple(std::vector<std::string>{"Underground", "passionate", "is"}, [](const std::string& str) { return str.size() < 5; }, 1)));
