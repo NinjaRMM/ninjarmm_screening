@@ -33,6 +33,8 @@ public:
 // * I tend to break these down in a header and cpp file, as it's easier to digest the code in separate parts,
 //   (except for inline methods), but once again, I figured I could make this fit into one file without
 //   bloating it too much
+// * Since I'm only creating these classes dynamically, I chose not to go with the rule-of-six, meaning
+//   I didn't implement any copy / move constructors or copy / move assignment operators
 
 class Programmer : public Job
 {
@@ -106,13 +108,30 @@ int ContainsTheString(Fn&& testFunction, const std::vector<std::string>& theStri
 }
 
 
+void DoUnitTests()
+{
+	// These are some simple tests just to validate that things are working as expected
+	assert(IsInBounds(1, 1, 4) == true);
+	assert(IsInBounds(100u, 14u, 40u) == false);
+	assert(IsInBounds(-100, 0, 400) == false);
+	assert(IsInBounds(30ll, 15ll, 90ll) == true);
+
+	auto testStrings1 = std::vector<std::string>{ "test", "not a test",  "test" };
+	auto testStrings2 = std::vector<std::string>{ "abc", "def", "efg", "def", "ijk", "def"};
+	auto testStrings3 = std::vector<std::string>{ "C++", "C#",  "F#", "Java" };
+	assert(ContainsTheString([](const std::string& tested) { return tested == "test"; }, testStrings1) == 2);
+	assert(ContainsTheString([](const std::string& tested) { return tested == "def"; }, testStrings2) == 3);
+	assert(ContainsTheString([](const std::string& tested) { return tested == "C++"; }, testStrings3) == 1);
+}
+
+
 // =========================
 // My code (as per request)
 // I have my own custom engine, which is an eternal work-in-progress, and I've got a feature that I really like and want to show (it's something I've coded quite some
 // time ago, so it may not be all 100%, though it should be). In order to implement my fiber-based job system, I've designed a delegate class, which I can create
 // using function pointers or lambdas, the latter being pretty useful since I can have a capture-list. The only issue with the Delegate class is that when
-// defining it I cannot use template deduction, so for that I have another class, Task, which just wraps some data array) - it is somewhat hacky stuff,
-// but it gets the job done in a nice way
+// defining it I cannot use template deduction, so for that I have another class, Task, which just wraps the delegate functionality) - it is somewhat
+// hacky stuff, but it gets the job done in a nice way
 
 // Base delegate class
 class IDelegate
@@ -281,6 +300,8 @@ int main()
 	auto count = ContainsTheString([](const std::string& tested) { return tested == "test"; }, theStrings);
 	//count = ContainsTheString([]() { return true; }, theStrings); // Uncomment to test the static_assert on the method
 	printf("Calling ContainsTheString() with lambda: %d\n\n\n", count);
+
+	void DoUnitTests();
 
 	// ==============================================
 	// My custom code part - using my Task class to
