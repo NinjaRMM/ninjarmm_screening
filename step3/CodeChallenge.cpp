@@ -50,6 +50,16 @@ T checkIfPositive(const U& u, const int& param1, const int& param2, int param3 =
     return u.getResult(param1, param2, param3);
 }
 
+// The best choice I see to add a new requirement is to respect the OCP (Open-Closed Principle).
+// The idea is to add a new function that calls the existing function, but adds some new functionality.
+template <typename T, typename U>
+T checkIfPositive(const U& u, const int& param1, const int& param2, const int& param3, int& total)
+{
+    total = param1 + param2 + param3;
+    T retunable = checkIfPositive<T, U>(u, param1, param2, param3);
+    return retunable;
+}
+
 //<<<<<<<< END OF EDITABLE SECTION OF CODE <<<<<<<<<<<
 
 int main()
