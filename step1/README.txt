@@ -23,9 +23,15 @@ Explanation for each item, so the interviewer can better understand my mindset:
            -> It was done, trivially, and doesn't need any explanation.
 
 	f. Store each instance in a collection.
+           -> Both objects were stored in a std::list
+
 	g. Iterate the collection and call each of the available interface functions.
+           -> Ok, it was done.
+
 	h. Create a template function that will test if the provided values are within a range. Call the function and print out the inputs and result. The following should execute assuming httpResonse is a uint32_t value:
 		i. IsInBounds<uint32_t>(httpResonseCode, 500, 599)
+           -> Task completed.
+
 	i. Create a function that will take a vector of strings and a test function, It should return how many items in the collection matched the test. Then print out the result.
 		i. auto theStrings = vector<std::string> { “one”, “two”,  “test”};
 		ii. auto count = ContainsTheString([](const std::string& tested) { return tested == “test” }, theStrings);
