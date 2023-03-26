@@ -1,6 +1,14 @@
+//////////////////////////////////////////////////////////////////////
+// This code is an implementation for the ninjarmm screening.
+//
+// How to compile:
+//   g++ -std=c++11 solution01.cpp -o solution01
+//
+//////////////////////////////////////////////////////////////////////
 #include <iostream>
 #include <string>
 #include <list>
+#include <vector>
 #include <stdint.h>
 
 using namespace std;
@@ -86,6 +94,20 @@ bool IsInBounds(T value_to_test, T min_range, T max_range) {
   return result;
 };
 
+//////////////////////////////////////////////////////////////////////
+// Function to check how many items matched the collection provided on a vector
+//////////////////////////////////////////////////////////////////////
+int ContainsTheString( bool (*test_function)(const string&), const vector<string> &vector_parameter ) {
+  int counter = 0;
+
+  for( const auto &item : vector_parameter) {
+    if( test_function(item) ) {
+      counter++;
+    }
+  }
+
+  return counter;
+}
 
 //////////////////////////////////////////////////////////////////////
 // Program Entry Point
@@ -128,9 +150,22 @@ int main() {
   cout << "Testing pilot object consistency" << endl;
   value_to_check = pilot->GetHoursRequired();
   IsInBounds<uint32_t>( value_to_check, 1, 12 );
+  
+  // Checks how many items in the collection matched the test
+  auto theStrings  = vector<std::string> { "one", "two", "test" };
+  auto count = ContainsTheString([](const std::string& tested) 
+  { 
+    return tested == "test";
+  }, theStrings);
+  cout << "Number of occurrences that matched the test: " << count << endl;
+
+  
+
+  // Release resources
+  delete programmer;
+  delete pilot;
 
   // Returns to the operating system
   return EXIT_SUCCESS;
 }
-
 
