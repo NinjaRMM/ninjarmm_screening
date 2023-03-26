@@ -10,8 +10,17 @@ Comments are encouraged.
 
 */
 
+// I will asume that every single include which is needed is included. I asume that, because it seems like
+// a chunk of code taken from a bigger part of the project.
+// As this is not a PR, I cannot suggest changes to the code, so I will just write comments.
+// NOTE: I do not know the style guide of the project, so I will try to figure it out from the code. This
+//       not the best way to do it, but it is the only way I can do it.
 
-struct ThirdPartyAVSoftware
+
+// as a general suggestion, Why not use a OOP approach?
+// you can use a class to wrap the data and the functions that operate on it.
+
+struct ThirdPartyAVSoftware // consider calling it AntiVirusSoftware, it's more descriptive.
 {
     std::wstring Name;
     std::wstring Description;
@@ -19,28 +28,39 @@ struct ThirdPartyAVSoftware
     std::string DefinitionStatus;
     std::wstring Version;
     std::wstring ProductState;
+    // consider using camelCase instead of CamelCase. A common convention is
+    // to use camelCase for variable names and CamelCase for class names or types.
+    // if the style guide says different, then use that.
+    // why are you using std::wstring instead of std::string?
 };
 
+// why not use exceptions instead of returning false? If you do so, you can return ThirdPartyAVSoftware and after
+// insert it in the map.
 bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftware>& thirdPartyAVSoftwareMap)
 {
     HRESULT hr = S_OK;
-    IWscProduct* PtrProduct = nullptr;
-    IWSCProductList* PtrProductList = nullptr;
-    BSTR PtrVal = nullptr;
+    IWscProduct* PtrProduct = nullptr; // Consider using smart pointers instead of raw pointers.
+    IWSCProductList* PtrProductList = nullptr; // Consider using smart pointers instead of raw pointers.
+    BSTR PtrVal = nullptr; // Could you find a more descriptive name?
     LONG ProductCount = 0;
     WSC_SECURITY_PRODUCT_STATE ProductState;
     WSC_SECURITY_SIGNATURE_STATUS ProductStatus;
-
-    std::wstring displayName, versionNumber, state, timestamp;
+    
+    // consider using camelCase instead of CamelCase, for the above variables.
+    std::wstring displayName, versionNumber, state, timestamp; // consider giving a default value to these variables.
+                                                               // consider putting each variable in a separate line.
     std::string definitionState;
+    // if the style guide doesn't say the contrary, cosider initializing the variables just before using them.
 
-    hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&PtrProductList));
-    if (FAILED(hr))
+    // consider writting a function to handle CoCreateInstance and the error handling.
+    hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&PtrProductList)); //this line is too long.
+    if (FAILED(hr)) 
     {
         std::cout << "Failed to create WSCProductList object. ";
         return false;
     }
 
+    // consider writting a function to handle PtrProductList->Initialize and the error handling.
     hr = PtrProductList->Initialize(WSC_SECURITY_PROVIDER_ANTIVIRUS);
     if (FAILED(hr))
     {
@@ -48,6 +68,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         return false;
     }
 
+    // consider writting a function to handle PtrProductList->get_Count and the error handling.
     hr = PtrProductList->get_Count(&ProductCount);
     if (FAILED(hr))
     {
@@ -57,6 +78,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
 
     for (uint32_t i = 0; i < ProductCount; i++)
     {
+        // consider writting a function to handle PtrProductList->get_Item and the error handling.
         hr = PtrProductList->get_Item(i, &PtrProduct);
         if (FAILED(hr))
         {
@@ -64,6 +86,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
             continue;
         }
 
+        // consider writting a function to handle PtrProduct->get_ProductName and the error handling.
         hr = PtrProduct->get_ProductName(&PtrVal);
         if (FAILED(hr))
         {
@@ -74,6 +97,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
 
         displayName = std::wstring(PtrVal, SysStringLen(PtrVal));
 
+        // consider writting a function to handle PtrProduct->get_ProductVersion and the error handling.
         hr = PtrProduct->get_ProductState(&ProductState);
         if (FAILED(hr))
         {
@@ -81,6 +105,9 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
             continue;
         }
 
+        // consider writting a function to wrapp the state name giving logic.
+        // consider using an unordered_map instead of a switch case, if memory is not a concern.
+        // if memory is a concern, consider using a switch case.
         if (ProductState == WSC_SECURITY_PRODUCT_STATE_ON)
         {
             state = L"On";
@@ -94,6 +121,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
             state = L"Expired";
         }
 
+        // consider writting a function to handle PtrProduct->get_ProductVersion and the error handling.
         hr = PtrProduct->get_SignatureStatus(&ProductStatus);
         if (FAILED(hr))
         {
@@ -103,6 +131,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
 
         definitionState = (ProductStatus == WSC_SECURITY_PRODUCT_UP_TO_DATE) ? "UpToDate" : "OutOfDate";
 
+        // consider writting a function to handle PtrProduct->get_ProductVersion and the error handling.
         hr = PtrProduct->get_ProductStateTimestamp(&PtrVal);
         if (FAILED(hr))
         {
@@ -121,8 +150,11 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         thirdPartyAVSoftwareMap[thirdPartyAVSoftware.Name] = thirdPartyAVSoftware;
 
         PtrProduct->Release();
+        // Are you sure that all the memory is being freed all the time? Can you ensure there are no memory leaks?
     }
 
+    // This next lines just check if the map is empty, you may have not updated the map in the for loop.
+    // Other outputs just tell you if there is an error. This violates the SRP principle.
     if (thirdPartyAVSoftwareMap.size() == 0)
     {
         return false;
