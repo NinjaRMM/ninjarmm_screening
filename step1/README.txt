@@ -35,8 +35,16 @@ Explanation for each item, so the interviewer can better understand my mindset:
 	i. Create a function that will take a vector of strings and a test function, It should return how many items in the collection matched the test. Then print out the result.
 		i. auto theStrings = vector<std::string> { “one”, “two”,  “test”};
 		ii. auto count = ContainsTheString([](const std::string& tested) { return tested == “test” }, theStrings);
-	j. Write any other code you feel would show off your understanding of C/C++ and programming in general. Bonus: Variadic Template /w usage. 
-	k. Please add passing unit tests. 
-	l. All The source can be in 1 file, it should compile and there should be no runtime errors, and no memory leaks. Use built in types freely to help you manage resources. 
+           -> Task completed using lambda function.
 
+	j. Write any other code you feel would show off your understanding of C/C++ and programming in general. Bonus: Variadic Template /w usage. 
+           -> I have written two codes:
+              -> a) A variadic function to sum parameters
+              -> b) A class to create windows on a text user interface, with colors, using the ANSI capability of terminals.
+
+	k. Please add passing unit tests. 
+           -> I've created a new template function to test the sum function.
+
+	l. All The source can be in 1 file, it should compile and there should be no runtime errors, and no memory leaks. Use built in types freely to help you manage resources. 
+           -> The source code is in 1 file, and I've used valgrind to test the solution preventing memory leaks.
 
