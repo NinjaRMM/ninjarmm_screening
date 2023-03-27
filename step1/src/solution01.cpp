@@ -30,6 +30,7 @@ public:
   virtual string GetDescription() = 0;
   virtual unsigned int GetHoursRequired() = 0;
   virtual void DoWork() = 0;
+  virtual ~Job() = default;
 };
 
 //////////////////////////////////////////////////////////////////////
