@@ -1,6 +1,9 @@
 Explanation for each item, so the interviewer can better understand my mindset:
 * All my comments is prefixed with the sequence: '->'
 
+How to compile the code:
+  g++ -std=c++11 solution01.cpp -o solution01
+
 
 1. Write a small program in C++ that will contain the following:
 	a. Create a class Job
