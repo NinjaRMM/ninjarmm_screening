@@ -16,7 +16,7 @@ struct ThirdPartyAVSoftware
     std::wstring Name;
     std::wstring Description;
     std::wstring DefinitionUpdateTime;
-    std::string DefinitionStatus;
+    std::wstring DefinitionStatus; // Adjusted to wstring, no obvious reason no to maintain the common string type.
     std::wstring Version;
     std::wstring ProductState;
 };
@@ -31,8 +31,10 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
     WSC_SECURITY_PRODUCT_STATE ProductState;
     WSC_SECURITY_SIGNATURE_STATUS ProductStatus;
 
-    std::wstring displayName, versionNumber, state, timestamp;
-    std::string definitionState;
+    std::wstring displayName; // Changed to single line declarations for readability and preference
+    std::wstring state;
+    std::wstring timestamp;
+    std::wstring definitionState; // changed to wstring to match DefinitionStatus
 
     hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&PtrProductList));
     if (FAILED(hr))
@@ -101,7 +103,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
             continue;
         }
 
-        definitionState = (ProductStatus == WSC_SECURITY_PRODUCT_UP_TO_DATE) ? "UpToDate" : "OutOfDate";
+        definitionState = (ProductStatus == WSC_SECURITY_PRODUCT_UP_TO_DATE) ? L"UpToDate" : L"OutOfDate"; // changed inputs to match the new type.
 
         hr = PtrProduct->get_ProductStateTimestamp(&PtrVal);
         if (FAILED(hr))
