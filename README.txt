@@ -1,5 +1,5 @@
 Solution for the ninjarmm interview.
-Name: Luis Cardoso
+Name: Luis Henrique Ribeiro Cardoso
 e-mail: lhcardoso@gmail.com
 git user: lhcard
 
