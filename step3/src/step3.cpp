@@ -33,34 +33,44 @@ OBJ_STR objStr;
 
 //<<<<<<<< START OF EDITABLE SECTION OF CODE <<<<<<<<<<<
 
+// ran at https://cpp.sh:
+//    C++20
+//    -Wall, -Wextra, -Wpedantic
+//    no optimization
+// also ran locally with:
+// clear && clang++ -std=c++17 -Wall step1.cc && ./a.out && echo $?
+//    Apple clang version 12.0.5 (clang-1205.0.22.11)
+//    Target: arm64-apple-darwin20.1.0
+
+void callSomeExistingCode()
+{
+  /*
+    SOME EXISTING CODE
+  */
+}
+
 //Here's a template function that can accept a sample object and 3 integer parameters. It checks if the sum of the integer params is positive or not.
 //The third integer param is optional so it's declared as a default param
 //Inside the function is some existing code that needs to exist, but not relevant to this exercise.
 template <typename T, typename U>
 T checkIfPositive(const U& u, const int& param1, const int& param2, int param3 = 0)
 {
-
-    // Assume there's already some existing code in here, some business logic that we are not interested in this exercise.
-    /*
-
-    SOME EXISTING CODE
-
-    */
-
+    callSomeExistingCode();
     return u.getResult(param1, param2, param3);
 }
 
+//Here's a template function that can accept a sample object and 3 integer parameters. It checks if the sum of the integer params is positive or not.
+// This is similar to the 3 parameter version but also will return a sum total
+// Since a total is returned, the third parameter is not optional in this version
+// NOTE: A new version of the function is added here because existing code relies on the old version
+//    for example, we need to support a call paremeters like this : (obj, 1, 2) with param3 being defaulted
+//    we could have used the original version with total being a pointer to the output, with a default of nullptr
+//      but the requested API was for total to be passed by reference
+//Inside the function is some existing code that needs to exist, but not relevant to this exercise.
 template <typename T, typename U>
 T checkIfPositive(const U& u, const int& param1, const int& param2, const int& param3, int& total)
 {
-
-    // Assume there's already some existing code in here, some business logic that we are not interested in this exercise.
-    /*
-
-    SOME EXISTING CODE
-
-    */
-
+    callSomeExistingCode();
     total = param1 + param2 + param3;
     return u.getResult(param1, param2, param3);
 }
