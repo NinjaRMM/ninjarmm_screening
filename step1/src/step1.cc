@@ -20,7 +20,7 @@ using std::vector;
 
 class Job {
 public:
-  Job(string name, string description, unsigned int hoursRequired) :
+  Job(const string& name, const string& description, unsigned int hoursRequired) :
     name_{name}, description_{description}, hoursRequired_{hoursRequired}
   {
   }
@@ -33,9 +33,9 @@ public:
   string getName() const { return name_; };
   string getDescription() const { return description_; };
   int getHoursRequired() const { return hoursRequired_; };
-  string DoWork() const
+  void DoWork() const
   {
-    return string("My work involves " + description_);
+    std::cout << "My work involves " << description_ << std::endl;
   }
 
   virtual ~Job()
@@ -50,8 +50,8 @@ private:
 
 class Programmer : public Job {
 public:
-  Programmer(string name, string description, unsigned int hoursRequired) :
-    Job{name, description, hoursRequired}
+  Programmer(string name, unsigned int hoursRequired) :
+    Job{name, "computer programming", hoursRequired}
   {
   }
 
@@ -68,8 +68,8 @@ private:
 
 class Pilot : public Job {
 public:
-  Pilot(string name, string description, unsigned int hoursRequired) :
-    Job{name, description, hoursRequired}
+  Pilot(string name, unsigned int hoursRequired) :
+    Job{name, "flying aircraft", hoursRequired}
   {
   }
 
@@ -118,20 +118,33 @@ unsigned int ContainsTheString(bool (*testFunction)(const std::string& tested), 
   return ret;
 }
 
+template<typename T>
+void print(T arg)
+{
+  std::cout << arg << std::endl;
+}
+
+template<typename T, typename... MoreArgs>
+void print(T arg, MoreArgs... args)
+{
+  std::cout << arg << ' ';
+  print(args...);
+}
+
 int main()
 {
-  std::vector<Job> jobs;
-  jobs.push_back(Job("eric", "just standard job stuff", 40));
-  jobs.push_back(Programmer("zawinski", "hacking", 10000));
-  jobs.push_back(Pilot("captain tony", "flying a plane for american airlines", 30000));
+  std::vector<std::unique_ptr<Job>> jobs;
+  jobs.emplace_back(new Job("Eric", "just standard job stuff", 40));
+  jobs.emplace_back(new Programmer("Zawinski", 10000));
+  jobs.emplace_back(new Pilot("Captain Tony", 30000));
 
   for (const auto& iter : jobs)
   {
-    std::cout << "Job name " << iter.getName() << ":" << std::endl;
-    std::cout << "Description is " << iter.getDescription() << std::endl;
-    std::cout << "Hours required for job " << iter.getName() <<
-      " is " << iter.getHoursRequired() << std::endl;
-    std::cout << iter.DoWork() << std::endl;
+    std::cout << "Job name " << iter->getName() << ":" << std::endl;
+    std::cout << "Description is " << iter->getDescription() << std::endl;
+    std::cout << "Hours required for job " << iter->getName() <<
+      " is " << iter->getHoursRequired() << std::endl;
+    iter->DoWork();
     std::cout << std::endl;
   }
 
@@ -153,6 +166,8 @@ int main()
   auto moreStrings = std::vector<std::string> { "one", "test", "two", "test"};
   assert(ContainsTheString(matchFunction, moreStrings) == 2);
   assert(ContainsTheString(matchFunction,{ "one", "two"}) == 0);
+
+  print("the", "quick", "brown", "fox", "jumped", "over", "the", "lazy", "dog");
 
   return 0;
 }
