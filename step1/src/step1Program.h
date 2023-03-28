@@ -79,15 +79,21 @@ private:
 };
 
 template <typename T>
-void IsInBounds(T val, T low, T high)
+bool IsInBounds(T val, T low, T high)
 {
+    bool ret = false;
     cout << "Requested value: " << val << endl;
     cout << "Begin: " << low << endl;
     cout << "End: " << high << endl;
     if ((val >= low) && (val <= high))
+    {
+        ret = true;
         cout << "Within range" << endl;
+    }
     else
         cout << "Outside range" << endl;
+
+    return ret;
 }
 
 size_t ContainsTheString(function<bool(const string&)> foo, vector<string>& strs)

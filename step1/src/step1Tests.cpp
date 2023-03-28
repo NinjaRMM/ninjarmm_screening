@@ -41,6 +41,16 @@ TEST(step1Program, Jobs)
     delete pilot;
 }
 
+TEST(step1Program, IsInBounds)
+{
+    EXPECT_FALSE(IsInBounds<uint32_t>(499, 500, 599));
+    EXPECT_FALSE(IsInBounds<uint32_t>(600, 500, 599));
+    EXPECT_TRUE(IsInBounds<uint32_t>(500, 500, 599));
+    EXPECT_TRUE(IsInBounds<uint32_t>(500, 500, 599));
+    EXPECT_TRUE(IsInBounds<uint32_t>(599, 500, 599));
+    EXPECT_TRUE(IsInBounds<uint32_t>(550, 500, 599));
+}
+
 int main(int argc, char* argv[])
 {
     ::testing::InitGoogleTest(&argc, argv);
