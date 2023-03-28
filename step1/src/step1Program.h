@@ -32,7 +32,10 @@ public:
     virtual string   GetName(void)        = 0;
     virtual string   GetDescription(void) = 0;
     virtual uint32_t GetReqHours(void)    = 0;
-    virtual void     DoWork(void)         = 0;
+    void             DoWork(void)
+    {
+        cout << "My work involves " << GetDescription();
+    }
 
 private:
     /* data */
@@ -47,15 +50,11 @@ public:
     }
     string GetDescription(void) override
     {
-        return "I program things";
+        return "programming things";
     }
     uint32_t GetReqHours(void) override
     {
         return 30;
-    }
-    void DoWork(void) override
-    {
-        printf("My work involves Programming\n");
     }
 
 private:
@@ -69,15 +68,11 @@ public:
     }
     string GetDescription(void) override
     {
-        return "I pilot things";
+        return "piloting things";
     }
     uint32_t GetReqHours(void) override
     {
         return 40;
-    }
-    void DoWork(void) override
-    {
-        printf("My work involves Piloting\n");
     }
 
 private:
