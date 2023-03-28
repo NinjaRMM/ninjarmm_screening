@@ -10,8 +10,6 @@
  * @author      Henrique Awoyama Klein (henryaklein@gmail.com)
  */
 #include "step1Program.h"
-#include <vector>
-#include <iostream>
 
 int main(int argc, char** argv)
 {
@@ -30,6 +28,24 @@ int main(int argc, char** argv)
         cout << curr_job->GetReqHours() << endl;
         curr_job->DoWork();
     }
+    IsInBounds<uint32_t>(499, 500, 599);
+    IsInBounds<uint32_t>(600, 500, 599);
+    IsInBounds<uint32_t>(500, 500, 599);
+    IsInBounds<uint32_t>(599, 500, 599);
+    IsInBounds<uint32_t>(550, 500, 599);
 
+    auto theStrings = vector<string>{"one", "two", "two", "test", "test", "test"};
+
+    auto count = ContainsTheString([](const std::string& tested) { return tested == "test"; }, theStrings);
+
+    cout << "number of \"test\" strings " << count << endl;
+
+    StringChecker string_checker;
+    auto          hook = bind(&StringChecker::CheckIfContainsTWO, &string_checker, _1);
+    count              = ContainsTheString(hook, theStrings);
+
+    cout << "number of \"two\" strings " << count << endl;
+    delete prog;
+    delete pilot;
     return 0;
 }

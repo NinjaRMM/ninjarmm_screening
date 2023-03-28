@@ -1,14 +1,14 @@
 HEADERS = 
 OBJECTS = main.o 
 
-default: my_test
+default: step1.exe
 
 %.o: %.c $(HEADERS)
 	g++ -c $< -o $@
 
-my_test: $(OBJECTS)
+step1.exe: $(OBJECTS)
 	g++ $(OBJECTS) -o $@
 
 clean:
 	-rm -f $(OBJECTS)
-	-rm -f my_test
+	-rm -f step1.exe

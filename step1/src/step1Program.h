@@ -12,8 +12,11 @@
 #include <stdint.h>
 #include <string>
 #include <iostream>
+#include <vector>
+#include <functional>
 
 using namespace std;
+using namespace placeholders;
 
 class Job
 {
@@ -86,4 +89,30 @@ void IsInBounds(T val, T low, T high)
     cout << "Requested value: " << val << endl;
     cout << "Begin: " << low << endl;
     cout << "End: " << high << endl;
+    if ((val >= low) && (val <= high))
+        cout << "Within range" << endl;
+    else
+        cout << "Outside range" << endl;
 }
+
+size_t ContainsTheString(function<bool(const string&)> foo, vector<string>& strs)
+{
+    size_t times = 0;
+    for (auto it = strs.begin(); it < strs.end(); it++)
+    {
+        if (foo(*it) == true)
+            times++;
+    }
+    return times;
+}
+
+class StringChecker
+{
+public:
+    bool CheckIfContainsTWO(const std::string& teststr)
+    {
+        return teststr == "two";
+    }
+
+private:
+};
