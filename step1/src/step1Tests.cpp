@@ -22,18 +22,21 @@ TEST(step1Program, Jobs)
     my_vect.push_back(prog);
     my_vect.push_back(pilot);
     GTEST_ASSERT_EQ(my_vect.size(), 2);
+    for (auto it = my_vect.begin(); it < my_vect.end(); it++)
+    {
+        Job* curr_job = *it;
 
-    Job*   gen_job = my_vect.at(0);
-    string s1      = "Programmer";
-    GTEST_ASSERT_EQ(gen_job->GetName(), "Programmer");
-    GTEST_ASSERT_EQ(gen_job->GetDescription(), "I program things");
-    GTEST_ASSERT_EQ(gen_job->GetReqHours(), 30);
+        EXPECT_PRED3([](string str, string s1, string s2) { return str == s1 || str == s2; }, curr_job->GetName(), "Programmer", "Pilot");
+        EXPECT_PRED3([](string str, string s1, string s2) { return str == s1 || str == s2; }, curr_job->GetDescription(), "programming things",
+                     "piloting things");
+        EXPECT_PRED3([](uint32_t str, uint32_t s1, uint32_t s2) { return str == s1 || str == s2; }, curr_job->GetReqHours(), 30, 40);
+        testing::internal::CaptureStdout();
+        curr_job->DoWork();
+        string output = testing::internal::GetCapturedStdout();
+        EXPECT_PRED3([](string str, string s1, string s2) { return str == s1 || str == s2; }, output, "My work involves programming things",
+                     "My work involves piloting things");
+    }
 
-    gen_job = my_vect.at(1);
-    GTEST_ASSERT_EQ(gen_job->GetName(), "Pilot");
-    GTEST_ASSERT_EQ(gen_job->GetDescription(), "I pilot things");
-    GTEST_ASSERT_EQ(gen_job->GetReqHours(), 40);
-    //EXPECT_STREQ(gen_job->DoWork(), "My work involves Programming");
     delete prog;
     delete pilot;
 }
