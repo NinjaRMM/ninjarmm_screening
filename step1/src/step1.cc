@@ -18,6 +18,7 @@
 using std::string;
 using std::vector;
 
+// instructions do not say if this should be a pure virtual class or not, so allow it to be instantiated 
 class Job {
 public:
   Job(const string& name, const string& description, unsigned int hoursRequired) :

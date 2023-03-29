@@ -38,7 +38,7 @@ OBJ_STR objStr;
 //    -Wall, -Wextra, -Wpedantic
 //    no optimization
 // also ran locally with:
-// clear && clang++ -std=c++17 -Wall step1.cc && ./a.out && echo $?
+// clear && clang++ -std=c++17 -Wall step3.cpp && ./a.out && echo $?
 //    Apple clang version 12.0.5 (clang-1205.0.22.11)
 //    Target: arm64-apple-darwin20.1.0
 

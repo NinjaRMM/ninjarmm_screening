@@ -9,7 +9,7 @@ Make any code updates that you see fit (If any).
 Comments are encouraged.
 
 EXN: Please note, I haven't used these Windows libraries, so I am unfamilar with the APIs
-EXN:  using this webpages:
+EXN:  using these webpages:
   https://learn.microsoft.com/en-us/windows/win32/api/iwscapi/
   https://learn.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-cocreateinstance
 
