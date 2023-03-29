@@ -34,7 +34,7 @@ void operate_jobs()
         std::cout << "Name: " << job->get_name() << std::endl;
         std::cout << "Description: " << job->get_description() << std::endl;
         std::cout << "Hours required: " << job->get_hours_required() << std::endl;
-        job->DoWork();
+        job->do_work();
     }
 }
 

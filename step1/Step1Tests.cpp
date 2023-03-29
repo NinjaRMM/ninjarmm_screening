@@ -21,14 +21,14 @@ TEST_F(JobTestFixture, TestProgrammer) {
     EXPECT_EQ(programmer_ptr_->get_name(), "Programmer");
     EXPECT_EQ(programmer_ptr_->get_description(), "writing code");
     EXPECT_EQ(programmer_ptr_->get_hours_required(), 40);
-    EXPECT_NO_THROW(programmer_ptr_->DoWork());
+    EXPECT_NO_THROW(programmer_ptr_->do_work());
 }
 
 TEST_F(JobTestFixture, TestPilot) {
     EXPECT_EQ(pilot_ptr_->get_name(), "Pilot");
     EXPECT_EQ(pilot_ptr_->get_description(), "flying a plane");
     EXPECT_EQ(pilot_ptr_->get_hours_required(), 28);
-    EXPECT_NO_THROW(pilot_ptr_->DoWork());
+    EXPECT_NO_THROW(pilot_ptr_->do_work());
 }
 
 // ********** ********** **********

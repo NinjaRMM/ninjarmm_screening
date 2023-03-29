@@ -48,7 +48,7 @@ public:
     std::string get_description() const { return description_; }
     int get_hours_required() const { return hours_required_; }
 
-    virtual void DoWork() const { std::cout << "My work involves " << description_ << std::endl; }
+    virtual void do_work() const { std::cout << "My work involves " << description_ << std::endl; }
 
 private:
     std::string name_;
