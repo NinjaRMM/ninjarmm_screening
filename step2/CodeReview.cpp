@@ -13,7 +13,7 @@ Comments are encouraged.
 // I will asume that every single include which is needed is included. I asume that, because it seems like
 // a chunk of code taken from a bigger part of the project.
 // As this is not a PR, I cannot suggest changes to the code, so I will just write comments.
-// NOTE: I do not know the style guide of the project, so I will try to figure it out from the code. This
+// NOTE: I do not know the style guide of the project, so I will try to figure it out from the code. This is
 //       not the best way to do it, but it is the only way I can do it.
 
 
@@ -32,6 +32,7 @@ struct ThirdPartyAVSoftware // consider calling it AntiVirusSoftware, it's more 
     // to use camelCase for variable names and CamelCase for class names or types.
     // if the style guide says different, then use that.
     // why are you using std::wstring instead of std::string?
+    // why is DefinitionStatus a std::string and not a std::wstring?
 };
 
 // why not use exceptions instead of returning false? If you do so, you can return ThirdPartyAVSoftware and after
