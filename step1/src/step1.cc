@@ -18,18 +18,13 @@
 using std::string;
 using std::vector;
 
-// instructions do not say if this should be a pure virtual class or not, so allow it to be instantiated 
+// instructions do not say if this should be a pure virtual class or not, so allow it to be instantiated
 class Job {
 public:
   Job(const string& name, const string& description, unsigned int hoursRequired) :
     name_{name}, description_{description}, hoursRequired_{hoursRequired}
   {
   }
-
-  Job(const Job&) = default;
-  Job& operator=(const Job&) = default;
-  Job(Job&&) = default;
-  Job& operator=(Job&&) = default;
 
   string getName() const { return name_; };
   string getDescription() const { return description_; };
@@ -47,6 +42,12 @@ private:
   string name_;
   string description_;
   unsigned int hoursRequired_;
+
+  // not supported until they are needed (also shows that unnecessary objects are not created)
+  Job(const Job&) = delete;
+  Job& operator=(const Job&) = delete;
+  Job(Job&&) = delete;
+  Job& operator=(Job&&) = delete;
 };
 
 class Programmer : public Job {
@@ -76,7 +77,7 @@ public:
 
   ~Pilot()
   {
-
+    
   }
 
 private:
@@ -135,9 +136,9 @@ void print(T arg, MoreArgs... args)
 int main()
 {
   std::vector<std::unique_ptr<Job>> jobs;
-  jobs.emplace_back(new Job("Eric", "just standard job stuff", 40));
-  jobs.emplace_back(new Programmer("Zawinski", 10000));
-  jobs.emplace_back(new Pilot("Captain Tony", 30000));
+  jobs.emplace_back(std::make_unique<Job>("Eric", "just standard job stuff", 40));
+  jobs.emplace_back(std::make_unique<Programmer>("Zawinski", 10000));
+  jobs.emplace_back(std::make_unique<Pilot>("Captain Tony", 30000));
 
   for (const auto& iter : jobs)
   {
