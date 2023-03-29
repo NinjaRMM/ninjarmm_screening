@@ -3,3 +3,4 @@ project(ninjarmm_screening)
 set(CMAKE_CXX_STANDARD 17)
 
 add_subdirectory(step1)
+add_subdirectory(step2)
