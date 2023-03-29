@@ -21,119 +21,137 @@ struct ThirdPartyAVSoftware
     std::wstring ProductState;
 };
 
-//Change the return value to better handle different error handling, my suggestion would be a enumerator
-bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftware>& thirdPartyAVSoftwareMap)
+/**
+ * @brief       Created enumerator to better handle different return values
+ * @warning     This might break code that calls it. Need to check all instances
+ */
+typedef enum QueryWinErr_e
 {
-    //Create return value variable here.
-    //Reduce the scope of every other variable to keep as short as possible
-    HRESULT                       hr             = S_OK;
-    IWscProduct*                  PtrProduct     = nullptr;
-    IWSCProductList*              PtrProductList = nullptr;
-    BSTR                          PtrVal         = nullptr;
-    LONG                          ProductCount   = 0;
-    WSC_SECURITY_PRODUCT_STATE    ProductState;  //Not necessary to initialize cause it works, but I consider it a better practice. Also the name might cause confusion.
-    WSC_SECURITY_SIGNATURE_STATUS ProductStatus; //Not necessary to initialize cause it works, but I consider it a better practice
+    AV_SW_RETURN_OK      = 1,  ///< Keep the '1' value as not error to minimize impact on interface change
+    AV_SW_CREAT_ERR      = -1, ///< Creation error
+    AV_SW_INIT_ERR       = -2, ///< Initialization error
+    AV_SW_NONE_AVAIL_ERR = -3, ///< No Third Party AV SW available error
+} QueryWinErr_et;
 
-    // Rename "state" to something less generic so it'd be easier to find and avoid confusion
-    std::wstring displayName, versionNumber, state, timestamp; //Avoid multiple variables in a single declaration. Also reduce the scope.
-    std::string  definitionState;
+QueryWinErr_et queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftware>& thirdPartyAVSoftwareMap)
+{
+    QueryWinErr_et ret = AV_SW_CREAT_ERR; // Created return variable to remove multiple points of return.
 
-    // To get rid of multiple return points and avoid increasing code depth I like to use "do {}while(0)"
-    // Since its possible on each error define a variable to your return variable and "break"
-    hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&PtrProductList));
-    if (FAILED(hr))
+    //All variables were moved to the smallest scope possible or removed if not necessary
+
+    // Some standards tend to not allow "break" or "continue" but I use them to reduce overall cyclomatic complexity, depth and improve
+    // readability
+
+    // The following "do while(0)" is a trick I'd like to do to avoid multiple points of return without increasing
+    // code depth which usually comes when combining "if" statements
+    do
     {
-        std::cout << "Failed to create WSCProductList object. ";
-        return false; //remove multiple points of return. Create specific error for this
-    }
+        HRESULT          hr             = S_OK;    //reduced scope of this variable
+        IWSCProductList* PtrProductList = nullptr; // reduced the scope of the variable
+        LONG             ProductCount   = 0;       // reduced the scope of the variable
 
-    hr = PtrProductList->Initialize(WSC_SECURITY_PROVIDER_ANTIVIRUS);
-    if (FAILED(hr))
-    {
-        std::cout << "Failed to query antivirus product list. ";
-        return false; //remove multiple points of return. Create specific error for this
-    }
-
-    hr = PtrProductList->get_Count(&ProductCount);
-    if (FAILED(hr))
-    {
-        std::cout << "Failed to query product count.";
-        return false; //remove multiple points of return. Create specific error for this
-    }
-
-    for (uint32_t i = 0; i < ProductCount; i++)
-    {
-        hr = PtrProductList->get_Item(i, &PtrProduct);
+        hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&PtrProductList));
         if (FAILED(hr))
         {
-            std::cout << "Failed to query AV product.";
-            continue;
+            //no need to set the first error, since it's the default value.
+            std::cout << "Failed to create WSCProductList object. ";
+            break;
         }
 
-        hr = PtrProduct->get_ProductName(&PtrVal);
+        hr = PtrProductList->Initialize(WSC_SECURITY_PROVIDER_ANTIVIRUS);
         if (FAILED(hr))
         {
+            std::cout << "Failed to query antivirus product list. ";
+            ret = AV_SW_INIT_ERR;
+            break;
+        }
+        hr = PtrProductList->get_Count(&ProductCount);
+        if (FAILED(hr))
+        {
+            std::cout << "Failed to query product count.";
+            ret = AV_SW_GET_COUNT_ERR;
+            break;
+        }
+        for (uint32_t i = 0; i < ProductCount; ++i) // doesn't make a difference in functionality but might lead to more safe/optimized assembly
+        {
+
+            IWscProduct* PtrProduct = nullptr; //reduced the scope of the variable
+
+            hr = PtrProductList->get_Item(i, &PtrProduct);
+            if (FAILED(hr))
+            {
+                std::cout << "Failed to query AV product at Product " << i; //if it fails better to know which index
+                continue;
+            }
+
+            BSTR PtrVal = nullptr; //reduced the scope of this variable
+
+            hr = PtrProduct->get_ProductName(&PtrVal);
+            if (FAILED(hr))
+            {
+                PtrProduct->Release();
+                std::cout << "Failed to query AV product name at Product " << i; //if it fails better to know which index
+                continue;
+            }
+
+            std::wstring displayName; // reduced scope of the variable
+
+            displayName = std::wstring(PtrVal, SysStringLen(PtrVal));
+
+            WSC_SECURITY_PRODUCT_STATE CurrProductState = WSC_SECURITY_PRODUCT_STATE_ON; // Renamed to avoid confusion and shortened scope
+
+            hr = PtrProduct->get_ProductState(&CurrProductState);
+            if (FAILED(hr))
+            {
+                std::cout << "Failed to query AV product state at Product " << i; //if it fails better to know which index
+                continue;
+            }
+
+            std::wstring curr_state = L"Expired"; // Shortened scope and default value to reduce else
+
+            if (CurrProductState == WSC_SECURITY_PRODUCT_STATE_ON)
+            {
+                curr_state = L"On";
+            }
+            else if (CurrProductState == WSC_SECURITY_PRODUCT_STATE_OFF)
+            {
+                curr_state = L"Off";
+            }
+
+            WSC_SECURITY_SIGNATURE_STATUS CurrProductStatus = WSC_SECURITY_PRODUCT_OUT_OF_DATE; // Renamed and shortened scope
+
+            hr = PtrProduct->get_SignatureStatus(&CurrProductStatus);
+            if (FAILED(hr))
+            {
+                std::cout << "Failed to query AV product definition state at Product " << i; //if it fails better to know which index
+                continue;
+            }
+
+            hr = PtrProduct->get_ProductStateTimestamp(&PtrVal);
+            if (FAILED(hr))
+            {
+                std::cout << "Failed to query AV product definition state at Product " << i; //if it fails better to know which index
+                continue;
+            }
+
+            //removed unecessary temporary struct.
+            thirdPartyAVSoftwareMap[displayName].Name                 = displayName;
+            thirdPartyAVSoftwareMap[displayName].DefinitionStatus     = (ProductStatus == WSC_SECURITY_PRODUCT_UP_TO_DATE) ? "UpToDate" : "OutOfDate";
+            thirdPartyAVSoftwareMap[displayName].DefinitionUpdateTime = std::wstring(PtrVal, SysStringLen(PtrVal));
+            thirdPartyAVSoftwareMap[displayName].Description          = curr_state;
+            thirdPartyAVSoftwareMap[displayName].ProductState         = curr_state;
+
+            SysFreeString(PtrVal);
             PtrProduct->Release();
-            std::cout << "Failed to query AV product name.";
-            continue;
         }
-
-        displayName = std::wstring(PtrVal, SysStringLen(PtrVal));
-
-        hr = PtrProduct->get_ProductState(&ProductState);
-        if (FAILED(hr))
+        if (thirdPartyAVSoftwareMap.size() == 0)
         {
-            std::cout << "Failed to query AV product state.";
-            continue;
+            ret = AV_SW_NONE_AVAIL_ERR;
+            break;
         }
 
-        if (ProductState == WSC_SECURITY_PRODUCT_STATE_ON)
-        {
-            state = L"On";
-        }
-        else if (ProductState == WSC_SECURITY_PRODUCT_STATE_OFF)
-        {
-            state = L"Off";
-        }
-        else
-        {
-            state = L"Expired"; //if "state" variable is created with this as the default value, this else could be erased
-        }
+        ret = AV_SW_RETURN_OK;
+    } while (0);
 
-        hr = PtrProduct->get_SignatureStatus(&ProductStatus);
-        if (FAILED(hr))
-        {
-            std::cout << "Failed to query AV product definition state.";
-            continue;
-        }
-
-        definitionState = (ProductStatus == WSC_SECURITY_PRODUCT_UP_TO_DATE) ? "UpToDate" : "OutOfDate";
-
-        hr = PtrProduct->get_ProductStateTimestamp(&PtrVal);
-        if (FAILED(hr))
-        {
-            std::cout << "Failed to query AV product definition state.";
-            continue;
-        }
-        timestamp = std::wstring(PtrVal, SysStringLen(PtrVal));
-        SysFreeString(PtrVal);
-
-        //don't see the need for a temporary struct here. Can be accessed by the displayName and write directly
-
-        ThirdPartyAVSoftware thirdPartyAVSoftware;
-        thirdPartyAVSoftware.Name                          = displayName;
-        thirdPartyAVSoftware.DefinitionStatus              = definitionState;
-        thirdPartyAVSoftware.DefinitionUpdateTime          = timestamp;
-        thirdPartyAVSoftware.Description                   = state;
-        thirdPartyAVSoftware.ProductState                  = state;
-        thirdPartyAVSoftwareMap[thirdPartyAVSoftware.Name] = thirdPartyAVSoftware;
-
-        PtrProduct->Release();
-    }
-
-    if (thirdPartyAVSoftwareMap.size() == 0)
-    {
-        return false; //remove multiple points of return. Create specific error for this
-    }
-    return true; //return the return value
+    return ret;
 }
