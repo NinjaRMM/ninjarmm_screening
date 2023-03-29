@@ -11,6 +11,8 @@ You are free to use whatever compiler/platform you are most comfortable with. Yo
 ### Step 1 
 Take a look at the `Requirements.txt` file in the `step1/` directory. The document will contain an explanation of the code that we are expecting to see. It involved writing some basic classes and demonstrating your understanding of class hierarchies, virtual methods, templates, standard containers, and resource managment. 
 
+[Solution step1](step1/README.md)
+
 ### Step 2
 Take a look at the `CodeReview.cpp` file in the `step2/` directory. In this step we ask you to review some code that came directly from the code you'll be working with if you join the team. Look over it carefully and provide feedback as you would in a standard code review.
 
