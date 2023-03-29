@@ -18,8 +18,6 @@ EXN:  using these webpages:
 #include <map>
 #include <string>
 
-typedef int HRESULT;
-
 struct ThirdPartyAVSoftware
 {
     // EXN: create a constructor that requires all elements, or all required elements
@@ -36,11 +34,12 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
   // EXN: std::wstring versionNumber was not used, moved others down to limit scope
 
     IWSCProductList* PtrProductList = nullptr;
+    // EXN: consider coding without a need for reinterpret_cast, I cannot compile this code so I did not try to modify some of it
     HREESULT hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&PtrProductList));
     if (FAILED(hr))
     {
         std::cout << "Failed to create WSCProductList object. ";  // EXN: might want std::endl here and on others
-        return false;  // EXN: could consider nexted if statements to avoid multiple returns (or could possible use exceptions but that has other pitfalls)
+        return false;  // EXN: could consider nested if statements to avoid multiple returns (or could possible use exceptions but that has other pitfalls)
                         //    same comment for similar code below
     }
 
@@ -76,7 +75,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
             PtrProduct->Release(); // EXN: I did not see anywhere that the reference count was incremented so far in the code
                                     //      so not sure if it needs to be released
                                     //      if it does need to be released, other continue statements below do not do it
-                                    //      use nested ifs of exceptions
+                                    //      use nested ifs or exceptions
                                     //      some later continue statements have the same problem
             std::cout << "Failed to query AV product name.";
             continue;
@@ -87,7 +86,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         if (FAILED(hr))
         {
             std::cout << "Failed to query AV product state.";
-            // EXN: this leaks PtrProductName, use do not use continue, use nested ifs or exceptions
+            // EXN: this leaks PtrProductName, do not use continue, use nested ifs or exceptions
             //    some later continue statements have the same problem
             continue;
         }
