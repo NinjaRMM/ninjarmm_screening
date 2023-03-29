@@ -39,9 +39,9 @@ public:
   }
 
 private:
-  string name_;
-  string description_;
-  unsigned int hoursRequired_;
+  const string name_;
+  const string description_;
+  const unsigned int hoursRequired_;
 
   // not supported until they are needed (also shows that unnecessary objects are not created)
   Job(const Job&) = delete;
@@ -120,6 +120,12 @@ unsigned int ContainsTheString(bool (*testFunction)(const std::string& tested), 
         ++ret;
       }
   }
+  std::cout << "for input strings : ";
+  for (const auto& word : strings) {
+    std::cout << word << " ";
+  }
+  std::cout << ": you matched " << ret;
+  std::cout << ((ret == 1) ? " time." : " times.") << std::endl;
   return ret;
 }
 
@@ -186,6 +192,7 @@ int main()
   assert(ContainsTheString(matchFunction, moreStrings) == 2);
   assert(ContainsTheString(matchFunction,{ "one", "two"}) == 0);
 
+  std::cout << std::endl << "Variadic template example:" << std::endl;
   print("the", "quick", "brown", "fox", "jumped", "over", "the", "lazy", "dog");
 
   return 0;
