@@ -1,3 +1,22 @@
+// Copyright (c) 2023. Alexandre Horst
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+//  associated documentation files (the "Software"), to deal in the Software without restriction, including
+//  without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+//  of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following
+//   conditions:
+//
+// The above copyright notice and this permission notice shall be included in all copies or substantial
+// portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT
+// OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+// OTHER DEALINGS IN THE SOFTWARE.
+//
+
 /*
 
 NINJARMM Code Challenge
@@ -36,9 +55,14 @@ OBJ_STR objStr;
 //Here's a template function that can accept a sample object and 3 integer parameters. It checks if the sum of the integer params is positive or not.
 //The third integer param is optional so it's declared as a default param
 //Inside the function is some existing code that needs to exist, but not relevant to this exercise. 
-template <typename T, typename U>
-T checkIfPositive(const U& u, const int& param1, const int& param2, int param3 = 0)
-{
+template<typename T, typename U>
+T checkIfPositive(const U &u, const int &param1, const int &param2, int param3, int &total) {
+    total = param1 + param2 + param3;
+    return checkIfPositive<T, U>(u, param1, param2, param3);
+}
+
+template<typename T, typename U>
+T checkIfPositive(const U &u, const int &param1, const int &param2, int param3 = 0) {
 
     // Assume there's already some existing code in here, some business logic that we are not interested in this exercise. 
     /*
@@ -78,7 +102,7 @@ int main()
     //How are you going to solve this problem? 
     //You can only change the code inside the EDITABLE SECTION OF CODE
     //Hint, the following calls should now be valid moving forward:
-    /*
+
     int total = 0;
 
     iResult = checkIfPositive<int, OBJ_INT>(objInt, 1, 2);
@@ -98,7 +122,7 @@ int main()
 
     sResult = checkIfPositive<std::string, OBJ_STR>(objStr, 1, 2, 3, total); //<-- Total is output param
     std::cout << sResult << " " << total << std::endl;
-    */
+
 
     return 0;
 
