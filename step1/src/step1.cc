@@ -77,7 +77,7 @@ public:
 
   ~Pilot()
   {
-    
+
   }
 
 private:
@@ -91,18 +91,21 @@ private:
 // assume we want inclusive
 // assume we can use beyond numeral values here
 template<typename T>
-bool IsInBounds(T value, T minimumValue, T maximumValue)
+bool IsInBounds(T value, T minimumValue, T maximumValue, bool print = true)
 {
   bool ret = (value >= minimumValue) and (value <= maximumValue);
-  if (ret)
+  if (print)
   {
-    std::cout << value << " is within the range of " << minimumValue <<
-      " and " << maximumValue << " (inclusive)" << std::endl;
-  }
-  else
-  {
-    std::cout << value << " is NOT within the range of " << minimumValue <<
-      " and " << maximumValue << " (inclusive)" << std::endl;
+    if (ret)
+    {
+      std::cout << value << " is within the range of " << minimumValue <<
+        " and " << maximumValue << " (inclusive)" << std::endl;
+    }
+    else
+    {
+      std::cout << value << " is NOT within the range of " << minimumValue <<
+        " and " << maximumValue << " (inclusive)" << std::endl;
+    }
   }
   return ret;
 }
@@ -150,15 +153,29 @@ int main()
     std::cout << std::endl;
   }
 
-  uint32_t httpResponseCode = 404;
-  assert(not IsInBounds<uint32_t>(httpResponseCode, 500, 599));
+  const uint32_t httpResponseCode = 404;
+  const uint32_t minValue = 500;
+  const uint32_t maxValue = 599;
+  assert(not IsInBounds<uint32_t>(httpResponseCode, minValue, maxValue));
   assert(IsInBounds(99, 45, 99));
   assert(not IsInBounds(100, 45, 99));
-  char characterTest = 'Z'; // ascii value is 90
-  assert(not IsInBounds<char>(characterTest, 45, 80));
-  characterTest = 'J'; // ascii value is 74
-  assert(IsInBounds<char>(characterTest, 45, 80));
+  const char characterZ = 'Z'; // ascii value is 90
+  assert(not IsInBounds<char>(characterZ, 45, 80));
+  const char characterJ = 'J'; // ascii value is 74
+  assert(IsInBounds<char>(characterJ, 45, 80));
   std::cout << std::endl;
+
+  // more complete test
+  for (uint32_t value = 0; value <= 1000; ++value) {
+    if ((value >= minValue) and (value <= maxValue))
+    {
+      assert(IsInBounds<uint32_t>(value, minValue, maxValue, false));
+    }
+    else
+    {
+      assert(not IsInBounds<uint32_t>(value, minValue, maxValue, false));
+    }
+  }
 
   auto theStrings = vector<std::string> { "one", "two", "test"};
   auto count = ContainsTheString([](const std::string& tested) { return tested == "test"; }, theStrings);
