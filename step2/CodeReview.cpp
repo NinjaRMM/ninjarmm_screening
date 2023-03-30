@@ -27,16 +27,17 @@ struct ThirdPartyAVSoftware
  */
 typedef enum QueryWinErr_e
 {
-    AV_SW_RETURN_OK      = 1,  ///< Keep the '1' value as not error to minimize impact on interface change
+    AV_SW_RETURN_OK      = 0,  ///< Return OK
     AV_SW_CREAT_ERR      = -1, ///< Creation error
     AV_SW_INIT_ERR       = -2, ///< Initialization error
     AV_SW_NONE_AVAIL_ERR = -3, ///< No Third Party AV SW available error
 } QueryWinErr_et;
 
-QueryWinErr_et queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftware>& thirdPartyAVSoftwareMap)
+QueryWinErr_et queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftware>& thirdPartyAVSoftwareMap, HRESULT errcode* = nullptr)
 {
     QueryWinErr_et ret = AV_SW_CREAT_ERR; // Created return variable to remove multiple points of return.
 
+    HRESULT hr = S_OK; //maintained the scope of this variable to optionally return as a parameter
     //All variables were moved to the smallest scope possible or removed if not necessary
 
     // Some standards tend to not allow "break" or "continue" but I use them to reduce overall cyclomatic complexity, depth and improve
@@ -46,7 +47,6 @@ QueryWinErr_et queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPart
     // code depth which usually comes when combining "if" statements
     do
     {
-        HRESULT          hr             = S_OK;    //reduced scope of this variable
         IWSCProductList* PtrProductList = nullptr; // reduced the scope of the variable
         LONG             ProductCount   = 0;       // reduced the scope of the variable
 
@@ -136,7 +136,7 @@ QueryWinErr_et queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPart
 
             //removed unecessary temporary struct.
             thirdPartyAVSoftwareMap[displayName].Name                 = displayName;
-            thirdPartyAVSoftwareMap[displayName].DefinitionStatus     = (ProductStatus == WSC_SECURITY_PRODUCT_UP_TO_DATE) ? "UpToDate" : "OutOfDate";
+            thirdPartyAVSoftwareMap[displayName].DefinitionStatus     = (CurrProductStatus == WSC_SECURITY_PRODUCT_UP_TO_DATE) ? "UpToDate" : "OutOfDate";
             thirdPartyAVSoftwareMap[displayName].DefinitionUpdateTime = std::wstring(PtrVal, SysStringLen(PtrVal));
             thirdPartyAVSoftwareMap[displayName].Description          = curr_state;
             thirdPartyAVSoftwareMap[displayName].ProductState         = curr_state;
@@ -152,6 +152,12 @@ QueryWinErr_et queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPart
 
         ret = AV_SW_RETURN_OK;
     } while (0);
+
+    if (errcode)
+    {
+        *errcode = hr; //this will return the code even if the function results in success to some extent.
+        //If both return value and errcode are ok, than it means it didn't fail in any product as well.
+    }
 
     return ret;
 }
