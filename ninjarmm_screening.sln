@@ -13,7 +13,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "step2", "step2\step2.vcxpro
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "step3", "step3", "{F1734B6B-0209-4BFF-8659-EB82A560142C}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "step3", "step3\step3.vcxproj", "{11B3F56C-94EF-4A35-BAE2-C2DDC5B37F7D}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "step3", "step3\src\step3.vcxproj", "{11B3F56C-94EF-4A35-BAE2-C2DDC5B37F7D}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "step1_tests", "step1\src\step1_tests\step1_tests.vcxproj", "{3ABA720E-5D72-4D16-8EA8-19563C526A45}"
 EndProject
