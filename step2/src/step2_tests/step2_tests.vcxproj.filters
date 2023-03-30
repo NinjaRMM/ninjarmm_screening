@@ -15,15 +15,18 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CodeReview.cpp">
+    <ClCompile Include="step2_tests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ModifiedCodeReview.cpp">
+    <ClCompile Include="..\ModifiedCodeReview.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\ModifiedCodeReview.h">
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\ModifiedCodeReview.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
