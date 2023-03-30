@@ -31,3 +31,10 @@
 *.out
 *.app
 step2/~$quirements.docx
+
+*.vcxproj.user
+
+.vs/
+x64/
+Win32/
+packages/
