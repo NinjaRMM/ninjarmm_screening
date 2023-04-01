@@ -1,10 +1,7 @@
 /**
- * @defgroup    step1Program.h Description
- * @ingroup     step1Program.h
- * @{
  * @file        step1Program.h
  * @brief       Header file of the step1 assignment
- * @version     0.1
+ * @version     1.0
  * @date        2023-03-28
  * @copyright   Copyright (c) 2023
  * @author      Henrique Awoyama Klein (henryaklein@gmail.com)
@@ -128,7 +125,7 @@ private:
 };
 
 /**
- * @brief       Singleton class example
+ * @brief       Singleton class example (Bonus)
  */
 class SingleInstance
 {
@@ -168,9 +165,17 @@ private:
     uint32_t my_key; ///< key used to test the singleton
 };
 
+/**
+ * @brief       Simple factory to create jobs (Bonus)
+ */
 class JobFactory
 {
 public:
+    /**
+     * @brief       Method to create jobs according to string parameter
+     * @param[in]   job_str: Name of job
+     * @return      Job instance if not nullptr 
+     */
     static Job* CreateJob(std::string job_str)
     {
         Job* new_job = nullptr;
@@ -187,6 +192,14 @@ public:
     }
 };
 
+/**
+ * @brief       Check if a value is in bounds.
+ *              Goes from low to high-1
+ * @param[in]   val: Value to be checked
+ * @param[in]   low: Lowest value possible
+ * @param[in]   high: One after the highest value possible
+ * @return      true if the value is within limits, false otherwise
+ */
 template <typename T>
 bool IsInBounds(T val, T low, T high)
 {
@@ -205,6 +218,12 @@ bool IsInBounds(T val, T low, T high)
     return ret;
 }
 
+/**
+ * @brief       Method that counts how many successes foo has had with strs
+ * @param[in]   foo: Function that checks the strings for a pattern
+ * @param[in]   strs: Vector os strings 
+ * @return      Number of times a string in strs was matches in foo
+ */
 size_t ContainsTheString(function<bool(const string&)> foo, vector<string>& strs)
 {
     size_t times = 0;
@@ -216,9 +235,20 @@ size_t ContainsTheString(function<bool(const string&)> foo, vector<string>& strs
     return times;
 }
 
+/**
+ * @brief       Class to Check strings (Bonus)
+ *              It was implemented to showcase the bind of a class member to a 
+ *              std::function instead of using a lambda directly.
+ */
 class StringChecker
 {
 public:
+    /**
+     * @brief       Method to use instead of the lambda function on the 
+     *              ContainsTheString test. 
+     * @param[in]   teststr: String to test
+     * @return      true if teststr equals "two, false otherwise 
+     */
     bool CheckIfContainsTWO(const std::string& teststr)
     {
         return teststr == "two";
@@ -227,26 +257,58 @@ public:
 private:
 };
 
+/**
+ * @brief       Check if a variable is zero (default behavior will work on int numbers) - (Bonus)
+ * @param[in]   var: Variable to be checked 
+ * @return      true if value is zero
+ * @warning     Since I didn't create all specializations some types are bound to fail
+ */
 template <typename T>
 bool CheckIFZero(T var)
 {
     return var == 0;
 }
+/**
+ * @brief       Variadic template function to check if multiple variables are zeroed (Bonus)
+ * @param[in]   var: first variable
+ * @param[in]   vars: remaining variables
+ * @return      true if all arguments are zero
+ */
 template <typename T, typename... types>
 bool CheckIFZero(T var, types... vars)
 {
     return CheckIFZero(var) && CheckIFZero(vars...);
 }
+
+/**
+ * @brief       Specialization to check if float is considered zero (Bonus)
+ * @param[in]   var: float variable
+ * @return      true if float number is rounded up to zero
+ */
 template <>
 bool CheckIFZero<float>(float var)
 {
-    return (var < 0.09f) && (var > -0.09f);
+    static constexpr float FLOAT_ZERO_THREASHOLD = 0.09f;
+    return (var < FLOAT_ZERO_THREASHOLD) && (var > -FLOAT_ZERO_THREASHOLD);
 }
+/**
+ * @brief       Specialization to check if double is considered zero (Bonus)
+ * @param[in]   var: double variable
+ * @return      true if double number is rounded up to zero
+ */
 template <>
 bool CheckIFZero<double>(double var)
 {
-    return (var < 0.009) && (var > -0.009f);
+    static constexpr double DOUBLE_ZERO_THREASHOLD = 0.009;
+
+    return (var < DOUBLE_ZERO_THREASHOLD) && (var > -DOUBLE_ZERO_THREASHOLD);
 }
+
+/**
+ * @brief       Specialization to check if string is considered zeroed (empty)(Bonus)
+ * @param[in]   var: string variable
+ * @return      true if string is cleared;
+ */
 template <>
 bool CheckIFZero<std::string>(string var)
 {
