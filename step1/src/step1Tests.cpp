@@ -12,11 +12,13 @@ TEST(step1Program, ContainsTheString)
 }
 TEST(step1Program, Jobs)
 {
-    Job* prog  = new Programmer();
-    Job* pilot = new Pilot();
+    Job* prog           = JobFactory::CreateJob("Programmer");
+    Job* pilot          = JobFactory::CreateJob("Pilot");
+    Job* phone_operator = JobFactory::CreateJob("Phone Operator");
 
     EXPECT_NE(prog, nullptr);
     EXPECT_NE(pilot, nullptr);
+    EXPECT_EQ(phone_operator, nullptr);
 
     vector<Job*> my_vect;
     my_vect.push_back(prog);
@@ -27,14 +29,12 @@ TEST(step1Program, Jobs)
         Job* curr_job = *it;
 
         EXPECT_PRED3([](string str, string s1, string s2) { return str == s1 || str == s2; }, curr_job->GetName(), "Programmer", "Pilot");
-        EXPECT_PRED3([](string str, string s1, string s2) { return str == s1 || str == s2; }, curr_job->GetDescription(), "programming things",
-                     "piloting things");
+        EXPECT_PRED3([](string str, string s1, string s2) { return str == s1 || str == s2; }, curr_job->GetDescription(), "programming things", "piloting things");
         EXPECT_PRED3([](uint32_t str, uint32_t s1, uint32_t s2) { return str == s1 || str == s2; }, curr_job->GetReqHours(), 30, 40);
         testing::internal::CaptureStdout();
         curr_job->DoWork();
         string output = testing::internal::GetCapturedStdout();
-        EXPECT_PRED3([](string str, string s1, string s2) { return str == s1 || str == s2; }, output, "My work involves programming things",
-                     "My work involves piloting things");
+        EXPECT_PRED3([](string str, string s1, string s2) { return str == s1 || str == s2; }, output, "My work involves programming things", "My work involves piloting things");
     }
 
     delete prog;
@@ -51,6 +51,36 @@ TEST(step1Program, IsInBounds)
     EXPECT_TRUE(IsInBounds<uint32_t>(550, 500, 599));
 }
 
+TEST(step1Program, TemplVariadic_Specializ)
+{
+    auto        my_f   = 0.05f;
+    auto        my_do  = 0.001;
+    auto        my_num = 0;
+    std::string my_str;
+    EXPECT_TRUE(CheckIFZero(my_f, my_do, my_num, my_str));
+
+    my_do = 0.05;
+    EXPECT_FALSE(CheckIFZero(my_f, my_do, my_num, my_str));
+
+    my_str = "Not zeroed";
+    my_do  = 0.002;
+    EXPECT_FALSE(CheckIFZero(my_f, my_do, my_num, my_str));
+    my_str.clear();
+    EXPECT_TRUE(CheckIFZero(my_f, my_do, my_num, my_str));
+    EXPECT_TRUE(CheckIFZero(0, 0.02f));
+    EXPECT_FALSE(CheckIFZero(0, 0.02));
+}
+
+TEST(step1Program, Singleton)
+{
+    SingleInstance& my_inst = SingleInstance::GetInstance(20);
+
+    EXPECT_EQ(my_inst.GetKey(), 20);
+
+    SingleInstance& my_sec_inst = SingleInstance::GetInstance(45);
+    EXPECT_NE(my_sec_inst.GetKey(), 45);
+    EXPECT_EQ(my_sec_inst.GetKey(), 20);
+}
 int main(int argc, char* argv[])
 {
     ::testing::InitGoogleTest(&argc, argv);
