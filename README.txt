@@ -8,8 +8,12 @@ On every code I write I use clang-format with a specific set of parameters I'm u
 As a standard I add doxygen documentation, although I just build it occasionally.
 I used VS Code and g++ version 11.3.0 for thi exercise, running on a Linux Mint.
 
-For step 1 I create a build directory within step1/src/ and call "make" and run with "./step1Tests". 
-I added "build" directory to the repository even though it wasn't necessary.
+To set everything up you need to clone not only the repository but its submodule (google test)
+
+For step 1 I created a build directory within step1/src/.
+Navigate to the build directory and if it's the first time compiling you'll need to set the directory by calling "cmake .."
+After that is processed, for all further uses you'll need to call "make" and run with "./step1Tests" inside the "build" directory.
+
 
 
 For step 2 I though of 3 approaches. The first is actually using a plugin that is non intrusive, which means it 
