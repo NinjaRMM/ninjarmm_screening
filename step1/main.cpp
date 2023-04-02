@@ -3,29 +3,32 @@
 #include<string>
 #include<functional>
 
+#include <ctime>
+
 #include "jobs.h"
 
 using namespace std;
 
 const char * Job::getJobName()
 {
-    return _name;
+    return jobName;
 }
 
 const char * Job::getJobDescription()
 {
-    return _description;
+    return jobDescription;
 }
 
 int Job::getJobHours()
 {
-    return _hours;
+    return jobHours;
 }
 
 void Job::DoWork()
 {
-    cout << "My work involves " << _description << endl;
+    cout << "My work involves " << jobDescription << endl;
 };
+
 
 template<typename T>
 bool IsInBounds(T code, T lowerBound, T upperBound)
@@ -33,21 +36,53 @@ bool IsInBounds(T code, T lowerBound, T upperBound)
     return (code >= lowerBound && code <= upperBound);
 }
 
+template<typename T, typename... Args>
+void testIsInBounds(T lowerBound, T upperBound, Args... args)
+{
+    array<int, sizeof...(args)> codes = {args...};
+    for (const auto& code : codes)
+    {
+        cout << code << " is " << (IsInBounds<T>(code, lowerBound, upperBound) ? "in range" : "out of range") << endl;
+    }
+}
+
 template<typename T>
 int ContainsTheString(function<bool(const T&)> testFunc, const vector<T>& strings) {
     int count = 0;
 
-    auto it = strings.begin();
-    while (it != strings.end())
+    for (auto it = strings.begin(); it != strings.end(); it++)
     {
         if (testFunc(*it))
         {
             count++;
         }
-        it++;
     }
 
     return count;
+}
+
+void testContainsTheString()
+{
+    vector<string> theStrings;
+    srand(time(NULL));
+
+    int TestedAdded = 0;
+    for (int i = 0; i < 10; i++)
+    {
+        int random_number = rand() % 10 + 1;
+        if (random_number <= 4)
+        {
+            theStrings.emplace_back("test");
+            TestedAdded++;
+        }
+        else
+        {
+            theStrings.emplace_back("some string");
+        }
+    }
+    cout << TestedAdded << " tested added to the list" << endl;
+    int count = ContainsTheString<string>([](const string& tested) { return tested == "test"; }, theStrings);
+    cout << (TestedAdded == count ? "test passed " : "test failed ") << count << " strings tested" << endl;
 }
 
 int main(int argc, char * argv[])
@@ -74,9 +109,9 @@ int main(int argc, char * argv[])
     }
 
     // is in bound
-    uint32_t httpResonseCode = 505;
-    cout << "testing if reason code " << httpResonseCode << " is in between 500 and 599" << endl;
-    if (IsInBounds<uint32_t>(httpResonseCode, 500, 599))
+    uint32_t httpResonseCode = 505, lower = 500, upper = 599;
+    cout << endl << "testing if reason code " << httpResonseCode << " is in between " << lower << " and " << upper << endl;
+    if (IsInBounds<uint32_t>(httpResonseCode, lower, upper))
     {
         cout << "reason code is in bound" << endl;
     }
@@ -85,12 +120,17 @@ int main(int argc, char * argv[])
         cout << "reason code is out of bounds" << endl;
     }
 
+    // unit test several codes
+    testIsInBounds(lower, upper, 100, 500, 505, 600, 900);
+
 
     // vector of strings
     auto theStrings = vector<string> { "one", "two", "test"};
     auto count = ContainsTheString<string>([](const string& tested) { return tested == "test"; }, theStrings);
 
-    cout << count << " strings tested" << endl;
+    cout << endl << count << " strings tested" << endl;
+
+    testContainsTheString();
 
     return 0;
 
