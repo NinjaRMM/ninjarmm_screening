@@ -10,16 +10,23 @@ Comments are encouraged.
 
 */
 
+// this had no includes, I'm so used to only seing code submitted that will actually compile before it's submitted for review
+// that I didn't even think to check the most obvious thing
+#include "CodeReview.h" // a source file without a header? that won't do
+// STD includes
+#include <iostream>
+#include <map>
+#include <string>
 
-struct ThirdPartyAVSoftware
-{
-    std::wstring Name;
-    std::wstring Description;
-    std::wstring DefinitionUpdateTime;
-    std::wstring DefinitionStatus; // Adjusted to wstring, no obvious reason no to maintain the common string type.
-    std::wstring Version;
-    std::wstring ProductState;
-};
+// General Windows API Include
+#include <Windows.h>
+// Specific Windows API Includes
+#include <comdef.h>
+#include <winerror.h>
+#include <wscapi.h>
+#include <iwscapi.h>
+
+// Moved struct to header
 
 bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftware>& thirdPartyAVSoftwareMap)
 {
@@ -36,24 +43,35 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
     std::wstring timestamp;
     std::wstring definitionState; // changed to wstring to match DefinitionStatus
 
-    hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&PtrProductList));
+    hr = CoInitialize(nullptr); // Gotta make sure the COM library is initialized
     if (FAILED(hr))
     {
-        std::cout << "Failed to create WSCProductList object. ";
+        _com_error err(hr);
+        std::cerr << "Failed to initialize COM library. Error " << std::hex << hr << " " << err.ErrorMessage(); //changed to std::cerr and added return code
         return false;
     }
 
-    hr = PtrProductList->Initialize(WSC_SECURITY_PROVIDER_ANTIVIRUS);
+    hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&PtrProductList));
     if (FAILED(hr))
     {
-        std::cout << "Failed to query antivirus product list. ";
+        _com_error err(hr);
+        std::cerr << "Failed to create WSCProductList object. Error " << std::hex << hr << " " << err.ErrorMessage(); //changed to std::cerr and added return code
+        return false;
+    }
+
+    hr = PtrProductList->Initialize(WSC_SECURITY_PROVIDER_ANTIVIRUS); 
+    if (FAILED(hr))
+    {
+        _com_error err(hr);
+        std::cerr << "Failed to query antivirus product list. Error " << std::hex << hr << " " << err.ErrorMessage(); //changed to std::cerr and added return code
         return false;
     }
 
     hr = PtrProductList->get_Count(&ProductCount);
     if (FAILED(hr))
     {
-        std::cout << "Failed to query product count.";
+        _com_error err(hr);
+        std::cerr << "Failed to query product count. Error " << std::hex << hr << " " << err.ErrorMessage(); //changed to std::cerr and added return code
         return false;
     }
 
@@ -62,15 +80,17 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         hr = PtrProductList->get_Item(i, &PtrProduct);
         if (FAILED(hr))
         {
-            std::cout << "Failed to query AV product.";
+            _com_error err(hr);
+            std::cerr << "Failed to query AV product. Error " << std::hex << hr << " " << err.ErrorMessage(); //changed to std::cerr and added return code
             continue;
         }
 
         hr = PtrProduct->get_ProductName(&PtrVal);
         if (FAILED(hr))
         {
+            _com_error err(hr);
             PtrProduct->Release();
-            std::cout << "Failed to query AV product name.";
+            std::cerr << "Failed to query AV product name. Error " << std::hex << hr << " " << err.ErrorMessage(); //changed to std::cerr and added return code
             continue;
         }
 
@@ -79,7 +99,8 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         hr = PtrProduct->get_ProductState(&ProductState);
         if (FAILED(hr))
         {
-            std::cout << "Failed to query AV product state.";
+            _com_error err(hr);
+            std::cerr << "Failed to query AV product state. Error " << std::hex << hr << " " << err.ErrorMessage(); //changed to std::cerr and added return code
             continue;
         }
 
@@ -99,7 +120,8 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         hr = PtrProduct->get_SignatureStatus(&ProductStatus);
         if (FAILED(hr))
         {
-            std::cout << "Failed to query AV product definition state.";
+            _com_error err(hr);
+            std::cerr << "Failed to query AV product definition state. Error " << std::hex << hr << " " << err.ErrorMessage(); //changed to std::cerr and added return code
             continue;
         }
 
@@ -108,7 +130,8 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         hr = PtrProduct->get_ProductStateTimestamp(&PtrVal);
         if (FAILED(hr))
         {
-            std::cout << "Failed to query AV product definition state.";
+            _com_error err(hr);
+            std::cerr << "Failed to query AV product definition state. Error " << std::hex << hr << " " << err.ErrorMessage(); //changed to std::cerr and added return code
             continue;
         }
         timestamp = std::wstring(PtrVal, SysStringLen(PtrVal));
@@ -124,6 +147,8 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
 
         PtrProduct->Release();
     }
+
+    PtrProductList->Release(); // missing release
 
     if (thirdPartyAVSoftwareMap.size() == 0)
     {
