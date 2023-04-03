@@ -1,8 +1,7 @@
 #include <iostream>
 #include <memory>
 #include <vector>
-#include <functional>
-
+#include "Job.hpp"
 #include "Programmer.hpp"
 #include "Pilot.hpp"
 #include "Utils.hpp"

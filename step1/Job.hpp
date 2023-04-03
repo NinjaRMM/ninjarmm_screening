@@ -5,11 +5,12 @@
 
 class Job
 {
-public:
-	virtual std::string GetName() = 0;
-	virtual std::string GetDescription() = 0;
-	virtual uint32_t GetHours() = 0;
-	virtual void DoWork() = 0;
+public: // Requirement a., d.
+	virtual ~Job() = default;
+	virtual std::string GetName() = 0; // requirement d.i
+	virtual std::string GetDescription() = 0; // requirement d.ii
+	virtual uint32_t GetHours() = 0; // requirement d.iii
+	virtual void DoWork() = 0; // requirement d.iv
 };
 
 #endif

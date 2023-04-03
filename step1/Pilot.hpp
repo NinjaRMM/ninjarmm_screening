@@ -6,7 +6,7 @@ class Pilot : public Job
 {
 public:
 	Pilot();
-	~Pilot() = default;
+	virtual ~Pilot() override = default;
 	virtual std::string GetName() override;
 	virtual std::string GetDescription() override;
 	virtual uint32_t GetHours() override;
