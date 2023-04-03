@@ -193,7 +193,7 @@ int main ()
 		testResults.passedLocalLevel();
 
 		std::cout << "Testing Programmer::GetHours()" << std::endl;
-		uint32_t expectedUint32 = 20;
+		uint32_t expectedUint32 = 40;
 		if (programmer.GetHours() != expectedUint32)
 		{
 			PrintError(__LINE__, expectedUint32, programmer.GetHours(), std::string("Programmer::GetHours()"));
@@ -205,6 +205,7 @@ int main ()
 		//per requirements, DoWork does not return a value, and cannot be tested
 	}
 	std::cout << "Programmer tests " << (testResults.passedUnitLevel() ? "passed" : "FAILED") << std::endl;
+	std::cout << std::endl;
 	testResults.resetUnitLevel();
 
 	std::cout << "Testing Utils::IsInBounds" << std::endl;
