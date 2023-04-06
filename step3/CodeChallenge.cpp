@@ -39,6 +39,14 @@ OBJ_STR objStr;
 template <typename T, typename U>
 T checkIfPositive(const U& u, const int& param1, const int& param2, int param3 = 0)
 {
+    int total = param1 + param2 + param3;
+    return checkIfPositive<T>(u, param1, param2, param3, total);
+}
+
+template <typename T, typename U>
+T checkIfPositive(const U& u, const int& param1, const int& param2, int param3, int& total)
+{
+    total = param1 + param2 + param3;;
 
     // Assume there's already some existing code in here, some business logic that we are not interested in this exercise. 
     /*
