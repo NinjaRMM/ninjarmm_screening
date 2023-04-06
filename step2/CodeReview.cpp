@@ -14,6 +14,7 @@ There are some main improvements to be considered:
     -The naming conventions are not following any specific coding standards.
     -The code must include some documentation in order to make it easier to mantain.
     -The code makes use of raw pointers, which can lead to memory leaks and undefined behavior.
+    -Lack of unit testing
 */
 
 //The following headers are missing (Without them the code will not compile):
