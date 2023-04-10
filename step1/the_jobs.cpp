@@ -105,3 +105,53 @@ TEST_CASE("do work for a Pilot")
     CHECK(p.do_work() == "My work involves " + p.get_description());
   }
 }
+
+TEST_CASE("Jobs, containers and dynamic allocation")
+{
+  SUBCASE("Manual Old-school allocation")
+  {
+    Programmer* prg_ptr = new Programmer();
+    Pilot* plt_ptr = new Pilot();
+
+    std::vector<Job*> ptr_jobs;
+    ptr_jobs.push_back(prg_ptr);
+    ptr_jobs.push_back(plt_ptr);
+    // test job names
+    std::stringstream ss;
+    std::for_each(
+      ptr_jobs.begin(),
+      ptr_jobs.end(),
+      [&ss](Job* job) { ss << job->get_name() << std::endl; }
+    );
+    std::string job_name1, job_name2;
+    ss >> job_name1 >> job_name2;
+    CHECK(job_name1 == prg_ptr->get_name());
+    CHECK(job_name2 == plt_ptr->get_name());
+    // test job descriptions
+    ss = std::stringstream(); // reset the ss
+    std::for_each(
+      ptr_jobs.begin(),
+      ptr_jobs.end(),
+      [&ss](Job* job) { ss << job->get_description() << std::endl; }
+    );
+    std::string job_desc1, job_desc2;
+    std::getline(ss, job_desc1);
+    CHECK(job_desc1 == prg_ptr->get_description());
+    std::getline(ss, job_desc2);
+    CHECK(job_desc2 == plt_ptr->get_description());
+    // test job hours required
+    ss = std::stringstream(); // reset the ss
+    std::for_each(
+      ptr_jobs.begin(),
+      ptr_jobs.end(),
+      [&ss](Job* job) { ss << job->get_hours_required() << std::endl; }
+    );
+    int job_hours1, job_hours2;
+    ss >> job_hours1 >> job_hours2;
+    CHECK(job_hours1 == prg_ptr->get_hours_required());
+    CHECK(job_hours2 == plt_ptr->get_hours_required());
+    // clean memory
+    delete prg_ptr; prg_ptr = nullptr;
+    delete plt_ptr; plt_ptr = nullptr;
+  }
+}
