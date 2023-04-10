@@ -8,6 +8,7 @@
 
 #include <string>
 #include <functional>
+#include <memory>
 
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest.h>
@@ -152,5 +153,37 @@ TEST_CASE("Jobs, containers and dynamic allocation")
     // clean memory
     delete prg_ptr; prg_ptr = nullptr;
     delete plt_ptr; plt_ptr = nullptr;
+  }
+  SUBCASE("Using shared_ptr allocation")
+  {
+    std::shared_ptr<Programmer> prg_ptr = std::make_shared<Programmer>();
+    std::shared_ptr<Pilot> plt_ptr = std::make_shared<Pilot>();
+
+    std::vector<std::shared_ptr<Job>> jobs;
+    jobs.push_back(prg_ptr);
+    jobs.push_back(plt_ptr);
+    // test job names
+    std::stringstream ss;
+    using namespace std::placeholders;
+    ss_map_operation(ss, jobs, std::bind(&Job::get_name, _1));
+    std::string job_name1, job_name2;
+    ss >> job_name1 >> job_name2;
+    CHECK(job_name1 == prg_ptr->get_name());
+    CHECK(job_name2 == plt_ptr->get_name());
+    // test job descriptions
+    ss = std::stringstream(); // reset the ss
+    ss_map_operation(ss, jobs, std::bind(&Job::get_description, _1));
+    std::string job_desc1, job_desc2;
+    std::getline(ss, job_desc1);
+    CHECK(job_desc1 == prg_ptr->get_description());
+    std::getline(ss, job_desc2);
+    CHECK(job_desc2 == plt_ptr->get_description());
+    // test job hours required
+    ss = std::stringstream(); // reset the ss
+    ss_map_operation(ss, jobs, std::bind(&Job::get_hours_required, _1));
+    int job_hours1, job_hours2;
+    ss >> job_hours1 >> job_hours2;
+    CHECK(job_hours1 == prg_ptr->get_hours_required());
+    CHECK(job_hours2 == plt_ptr->get_hours_required());
   }
 }
