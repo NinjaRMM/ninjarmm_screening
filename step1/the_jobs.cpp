@@ -187,3 +187,37 @@ TEST_CASE("Jobs, containers and dynamic allocation")
     CHECK(job_hours2 == plt_ptr->get_hours_required());
   }
 }
+
+bool IsInBound(uint32_t value, uint32_t lower_bound, uint32_t upper_bound)
+{
+  return value < lower_bound ?
+    false : upper_bound < value ?
+    false : true;
+}
+TEST_CASE("IsInBound function to test if a value is inside a range of order comparable types")
+{
+  SUBCASE("Test True for inside value in range for uint32_t")
+  {
+    uint32_t value{100}, lower_bound{50}, upper_bound{150};
+    bool is_in_bound = IsInBound(value, lower_bound, upper_bound);
+    CHECK(is_in_bound == true);
+  }
+  SUBCASE("Test True for non-inside value in range for uint32_t")
+  {
+    uint32_t value{10}, lower_bound{50}, upper_bound{150};
+    bool is_in_bound = IsInBound(value, lower_bound, upper_bound);
+    CHECK(is_in_bound == false);
+  }
+  SUBCASE("Test True for value equal to lower_bound for uint32_t")
+  {
+    uint32_t value{50}, lower_bound{50}, upper_bound{150};
+    bool is_in_bound = IsInBound(value, lower_bound, upper_bound);
+    CHECK(is_in_bound == true);
+  }
+  SUBCASE("Test True for value equal to upper_bound for uint32_t")
+  {
+    uint32_t value{150}, lower_bound{50}, upper_bound{150};
+    bool is_in_bound = IsInBound(value, lower_bound, upper_bound);
+    CHECK(is_in_bound == true);
+  }
+}
