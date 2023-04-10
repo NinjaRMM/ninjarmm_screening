@@ -82,3 +82,26 @@ TEST_CASE("do work for a Programmer")
     CHECK(p.do_work() == "My work involves " + p.get_description());
   }
 }
+
+class Pilot : public Job
+{
+ public:
+  Pilot() noexcept
+   : Job{"pilot", "flying in the world", 48} {}
+};
+
+TEST_CASE("do work for a Pilot")
+{
+  SUBCASE("pilot do work")
+  {
+    // compile-time tested as:
+    static_assert(std::is_default_constructible<Pilot>::value == true);
+    // run-time tested as:
+    Pilot p;
+    MESSAGE("DoWork as programer is: " << p.do_work());
+    CHECK(p.get_name() == "pilot");
+    CHECK(p.get_description() == "flying in the world");
+    CHECK(p.get_hours_required() == 48);
+    CHECK(p.do_work() == "My work involves " + p.get_description());
+  }
+}
