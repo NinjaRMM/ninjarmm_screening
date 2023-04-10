@@ -28,11 +28,20 @@ class Job
   int get_hours_required() const;
 
   void DoWork() const;
+  std::string do_work() const;
 };
 
 std::string Job::get_name() const { return _name; }
 std::string Job::get_description() const { return _description; }
 int Job::get_hours_required() const { return _hours_req; }
+void Job::DoWork() const
+{
+  std::cout << do_work() << std::endl;
+}
+std::string Job::do_work() const
+{
+  return std::string{"My work involves "} + _description;
+}
 
 TEST_CASE("create job")
 {
@@ -66,8 +75,10 @@ TEST_CASE("do work for a Programmer")
     static_assert(std::is_default_constructible<Programmer>::value == true);
     // run-time tested as:
     Programmer p;
+    MESSAGE("DoWork as programer is: " << p.do_work());
     CHECK(p.get_name() == "programmer");
     CHECK(p.get_description() == "creating solutions in the world");
     CHECK(p.get_hours_required() == 40);
+    CHECK(p.do_work() == "My work involves " + p.get_description());
   }
 }
