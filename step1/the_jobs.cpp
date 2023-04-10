@@ -7,6 +7,7 @@
 */
 
 #include <string>
+#include <functional>
 
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest.h>
@@ -106,6 +107,15 @@ TEST_CASE("do work for a Pilot")
   }
 }
 
+template<typename Container, typename Func>
+void ss_map_operation(std::stringstream& ss, Container& c, Func&& f)
+{
+  std::for_each(
+    c.begin(),
+    c.end(),
+    [&ss,&f](auto job) { ss << f(job) << std::endl; }
+  );
+}
 TEST_CASE("Jobs, containers and dynamic allocation")
 {
   SUBCASE("Manual Old-school allocation")
@@ -118,22 +128,15 @@ TEST_CASE("Jobs, containers and dynamic allocation")
     ptr_jobs.push_back(plt_ptr);
     // test job names
     std::stringstream ss;
-    std::for_each(
-      ptr_jobs.begin(),
-      ptr_jobs.end(),
-      [&ss](Job* job) { ss << job->get_name() << std::endl; }
-    );
+    using namespace std::placeholders;
+    ss_map_operation(ss, ptr_jobs, std::bind(&Job::get_name, _1));
     std::string job_name1, job_name2;
     ss >> job_name1 >> job_name2;
     CHECK(job_name1 == prg_ptr->get_name());
     CHECK(job_name2 == plt_ptr->get_name());
     // test job descriptions
     ss = std::stringstream(); // reset the ss
-    std::for_each(
-      ptr_jobs.begin(),
-      ptr_jobs.end(),
-      [&ss](Job* job) { ss << job->get_description() << std::endl; }
-    );
+    ss_map_operation(ss, ptr_jobs, std::bind(&Job::get_description, _1));
     std::string job_desc1, job_desc2;
     std::getline(ss, job_desc1);
     CHECK(job_desc1 == prg_ptr->get_description());
@@ -141,11 +144,7 @@ TEST_CASE("Jobs, containers and dynamic allocation")
     CHECK(job_desc2 == plt_ptr->get_description());
     // test job hours required
     ss = std::stringstream(); // reset the ss
-    std::for_each(
-      ptr_jobs.begin(),
-      ptr_jobs.end(),
-      [&ss](Job* job) { ss << job->get_hours_required() << std::endl; }
-    );
+    ss_map_operation(ss, ptr_jobs, std::bind(&Job::get_hours_required, _1));
     int job_hours1, job_hours2;
     ss >> job_hours1 >> job_hours2;
     CHECK(job_hours1 == prg_ptr->get_hours_required());
