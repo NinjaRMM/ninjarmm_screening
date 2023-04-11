@@ -23,47 +23,48 @@ struct ThirdPartyAVSoftware
 
 bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftware>& thirdPartyAVSoftwareMap)
 {
+    // instantiate COM WSCProductList pointer class
     HRESULT hr = S_OK;
-    IWscProduct* PtrProduct = nullptr;
     IWSCProductList* PtrProductList = nullptr;
-    BSTR PtrVal = nullptr;
-    LONG ProductCount = 0;
-    WSC_SECURITY_PRODUCT_STATE ProductState;
-    WSC_SECURITY_SIGNATURE_STATUS ProductStatus;
-
-    std::wstring displayName, versionNumber, state, timestamp;
-    std::string definitionState;
-
-    hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&PtrProductList));
+    hr = CoCreateInstance(
+        __uuidof(WSCProductList),
+        NULL,
+        CLSCTX_INPROC_SERVER,
+        __uuidof(IWSCProductList),
+        reinterpret_cast<LPVOID*>(&PtrProductList)
+    );
     if (FAILED(hr))
     {
         std::cout << "Failed to create WSCProductList object. ";
         return false;
     }
-
+    // initialize PtrProductList
     hr = PtrProductList->Initialize(WSC_SECURITY_PROVIDER_ANTIVIRUS);
     if (FAILED(hr))
     {
         std::cout << "Failed to query antivirus product list. ";
         return false;
     }
-
+    // get size of the list
+    LONG ProductCount = 0;
     hr = PtrProductList->get_Count(&ProductCount);
     if (FAILED(hr))
     {
         std::cout << "Failed to query product count.";
         return false;
     }
-
+    // read the content of the list and save it in the map
     for (uint32_t i = 0; i < ProductCount; i++)
     {
+        IWscProduct* PtrProduct = nullptr;
         hr = PtrProductList->get_Item(i, &PtrProduct);
         if (FAILED(hr))
         {
             std::cout << "Failed to query AV product.";
             continue;
         }
-
+        // retrieve Product Name
+        BSTR PtrVal = nullptr;
         hr = PtrProduct->get_ProductName(&PtrVal);
         if (FAILED(hr))
         {
@@ -71,16 +72,16 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
             std::cout << "Failed to query AV product name.";
             continue;
         }
-
-        displayName = std::wstring(PtrVal, SysStringLen(PtrVal));
-
+        std::wstring displayName = std::wstring(PtrVal, SysStringLen(PtrVal));
+        // retrieve Product State
+        WSC_SECURITY_PRODUCT_STATE ProductState;
         hr = PtrProduct->get_ProductState(&ProductState);
         if (FAILED(hr))
         {
             std::cout << "Failed to query AV product state.";
             continue;
         }
-
+        std::wstring state;
         if (ProductState == WSC_SECURITY_PRODUCT_STATE_ON)
         {
             state = L"On";
@@ -93,30 +94,30 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         {
             state = L"Expired";
         }
-
+        // retreive Definition State
+        WSC_SECURITY_SIGNATURE_STATUS ProductStatus;
         hr = PtrProduct->get_SignatureStatus(&ProductStatus);
         if (FAILED(hr))
         {
             std::cout << "Failed to query AV product definition state.";
             continue;
         }
-
-        definitionState = (ProductStatus == WSC_SECURITY_PRODUCT_UP_TO_DATE) ? "UpToDate" : "OutOfDate";
-
+        std::string definitionState = (ProductStatus == WSC_SECURITY_PRODUCT_UP_TO_DATE) ? "UpToDate" : "OutOfDate";
+        // retrieve Definition Update Time
         hr = PtrProduct->get_ProductStateTimestamp(&PtrVal);
         if (FAILED(hr))
         {
             std::cout << "Failed to query AV product definition state.";
             continue;
         }
-        timestamp = std::wstring(PtrVal, SysStringLen(PtrVal));
+        std::wstring timestamp = std::wstring(PtrVal, SysStringLen(PtrVal));
         SysFreeString(PtrVal);
-
+        // create ThirdPartyAVSoftware and save it in map
         ThirdPartyAVSoftware thirdPartyAVSoftware;
         thirdPartyAVSoftware.Name = displayName;
         thirdPartyAVSoftware.DefinitionStatus = definitionState;
         thirdPartyAVSoftware.DefinitionUpdateTime = timestamp;
-        thirdPartyAVSoftware.Description = state;
+        thirdPartyAVSoftware.Description = state;       // TODO: Description and Version is not being used
         thirdPartyAVSoftware.ProductState = state;
         thirdPartyAVSoftwareMap[thirdPartyAVSoftware.Name] = thirdPartyAVSoftware;
 
