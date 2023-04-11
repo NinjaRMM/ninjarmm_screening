@@ -189,8 +189,21 @@ TEST_CASE("Jobs, containers and dynamic allocation")
 }
 
 template<typename T>
+struct LessComparableTrait
+{
+  using value_type = T;
+  static constexpr inline bool is_less_comparable()
+  {
+    return (value_type{} < value_type{}) == false;
+  }
+};
+template<typename T, typename Traits=LessComparableTrait<T>>
 bool IsInBound(T value, T lower_bound, T upper_bound)
 {
+  static_assert(
+    Traits::is_less_comparable(),
+    "IsInBound template should receive only less comparable types"
+  );
   return value < lower_bound ?
     false : upper_bound < value ?
     false : true;
