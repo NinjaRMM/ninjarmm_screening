@@ -188,7 +188,8 @@ TEST_CASE("Jobs, containers and dynamic allocation")
   }
 }
 
-bool IsInBound(uint32_t value, uint32_t lower_bound, uint32_t upper_bound)
+template<typename T>
+bool IsInBound(T value, T lower_bound, T upper_bound)
 {
   return value < lower_bound ?
     false : upper_bound < value ?
