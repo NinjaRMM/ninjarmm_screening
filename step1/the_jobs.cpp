@@ -318,4 +318,14 @@ TEST_CASE("ContainsTheString function tests")
     auto count = ContainsTheString(test_function, theStrings);
     CHECK(count == 0);
   }
+  SUBCASE("Less than z predicate and print result")
+  {
+    auto theStrings = std::vector<std::string> {"kal-el", "jor-el", "zod"};
+    auto less_than_z_test_function = [](const std::string& tested)
+    {
+      return tested < "z";
+    };
+    auto count = ContainsTheString(less_than_z_test_function, theStrings);
+    CHECK(count == 2);
+  }
 }
