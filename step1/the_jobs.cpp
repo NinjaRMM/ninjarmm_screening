@@ -278,43 +278,37 @@ int ContainsTheString(Func&& test, const std::vector<std::string>& strings)
 }
 TEST_CASE("ContainsTheString function tests")
 {
+  auto make_test_function = [](const std::string& test_word) {
+    return [test_word](const std::string& tested)
+    {
+      return tested == test_word;
+    };
+  };
   SUBCASE("Single match for an equality test and print result")
   {
     auto theStrings = std::vector<std::string> { "one", "two",  "test"};
-    auto test_function = [](const std::string& tested)
-    {
-      return tested == "test";
-    };
+    auto test_function = make_test_function("test");
     auto count = ContainsTheString(test_function, theStrings);
     CHECK(count == 1);
   }
   SUBCASE("No match for an equality test and print result")
   {
     auto theStrings = std::vector<std::string> { "one", "two",  "test"};
-    auto test_function = [](const std::string& tested)
-    {
-      return tested == "notest";
-    };
+    auto test_function = make_test_function("notest");
     auto count = ContainsTheString(test_function, theStrings);
     CHECK(count == 0);
   }
   SUBCASE("Multiple match for an equality test and print result")
   {
     auto theStrings = std::vector<std::string> { "test", "two",  "test"};
-    auto test_function = [](const std::string& tested)
-    {
-      return tested == "test";
-    };
+    auto test_function = make_test_function("test");
     auto count = ContainsTheString(test_function, theStrings);
     CHECK(count == 2);
   }
   SUBCASE("Empty strings an equality test and print result")
   {
     auto theStrings = std::vector<std::string> {};
-    auto test_function = [](const std::string& tested)
-    {
-      return tested == "test";
-    };
+    auto test_function = make_test_function("test");
     auto count = ContainsTheString(test_function, theStrings);
     CHECK(count == 0);
   }
