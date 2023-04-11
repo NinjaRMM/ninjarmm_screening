@@ -9,6 +9,8 @@
 #include <string>
 #include <functional>
 #include <memory>
+#include <vector>
+#include <algorithm>
 
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest.h>
@@ -266,5 +268,24 @@ TEST_CASE("IsInBound function to test if a value is inside a range of order comp
     std::string value{"bryan"}, lower_bound{"andres"}, upper_bound{"camilo"};
     bool is_in_bound = IsInBound(value, lower_bound, upper_bound);
     CHECK(is_in_bound == true);
+  }
+}
+
+template <typename Func>
+int ContainsTheString(Func&& test, const std::vector<std::string>& strings)
+{
+  return std::count_if(strings.begin(), strings.end(), test);
+}
+TEST_CASE("ContainsTheString function tests")
+{
+  SUBCASE("Single match for an equality test and print result")
+  {
+    auto theStrings = std::vector<std::string> { "one", "two",  "test"};
+    auto test_function = [](const std::string& tested)
+    {
+      return tested == "test";
+    };
+    auto count = ContainsTheString(test_function, theStrings);
+    CHECK(count == 1);
   }
 }
