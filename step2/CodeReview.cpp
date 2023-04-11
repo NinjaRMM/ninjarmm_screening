@@ -21,6 +21,7 @@ struct ThirdPartyAVSoftware
     std::wstring ProductState;
 };
 
+
 bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftware>& thirdPartyAVSoftwareMap)
 {
     // instantiate COM WSCProductList pointer class
@@ -60,6 +61,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         hr = PtrProductList->get_Item(i, &PtrProduct);
         if (FAILED(hr))
         {
+            PtrProduct->Release();
             std::cout << "Failed to query AV product.";
             continue;
         }
@@ -78,6 +80,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         hr = PtrProduct->get_ProductState(&ProductState);
         if (FAILED(hr))
         {
+            PtrProduct->Release();
             std::cout << "Failed to query AV product state.";
             continue;
         }
@@ -99,6 +102,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         hr = PtrProduct->get_SignatureStatus(&ProductStatus);
         if (FAILED(hr))
         {
+            PtrProduct->Release();
             std::cout << "Failed to query AV product definition state.";
             continue;
         }
@@ -107,6 +111,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         hr = PtrProduct->get_ProductStateTimestamp(&PtrVal);
         if (FAILED(hr))
         {
+            PtrProduct->Release();
             std::cout << "Failed to query AV product definition state.";
             continue;
         }
