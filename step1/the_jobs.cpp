@@ -288,4 +288,14 @@ TEST_CASE("ContainsTheString function tests")
     auto count = ContainsTheString(test_function, theStrings);
     CHECK(count == 1);
   }
+  SUBCASE("No match for an equality test and print result")
+  {
+    auto theStrings = std::vector<std::string> { "one", "two",  "test"};
+    auto test_function = [](const std::string& tested)
+    {
+      return tested == "notest";
+    };
+    auto count = ContainsTheString(test_function, theStrings);
+    CHECK(count == 0);
+  }
 }
