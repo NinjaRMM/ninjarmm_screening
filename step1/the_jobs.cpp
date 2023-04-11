@@ -197,6 +197,11 @@ struct LessComparableTrait
     return (value_type{} < value_type{}) == false;
   }
 };
+template<>
+struct LessComparableTrait<std::string>
+{
+  static constexpr inline bool is_less_comparable() { return true; }
+};
 template<typename T, typename Traits=LessComparableTrait<T>>
 bool IsInBound(T value, T lower_bound, T upper_bound)
 {
@@ -254,6 +259,12 @@ TEST_CASE("IsInBound function to test if a value is inside a range of order comp
     bool is_in_bound = IsInBound(
       value, std::move(lower_bound), std::move(upper_bound)
     );
+    CHECK(is_in_bound == true);
+  }
+  SUBCASE("Test for std::string")
+  {
+    std::string value{"bryan"}, lower_bound{"andres"}, upper_bound{"camilo"};
+    bool is_in_bound = IsInBound(value, lower_bound, upper_bound);
     CHECK(is_in_bound == true);
   }
 }
