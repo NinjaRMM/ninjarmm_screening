@@ -208,6 +208,14 @@ bool IsInBound(T value, T lower_bound, T upper_bound)
     false : upper_bound < value ?
     false : true;
 }
+struct MyLessComparableClass
+{
+  char value{0};
+  constexpr bool operator<(const MyLessComparableClass& rhs) const
+  {
+    return value < rhs.value;
+  }
+};
 TEST_CASE("IsInBound function to test if a value is inside a range of order comparable types")
 {
   SUBCASE("Test True for inside value in range for uint32_t")
@@ -232,6 +240,20 @@ TEST_CASE("IsInBound function to test if a value is inside a range of order comp
   {
     uint32_t value{150}, lower_bound{50}, upper_bound{150};
     bool is_in_bound = IsInBound(value, lower_bound, upper_bound);
+    CHECK(is_in_bound == true);
+  }
+  SUBCASE("Test for custom less comparable class")
+  {
+    MyLessComparableClass value{'C'}, lower_bound{'A'}, upper_bound{'F'};
+    bool is_in_bound = IsInBound(value, lower_bound, upper_bound);
+    CHECK(is_in_bound == true);
+  }
+  SUBCASE("Test for custom less comparable class rvalue")
+  {
+    MyLessComparableClass value{'C'}, lower_bound{'A'}, upper_bound{'F'};
+    bool is_in_bound = IsInBound(
+      value, std::move(lower_bound), std::move(upper_bound)
+    );
     CHECK(is_in_bound == true);
   }
 }
