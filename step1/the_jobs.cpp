@@ -323,3 +323,26 @@ TEST_CASE("ContainsTheString function tests")
     CHECK(count == 2);
   }
 }
+
+bool pred(int i) { return i == 2; }
+template <typename Func, typename ... Ts>
+std::size_t ContainsTheString(Func&& pred, Ts... ts)
+{
+  return (std::size_t(0) + ... + (pred(ts) ? 1 : 0));
+}
+TEST_CASE("ContainsTheString using varargs")
+{
+  SUBCASE("Variads using integers")
+  {
+    MESSAGE("count: " << ContainsTheString(pred, 1,2,3,4,5,6,7,10));
+  }
+  SUBCASE("Variads using strings")
+  {
+    auto str_pred = [](const std::string& s) { return s == "four"; };
+    auto count = ContainsTheString(
+      str_pred, "one", "two", "three", "four", "five"
+    );
+    MESSAGE("count: " << count);
+    CHECK(count = 1);
+  }
+}
