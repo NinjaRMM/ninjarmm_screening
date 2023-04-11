@@ -9,7 +9,9 @@ Make any code updates that you see fit (If any).
 Comments are encouraged.
 
 */
-
+#include <iostream>
+#include <string>
+#include <map>
 
 struct ThirdPartyAVSoftware
 {
