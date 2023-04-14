@@ -34,7 +34,7 @@ private:
 
 public:
     Programmer(string name, string descr, int hrsReq, int nLang)
-        : Job{ name, descr, hrsReq } // Call Job(name, desc, hrsReq) constructor
+        : Job{ name, descr, hrsReq }
         , m_nLang{ nLang }
     {
     }
@@ -54,7 +54,7 @@ private:
 
 public:
     Pilot(string name, string descr, int hrsReq, int hrsFlown)
-        : Job{ name, descr, hrsReq } // Call Job(name, desc, hrsReq) constructor
+        : Job{ name, descr, hrsReq }
         , m_hrsFlown{ hrsFlown }
     {
     }
@@ -76,42 +76,34 @@ bool isInBounds(T input, T lower, T upper)
 
 
 /*
-	i. Create a function that will take a vector of strings and a test function, It should return how many 
-	   items in the collection matched the test. Then print out the result.
-		i. auto theStrings = vector<std::string> { “one”, “two”,  “test”};
-		ii. auto count = ContainsTheString([](const std::string& tested) { return tested == “test” }, theStrings);
 	j. Write any other code you feel would show off your understanding of C/C++ and 
 	   programming in general. Bonus: Variadic Template /w usage. 
 	k. Please add passing unit tests. 
 */
 
-// Create the vector of strings to use for testing
-auto theStrings = vector<std::string> { "one", "two", "test"};
-
-//auto count = ContainsTheString([](const std::string& tested) { return tested == "test" }, theStrings);
-
-//int ContainsTheString( [](const std::string &tested)->bool, vector<std::string>);
-// lambda [](const std::string &tested)->bool
-
-// testing approaches
+// Function to count number of matches of test function in string vector
 template <typename F>
-void use_func(const F& func) {
-    const char * name = "use_func";
-    func(name);
+int ContainsTheString( const F& func, vector<std::string> strings)
+{
+    int nMatch = 0;
+
+    // Iterate over the vector of strings
+    for (const auto& theStr: strings)
+    {
+        // If the string matches the test function, increment the count
+        if( func(theStr) ) ++nMatch;
+    }
+    return nMatch;
 }
+
 
 int main()
 {
+    // Create the vector of strings to use for testing
+    auto theStrings = vector<std::string> { "test", "one", "two", "test"};
 
-    // testing approaches
-    use_func([](const char* callee) {
-        cout << "This lambda is invoked from " << callee << endl;
-    });
-    cout << endl << endl << endl;
-
-
-
-
+    auto numMatches = ContainsTheString([](const std::string& tested) { return tested == "test"; }, theStrings);
+    cout << "\'ContainsTheString\' function found " << numMatches << " matches." << endl << endl;
 
     // Use reference_wrapper to avoid object slicing
     vector<reference_wrapper<Job>> jobs{};
