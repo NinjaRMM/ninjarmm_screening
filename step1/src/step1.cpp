@@ -74,13 +74,6 @@ bool isInBounds(T input, T lower, T upper)
     return result;
 }
 
-
-/*
-	j. Write any other code you feel would show off your understanding of C/C++ and 
-	   programming in general. Bonus: Variadic Template /w usage. 
-	k. Please add passing unit tests. 
-*/
-
 // Function to count number of matches of test function in string vector
 template <typename F>
 int ContainsTheString( const F& func, vector<std::string> strings)
@@ -96,6 +89,9 @@ int ContainsTheString( const F& func, vector<std::string> strings)
     return nMatch;
 }
 
+//TEST (InBoundsTest, In) {
+//    EXPECT_EQ (true, isInBounds((int)55, (int)50, (int)60));
+//}
 
 int main()
 {
