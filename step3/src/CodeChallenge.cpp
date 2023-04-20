@@ -30,18 +30,21 @@ OBJ_STR objStr;
 
 
 //<<<<<<<< START OF EDITABLE SECTION OF CODE <<<<<<<<<<<
+// Extract a parameter pack with no argument (default parameter used)
 template<typename C>
 int extract(C& sum)
 {
     return 0;
 }
 
+// Extract just one parameter pack
 template<typename C>
 int extract(C& sum, int i)
 {
     return i;
 }
 
+// Extract first parameter from pack and add it with the sum of the other parameters to a ref of the second
 template<typename C>
 int extract(C& sum, int value, int &total)
 {

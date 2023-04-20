@@ -9,7 +9,7 @@ Comments are encouraged.
 Notes from reviewer Eduardo Canhassi:
 Concerning the code clarity, the developer could have used other patterns for error handling, such as nested ifs, break into other smaller functions, throw/catch (my approach if I had developed the function from scratch), etc.
 However, because all the approaches have pros and cons, I decided to stick to the developer's decision, especially considering the time to rework the code to an approach that would also have disavantages.
-Therefore, the only change was a prevention for memory leak. (ln 86)
+Therefore, the only changes were to prevent memory leak. (ln 86 & ln 128)
 
 */
 
