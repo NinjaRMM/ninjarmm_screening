@@ -6,6 +6,7 @@
 #include <functional>
 #include <stdexcept>
 #include <initializer_list>
+#include <cstring>
 
 
 // ------------------------------------------------
@@ -284,7 +285,7 @@ void DoPart4()
 }
 
 #define ASSERT_TRUE(expr) if(!(expr)) throw std::logic_error("FAILED");
-#define ASSERT_EXCEPT(except, expr) try { (expr); throw std::logic_error("FAILED");} catch(except e) {}
+#define ASSERT_EXCEPT(except, ...) try { __VA_ARGS__ throw std::logic_error("FAILED");} catch(except e) {}
 
 void TestJobClasses()
 {
@@ -406,14 +407,14 @@ void TestStackVector()
 
     auto testErrorWhenAddingMoreThanMaxSize = []() {
 
-        ASSERT_EXCEPT(std::out_of_range, (
-        { 
+        ASSERT_EXCEPT(std::out_of_range, 
+        {
             StackVector<float, 2> vec;
-            vec.push(1.4f); 
+            vec.push(1.4f);
             vec.push(2.4f);
-            vec.push(3.4f); 
+            vec.push(3.4f);
         }
-        ));
+        );
     };
 
     auto testUnorderedRemoveStackVector = []() {
@@ -434,11 +435,11 @@ void TestStackVector()
         vec.unorderedRemove(0);
         ASSERT_TRUE(vec.size() == 0);
 
-        ASSERT_EXCEPT(std::out_of_range, (
+        ASSERT_EXCEPT(std::out_of_range, 
         { 
             vec.unorderedRemove(0);
         }
-        ));        
+        );        
     };
 
     TEST(testPushStackVector);
