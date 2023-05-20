@@ -50,6 +50,13 @@ T checkIfPositive(const U& u, const int& param1, const int& param2, int param3 =
     return u.getResult(param1, param2, param3);
 }
 
+template <typename T, typename U>
+T checkIfPositive(const U& u, const int& param1, const int& param2, const int& param3, int& total)
+{
+    total = param1 + param2 + param3;
+    return checkIfPositive<T, U>(u, param1, param2, param3);
+}
+
 //<<<<<<<< END OF EDITABLE SECTION OF CODE <<<<<<<<<<<
 
 int main()
