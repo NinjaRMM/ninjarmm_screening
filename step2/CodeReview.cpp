@@ -31,9 +31,26 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
     WSC_SECURITY_PRODUCT_STATE ProductState;
     WSC_SECURITY_SIGNATURE_STATUS ProductStatus;
 
+    // I understand the approach of using a set of temporary variables to store the values to be 
+    // assigned to thirdPartyAVSoftware later. However it could be interesting to consider
+    // declaring thirdPartyAVSoftware at the beginning for-loop, and setting its member variables directly.
+    // This approach could eliminate the need for the following temporary variables.
     std::wstring displayName, versionNumber, state, timestamp;
-    std::string definitionState;
 
+    
+    // The following pattern is used repeatedly over the code:
+    //      hr = func(...);
+    //      if (FAILED(hr))
+    //      {
+    //          std::cout << "message";
+    //          //some action
+    //      }
+    // To improve readability and avoid mistakes, it could be placed within a macro. 
+    // Of course it is always better to avoid using macros, but sometimes if the it can make the code easier to read it could be considered. 
+    // Here are examples of macros that could be used:
+    //      #define SUCCESS_OR_RETURN(expr, msg) if(FAILED(expr)) {  std::cout << msg; return false; }
+    //      #define SUCCESS_OR_CONTINUE(expr, msg) if(FAILED(expr)) { PtrProduct->Release(); std::cout << msg; continue; }
+    // If this approach was to be adopted then the variable `hr` would not be necessary anymore. 
     hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&PtrProductList));
     if (FAILED(hr))
     {
@@ -55,7 +72,9 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         return false;
     }
 
-    for (uint32_t i = 0; i < ProductCount; i++)
+    // To avoid comparing variables with different types, 
+    // the variable `i` could be changed to LONG.
+    for (LONG i = 0; i < ProductCount; i++)
     {
         hr = PtrProductList->get_Item(i, &PtrProduct);
         if (FAILED(hr))
@@ -73,39 +92,52 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         }
 
         displayName = std::wstring(PtrVal, SysStringLen(PtrVal));
+        // As for timestamp, SysFreeString(PtrVal) is called here to free the string in PtrVal.
+        SysFreeString(PtrVal);
+        
 
         hr = PtrProduct->get_ProductState(&ProductState);
         if (FAILED(hr))
         {
+            // PtrProduct->Release() should be called here to release the object before continuing.
+            PtrProduct->Release();
             std::cout << "Failed to query AV product state.";
             continue;
         }
 
-        if (ProductState == WSC_SECURITY_PRODUCT_STATE_ON)
+        // The if else blocks could be replaced by a switch case block to make it more easily extensible.
+        // Another option here would be to store the state strings on a std::unordered_map<WSC_SECURITY_PRODUCT_STATE, std::wstring> and 
+        // use a default string as L"Expired".
+        // Furthermore, since the state is stored in ProductState, this switch statement could be moved downwards, just before the 
+        // declaration of thirdPartyAVSoftware. This could be done to allow all the data fetching to be separated from the data assignment. 
+        // This is not done here to avoid confusion in the code review.
+        switch (ProductState)
         {
+        case WSC_SECURITY_PRODUCT_STATE_ON:
             state = L"On";
-        }
-        else if (ProductState == WSC_SECURITY_PRODUCT_STATE_OFF)
-        {
+            break;
+        case WSC_SECURITY_PRODUCT_STATE_OFF:
             state = L"Off";
-        }
-        else
-        {
+            break;
+        default:
             state = L"Expired";
+            break;
         }
 
         hr = PtrProduct->get_SignatureStatus(&ProductStatus);
         if (FAILED(hr))
         {
+            // PtrProduct->Release() should be called here to release the object before continuing.
+            PtrProduct->Release();
             std::cout << "Failed to query AV product definition state.";
             continue;
         }
 
-        definitionState = (ProductStatus == WSC_SECURITY_PRODUCT_UP_TO_DATE) ? "UpToDate" : "OutOfDate";
-
         hr = PtrProduct->get_ProductStateTimestamp(&PtrVal);
         if (FAILED(hr))
         {
+            // PtrProduct->Release() should be called here to release the object before continuing.
+            PtrProduct->Release();
             std::cout << "Failed to query AV product definition state.";
             continue;
         }
@@ -114,7 +146,8 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
 
         ThirdPartyAVSoftware thirdPartyAVSoftware;
         thirdPartyAVSoftware.Name = displayName;
-        thirdPartyAVSoftware.DefinitionStatus = definitionState;
+        // Since the definitionState information is only used here, it does not need to be stored in a variable.
+        thirdPartyAVSoftware.DefinitionStatus = (ProductStatus == WSC_SECURITY_PRODUCT_UP_TO_DATE) ? "UpToDate" : "OutOfDate";
         thirdPartyAVSoftware.DefinitionUpdateTime = timestamp;
         thirdPartyAVSoftware.Description = state;
         thirdPartyAVSoftware.ProductState = state;
@@ -123,9 +156,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         PtrProduct->Release();
     }
 
-    if (thirdPartyAVSoftwareMap.size() == 0)
-    {
-        return false;
-    }
-    return true;
+    // To use a cleaner notation, the if block can be removed and the function can return
+    // the evaluation of the logic expression.
+    return thirdPartyAVSoftwareMap.size() != 0;
 }
