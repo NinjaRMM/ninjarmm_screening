@@ -105,7 +105,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
             continue;
         }
 
-        // The if else blocks could be replaced by a switch case block to make it more easily extensible.
+        // The if else blocks could be replaced by a switch case block to make it clearer.
         // Another option here would be to store the state strings on a std::unordered_map<WSC_SECURITY_PRODUCT_STATE, std::wstring> and 
         // use a default string as L"Expired".
         // Furthermore, since the state is stored in ProductState, this switch statement could be moved downwards, just before the 
