@@ -19,26 +19,26 @@ fetchcontent_makeavailable(googletest)
 set(CMAKE_CXX_STANDARD 20)
 
 add_library(libstep1 SHARED
-  src/step1/Job.cpp)
+  src/step1/Job.cpp
+  src/step1/Pilot.cpp
+  src/step1/Programmer.cpp
+)
 
 target_include_directories(
   libstep1
   PUBLIC include
 )
 
-add_executable(
-  step1
-  src/Main.cpp
-)
+add_executable(step1 src/Main.cpp)
 
-add_executable(
-  test_step1
+add_executable(test_step1
   test/step1/JobTest.cpp
+  test/step1/PilotTest.cpp
+  test/step1/ProgrammerTest.cpp
 )
 
 target_link_libraries(step1 libstep1)
-target_link_libraries(test_step1 libstep1 gtest_main)
+target_link_libraries(test_step1 libstep1 gtest_main gmock_main)
 
 include(GoogleTest)
 gtest_discover_tests(test_step1)
-
