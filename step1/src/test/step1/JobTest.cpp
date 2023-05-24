@@ -14,6 +14,12 @@ struct TestLogger {
     }
 };
 
+struct MockJob: public step1::Job<TestLogger> {
+    MOCK_METHOD(std::string, GetName, (),  (const, override));
+    MOCK_METHOD(std::string, GetDescription, (),  (const, override));
+    MOCK_METHOD(unsigned int, GetRequiredHours, (),  (const, override));
+};
+
 std::weak_ptr<TestLogger> TestLogger::instance;
 
 template class step1::Job<TestLogger>;
@@ -23,25 +29,32 @@ struct JobTest: public testing::Test {
     const std::string description = "drives around town";
     const unsigned int hours = 10;
 
-    step1::Job<TestLogger> job;
-
-    JobTest(): job(name, description, hours) {}
+    MockJob job;
 };
 
 TEST_F(JobTest, Getters) {
+    // TODO: this test became unnecessary, but I'll remove it later
+    using testing::Return;
+    EXPECT_CALL(job, GetName).Times(2).WillRepeatedly(Return(name));
+    EXPECT_CALL(job, GetDescription).Times(2).WillRepeatedly(Return(description));
+    EXPECT_CALL(job, GetRequiredHours).WillOnce(Return(hours));
+
     EXPECT_EQ(job.GetName(), name);
     EXPECT_EQ(job.GetDescription(), description);
-    EXPECT_NE(job.GetName(), job.GetDescription());
     EXPECT_EQ(job.GetRequiredHours(), hours);
+
+    EXPECT_NE(job.GetName(), job.GetDescription());
 }
 
 TEST_F(JobTest, DoWork) {
+    using testing::Return;
+
     auto logger = std::make_shared<TestLogger>();
     TestLogger::instance = logger;
 
-    EXPECT_CALL(
-        *logger,
-        LogImplementation("My work involves " + description + "\n")
-    );
+    EXPECT_CALL(job, GetDescription).WillOnce(Return(description));
+
+    EXPECT_CALL(*logger,
+                LogImplementation("My work involves " + description + "\n"));
     job.DoWork();
 }

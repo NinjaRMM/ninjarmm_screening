@@ -11,35 +11,17 @@ namespace step1 {
 template<class Logger = logger::Logger>
 class Job {
 public:
-    inline std::string GetName() const {
-        return this->name_;
-    }
+    virtual std::string GetName() const = 0;
 
-    inline std::string GetDescription() const {
-        return this->description_;
-    }
+    virtual std::string GetDescription() const = 0;
 
-    inline unsigned int GetRequiredHours() const {
-        return this->requiredHours_;
-    }
-
-    Job(const std::string& name,
-        const std::string& description,
-        unsigned int requiredHours):
-            name_(name),
-            description_(description),
-            requiredHours_(requiredHours) {}
+    virtual unsigned int GetRequiredHours() const = 0;
 
     void DoWork() const {
         std::stringstream ss;
         ss << "My work involves " << this->GetDescription() << std::endl;
         Logger::Log(ss.str());
     }
-
-private:
-    std::string name_;
-    std::string description_;
-    unsigned int requiredHours_;
 };
 
 extern template class Job<logger::Logger>;

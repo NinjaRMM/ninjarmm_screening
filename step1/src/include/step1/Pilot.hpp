@@ -6,7 +6,11 @@ namespace step1 {
 
 class Pilot : public Job<> {
 public:
-    Pilot();
+    std::string GetName() const override;
+
+    std::string GetDescription() const override;
+
+    unsigned int GetRequiredHours() const override;
 };
 
 } // namespace step1

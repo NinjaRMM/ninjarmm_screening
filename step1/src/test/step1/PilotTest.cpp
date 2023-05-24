@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-TEST(PilotTest, FieldsValues) {
+TEST(PilotTest, Getters) {
     step1::Pilot p;
     EXPECT_EQ(p.GetName(), "Pilot");
     EXPECT_EQ(p.GetDescription(), "racing a car");

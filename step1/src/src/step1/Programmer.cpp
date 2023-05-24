@@ -2,8 +2,17 @@
 
 namespace step1 {
 
-Programmer::Programmer():
-    Job("Programmer", "writing code", 8) {}
+std::string Programmer::GetName() const {
+    return "Programmer";
+}
+
+std::string Programmer::GetDescription() const {
+    return "writing code";
+}
+
+unsigned int Programmer::GetRequiredHours() const {
+    return 8;
+}
 
 } // namespace step1
 

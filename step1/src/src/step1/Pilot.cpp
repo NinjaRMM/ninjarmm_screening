@@ -2,7 +2,16 @@
 
 namespace step1 {
 
-Pilot::Pilot():
-    Job("Pilot", "racing a car", 12) {}
+std::string Pilot::GetName() const {
+    return "Pilot";
+}
+
+std::string Pilot::GetDescription() const {
+    return "racing a car";
+}
+
+unsigned int Pilot::GetRequiredHours() const {
+    return 12;
+}
 
 } // namespace step1

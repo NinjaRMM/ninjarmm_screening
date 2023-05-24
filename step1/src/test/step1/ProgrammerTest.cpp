@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-TEST(ProgrammerTest, FieldsValues) {
+TEST(ProgrammerTest, Getters) {
     step1::Programmer p;
     EXPECT_EQ(p.GetName(), "Programmer");
     EXPECT_EQ(p.GetDescription(), "writing code");

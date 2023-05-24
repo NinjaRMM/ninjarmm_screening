@@ -6,7 +6,11 @@ namespace step1 {
 
 class Programmer : public Job<> {
 public:
-    Programmer();
+    std::string GetName() const override;
+
+    std::string GetDescription() const override;
+
+    unsigned int GetRequiredHours() const override;
 };
 
 } // namespace step1
