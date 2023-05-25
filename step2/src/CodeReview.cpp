@@ -10,6 +10,9 @@ Comments are encouraged.
 
 */
 
+#include <string>
+#include <map>
+
 
 struct ThirdPartyAVSoftware
 {
@@ -21,6 +24,12 @@ struct ThirdPartyAVSoftware
     std::wstring ProductState;
 };
 
+/*
+ * this next line is too big, I would suggest the following modification
++     bool queryWindowsForAVSoftwareDataWSC(
++       std::map<std::wstring, ThirdPartyAVSoftware> &thirdPartyAVSoftwareMap)
+-     bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftware>& thirdPartyAVSoftwareMap)
+*/
 bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftware>& thirdPartyAVSoftwareMap)
 {
     HRESULT hr = S_OK;
@@ -34,6 +43,13 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
     std::wstring displayName, versionNumber, state, timestamp;
     std::string definitionState;
 
+/*
+ * this next line is too big, I would suggest the following modification
++     hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER,
++                           __uuidof(IWSCProductList),
++                           reinterpret_cast<LPVOID *>(&PtrProductList));
+-     hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&PtrProductList));
+*/
     hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&PtrProductList));
     if (FAILED(hr))
     {
@@ -123,6 +139,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         PtrProduct->Release();
     }
 
+    // change the next 5 lines to return thirdPartyAVSoftwareMap.size() != 0;
     if (thirdPartyAVSoftwareMap.size() == 0)
     {
         return false;
