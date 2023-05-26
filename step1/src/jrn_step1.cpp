@@ -60,6 +60,16 @@ class Pilot: public Job {
     }
 };
 
+int ContainsTheString(const std::function<int(std::string)>& testFunction, const std::vector<std::string>& strList){
+    int matchingStrCount = 0;
+    
+    for_each(strList.begin(), strList.end(),[&](std::string word){
+        if(testFunction(word))
+            ++matchingStrCount;
+    });
+    
+    return matchingStrCount;
+}
 int main() {
     Job* job1 = new Programmer();
     Job* job2 = new Pilot();
