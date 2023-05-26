@@ -78,6 +78,20 @@ T SumElements(T first, Args... args){
     first = (first + ... + args);
     return first ;
 }
+
+/*
+* Unit Testing template
+*/
+template <typename T> void Test(T expected, T current, std::string ctx = ""){
+    std::cout<<ctx<<std::endl;
+    
+    if(expected == current){
+        std::cout<<"\t***Execution PASS"<<std::endl;
+    } else {
+        std::cout<<"\t***Execution FAIL"<<std::endl;
+    }
+}
+
 int main() {
     Job* job1 = new Programmer();
     Job* job2 = new Pilot();
