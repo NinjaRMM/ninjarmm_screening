@@ -61,6 +61,19 @@ class Pilot: public Job {
 };
 
 int main() {
+    Job* job1 = new Programmer();
+    Job* job2 = new Pilot();
+    std::vector<Job*> jobs {job1, job2};
+    
+    for(auto job : jobs) {
+        std::cout<<"My name is "<<job->getName()<<", I work "<< job->getRequiredHours()<<" hours daily";
+        std::cout<<"\t"; job->getDescription();
+        std::cout<<"\n\t"; job->DoWork();
+        std::cout<<std::endl;
+    }
+    
+    std::for_each(jobs.begin(), jobs.end(), [](Job* p){delete p;});
+    
 
     return 0;
 }
