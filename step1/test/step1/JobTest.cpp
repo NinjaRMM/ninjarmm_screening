@@ -33,7 +33,7 @@ struct JobTest: public testing::Test {
 };
 
 TEST_F(JobTest, Getters) {
-    // TODO: this test became unnecessary, but I'll remove it later
+    // I decided to leave this test to showcase my GooGleMock and Test Fixture usage
     using testing::Return;
     EXPECT_CALL(job, GetName).Times(2).WillRepeatedly(Return(name));
     EXPECT_CALL(job, GetDescription).Times(2).WillRepeatedly(Return(description));
