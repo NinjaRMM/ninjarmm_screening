@@ -27,8 +27,7 @@ I didn't use any variadic template here because I couldn't see a good applicatio
 ### Step2
 
 There is a step2 executable that only runs on Windows due to the Win32 dependency.
-I made a feel changes regarding style and resource management that are described in comments.
-I couldn't retrieve the software list but I could see improvements points throughout the code.
+I made a few changes regarding style and resource management that are described in comments.
 
 ### Step3
 

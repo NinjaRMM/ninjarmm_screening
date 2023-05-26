@@ -10,6 +10,7 @@ Comments are encouraged.
 
 */
 
+#include <combaseapi.h>
 #include <iwscapi.h>
 #include <wscapi.h>
 #include <string>
@@ -18,12 +19,13 @@ Comments are encouraged.
 #include <functional>
 
 
+// Use wstring for everything
 struct ThirdPartyAVSoftware
 {
     std::wstring Name;
     std::wstring Description;
     std::wstring DefinitionUpdateTime;
-    std::string DefinitionStatus;
+    std::wstring DefinitionStatus;
     std::wstring Version;
     std::wstring ProductState;
 };
@@ -46,14 +48,14 @@ bool queryWindowsForAVSoftwareDataWSC(
     WSC_SECURITY_PRODUCT_STATE ProductState;
     WSC_SECURITY_SIGNATURE_STATUS ProductStatus;
 
-    std::wstring displayName, versionNumber, state, timestamp;
-    std::string definitionState;
+    std::wstring displayName, versionNumber, state, timestamp, definitionState;
 
 
     // This next line was too big
     hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER,
                           __uuidof(IWSCProductList),
                           reinterpret_cast<LPVOID*>(&PtrProductList));
+
     if (FAILED(hr))
     {
         // Change std::cout to std::cerr for failure messages
@@ -130,7 +132,7 @@ bool queryWindowsForAVSoftwareDataWSC(
             continue;
         }
 
-        definitionState = (ProductStatus == WSC_SECURITY_PRODUCT_UP_TO_DATE) ? "UpToDate" : "OutOfDate";
+        definitionState = (ProductStatus == WSC_SECURITY_PRODUCT_UP_TO_DATE) ? L"UpToDate" : L"OutOfDate";
 
         hr = PtrProduct->get_ProductStateTimestamp(&PtrVal);
         if (FAILED(hr))
@@ -162,9 +164,17 @@ bool queryWindowsForAVSoftwareDataWSC(
 
 int main() {
     std::map<std::wstring, ThirdPartyAVSoftware> thirdPartyAVSoftwareMap;
+    CoInitialize(NULL);
     queryWindowsForAVSoftwareDataWSC(thirdPartyAVSoftwareMap);
+    CoUninitialize();
     for (const auto& sw : thirdPartyAVSoftwareMap) {
-        std::wcout << sw.first << ": " << /* sw.second  */ "placeholder" << std::endl;
+        std::wcout << sw.first << " ---- "
+            << sw.second.Version << ", "
+            << sw.second.ProductState << ", "
+            << sw.second.DefinitionUpdateTime << ", "
+            << sw.second.DefinitionStatus << ", "
+            << sw.second.ProductState
+            << std::endl;
     }
     return EXIT_SUCCESS;
 }
