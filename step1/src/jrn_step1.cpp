@@ -70,6 +70,14 @@ int ContainsTheString(const std::function<int(std::string)>& testFunction, const
     
     return matchingStrCount;
 }
+/*
+* Variadic template
+*/
+template <typename T, typename ... Args> 
+T SumElements(T first, Args... args){
+    first = (first + ... + args);
+    return first ;
+}
 int main() {
     Job* job1 = new Programmer();
     Job* job2 = new Pilot();
