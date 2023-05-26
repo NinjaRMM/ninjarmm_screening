@@ -1,14 +1,21 @@
 /*
 
 NINJARMM Code Review
- 
-Please review the below code. 
-We do not expect you to execute this code, but you are welcome to try. 
 
-Make any code updates that you see fit (If any). 
+Please review the below code.
+We do not expect you to execute this code, but you are welcome to try.
+
+Make any code updates that you see fit (If any).
 Comments are encouraged.
 
 */
+
+#include <iwscapi.h>
+#include <wscapi.h>
+#include <string>
+#include <map>
+#include <iostream>
+#include <functional>
 
 
 struct ThirdPartyAVSoftware
@@ -21,8 +28,16 @@ struct ThirdPartyAVSoftware
     std::wstring ProductState;
 };
 
-bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftware>& thirdPartyAVSoftwareMap)
+// Ideally, this would be at a helper header
+template<class T>
+std::unique_ptr<T, std::function<void(T*)>> make_com_unique(T* ptr)
 {
+    return std::unique_ptr<T, std::function<void(T*)>>(ptr, [](T* ptr) { ptr->Release(); });
+}
+
+// This next line was too big
+bool queryWindowsForAVSoftwareDataWSC(
+    std::map<std::wstring, ThirdPartyAVSoftware> &thirdPartyAVSoftwareMap) {
     HRESULT hr = S_OK;
     IWscProduct* PtrProduct = nullptr;
     IWSCProductList* PtrProductList = nullptr;
@@ -34,70 +49,84 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
     std::wstring displayName, versionNumber, state, timestamp;
     std::string definitionState;
 
-    hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&PtrProductList));
+
+    // This next line was too big
+    hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER,
+                          __uuidof(IWSCProductList),
+                          reinterpret_cast<LPVOID*>(&PtrProductList));
     if (FAILED(hr))
     {
-        std::cout << "Failed to create WSCProductList object. ";
+        // Change std::cout to std::cerr for failure messages
+        std::cerr << "Failed to create WSCProductList object. ";
         return false;
     }
 
-    hr = PtrProductList->Initialize(WSC_SECURITY_PROVIDER_ANTIVIRUS);
+    // Use a unique_ptr with a custom deleter
+    // to have Release called on its destruction.
+    // PtrProductList was leaking.
+    auto ProductList = make_com_unique(PtrProductList);
+
+    hr = ProductList->Initialize(WSC_SECURITY_PROVIDER_ANTIVIRUS);
     if (FAILED(hr))
     {
-        std::cout << "Failed to query antivirus product list. ";
+        std::cerr << "Failed to query antivirus product list. ";
         return false;
     }
 
-    hr = PtrProductList->get_Count(&ProductCount);
+    hr = ProductList->get_Count(&ProductCount);
     if (FAILED(hr))
     {
-        std::cout << "Failed to query product count.";
+        std::cerr << "Failed to query product count.";
         return false;
     }
 
-    for (uint32_t i = 0; i < ProductCount; i++)
+    // There was a comparison between signed and unsigned numbers
+    for (LONG i = 0; i < ProductCount; i++)
     {
-        hr = PtrProductList->get_Item(i, &PtrProduct);
+        hr = ProductList->get_Item(i, &PtrProduct);
         if (FAILED(hr))
         {
-            std::cout << "Failed to query AV product.";
+            std::cerr << "Failed to query AV product.";
             continue;
         }
+        // Use the same make_com_unique helper function to remove the need to
+        // release the resource in several failure cases.
+        // Some failure cases didn't release this pointer;
+        auto Product = make_com_unique(PtrProduct);
 
-        hr = PtrProduct->get_ProductName(&PtrVal);
+        hr = Product->get_ProductName(&PtrVal);
         if (FAILED(hr))
         {
-            PtrProduct->Release();
-            std::cout << "Failed to query AV product name.";
+            std::cerr << "Failed to query AV product name.";
             continue;
         }
 
         displayName = std::wstring(PtrVal, SysStringLen(PtrVal));
+        // The string wasn't released
+        SysFreeString(PtrVal);
 
-        hr = PtrProduct->get_ProductState(&ProductState);
+        hr = Product->get_ProductState(&ProductState);
         if (FAILED(hr))
         {
-            std::cout << "Failed to query AV product state.";
+            std::cerr << "Failed to query AV product state.";
             continue;
         }
 
-        if (ProductState == WSC_SECURITY_PRODUCT_STATE_ON)
-        {
-            state = L"On";
-        }
-        else if (ProductState == WSC_SECURITY_PRODUCT_STATE_OFF)
-        {
-            state = L"Off";
-        }
-        else
-        {
-            state = L"Expired";
+        switch (ProductState) {
+            case WSC_SECURITY_PRODUCT_STATE_ON:
+                state = L"On";
+                break;
+            case WSC_SECURITY_PRODUCT_STATE_OFF:
+                state = L"Off";
+                break;
+            default:
+                state = L"Expired";
         }
 
         hr = PtrProduct->get_SignatureStatus(&ProductStatus);
         if (FAILED(hr))
         {
-            std::cout << "Failed to query AV product definition state.";
+            std::cerr << "Failed to query AV product definition state.";
             continue;
         }
 
@@ -106,26 +135,36 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         hr = PtrProduct->get_ProductStateTimestamp(&PtrVal);
         if (FAILED(hr))
         {
-            std::cout << "Failed to query AV product definition state.";
+            std::cerr << "Failed to query AV product definition state.";
             continue;
         }
         timestamp = std::wstring(PtrVal, SysStringLen(PtrVal));
         SysFreeString(PtrVal);
 
-        ThirdPartyAVSoftware thirdPartyAVSoftware;
-        thirdPartyAVSoftware.Name = displayName;
-        thirdPartyAVSoftware.DefinitionStatus = definitionState;
-        thirdPartyAVSoftware.DefinitionUpdateTime = timestamp;
-        thirdPartyAVSoftware.Description = state;
-        thirdPartyAVSoftware.ProductState = state;
-        thirdPartyAVSoftwareMap[thirdPartyAVSoftware.Name] = thirdPartyAVSoftware;
+        ThirdPartyAVSoftware thirdPartyAVSoftware{
+            displayName,
+            state,
+            timestamp,
+            definitionState,
+            state
+        };
 
-        PtrProduct->Release();
+        thirdPartyAVSoftwareMap[thirdPartyAVSoftware.Name] = thirdPartyAVSoftware;
     }
 
+    // change the next 5 lines to return thirdPartyAVSoftwareMap.size() != 0;
     if (thirdPartyAVSoftwareMap.size() == 0)
     {
         return false;
     }
     return true;
+}
+
+int main() {
+    std::map<std::wstring, ThirdPartyAVSoftware> thirdPartyAVSoftwareMap;
+    queryWindowsForAVSoftwareDataWSC(thirdPartyAVSoftwareMap);
+    for (const auto& sw : thirdPartyAVSoftwareMap) {
+        std::wcout << sw.first << ": " << /* sw.second  */ "placeholder" << std::endl;
+    }
+    return EXIT_SUCCESS;
 }
