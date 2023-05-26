@@ -1,10 +1,6 @@
-project(NinjaOneCppScreeningStep1)
-
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(CMAKE_PROJECT_VERSION_MAJOR 0)
-set(CMAKE_PROJECT_VERSION_MINOR 1)
-
 cmake_minimum_required(VERSION 3.16)
+
+project(NinjaOneCppScreeningStep1)
 
 include(FetchContent)
 fetchcontent_declare(
@@ -15,8 +11,9 @@ fetchcontent_declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 fetchcontent_makeavailable(googletest)
 
-
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 add_library(libstep1 SHARED
   src/step1/Job.cpp
