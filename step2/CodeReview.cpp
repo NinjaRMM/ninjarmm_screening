@@ -35,22 +35,39 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
     std::string definitionState;
 
     hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&PtrProductList));
-    if (FAILED(hr))
+    
+    /*
+    * According to https://learn.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-cocreateinstance
+    * in this case PtrProductList could be returned as null, so before moving or doing anything else forward,
+    * it would need to get validated. In this case, if the FAIL() macro properly handles it would be fine. But
+    * if it does not, it will better to ask explicitly for the S_OK status on all instances where it applies
+    */
+
+    if (hr != S_OK)
     {
         std::cout << "Failed to create WSCProductList object. ";
         return false;
     }
 
     hr = PtrProductList->Initialize(WSC_SECURITY_PROVIDER_ANTIVIRUS);
-    if (FAILED(hr))
+    if (hr != S_OK)
     {
         std::cout << "Failed to query antivirus product list. ";
         return false;
     }
-
+    /*
+    * According to https://learn.microsoft.com/en-us/windows/win32/api/iwscapi/nf-iwscapi-iwscproductlist-get_count
+    * method could fail returning a value different that S_OK. Asking explicitly that will avoid performing
+    * operations on unwanted values.
+    */
     hr = PtrProductList->get_Count(&ProductCount);
-    if (FAILED(hr))
+    if (hr != S_OK)
     {
+        //
+        // If not able to get the value, we would likely to free the memory as well
+        // for the allocated product list.
+        //
+        PtrProductList->Release();
         std::cout << "Failed to query product count.";
         return false;
     }
@@ -58,14 +75,16 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
     for (uint32_t i = 0; i < ProductCount; i++)
     {
         hr = PtrProductList->get_Item(i, &PtrProduct);
-        if (FAILED(hr))
+        if (hr != S_OK)
         {
             std::cout << "Failed to query AV product.";
             continue;
         }
-
+        //
+        // Refer to https://learn.microsoft.com/en-us/windows/win32/api/iwscapi/nn-iwscapi-iwscproduct
+        //
         hr = PtrProduct->get_ProductName(&PtrVal);
-        if (FAILED(hr))
+        if (hr != S_OK)
         {
             PtrProduct->Release();
             std::cout << "Failed to query AV product name.";
@@ -75,8 +94,11 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         displayName = std::wstring(PtrVal, SysStringLen(PtrVal));
 
         hr = PtrProduct->get_ProductState(&ProductState);
-        if (FAILED(hr))
+        if (hr != S_OK)
         {
+            //If it fails, allocated memory should be freed
+            SysFreeString(PtrVal);
+            PtrProduct->Release();
             std::cout << "Failed to query AV product state.";
             continue;
         }
@@ -95,8 +117,11 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         }
 
         hr = PtrProduct->get_SignatureStatus(&ProductStatus);
-        if (FAILED(hr))
+        if (hr != S_OK)
         {
+            //If it fails, allocated memory should be freed
+            SysFreeString(PtrVal);
+            PtrProduct->Release();
             std::cout << "Failed to query AV product definition state.";
             continue;
         }
@@ -104,8 +129,11 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         definitionState = (ProductStatus == WSC_SECURITY_PRODUCT_UP_TO_DATE) ? "UpToDate" : "OutOfDate";
 
         hr = PtrProduct->get_ProductStateTimestamp(&PtrVal);
-        if (FAILED(hr))
+        if (hr != S_OK)
         {
+            //If it fails, allocated memory should be freed
+            SysFreeString(PtrVal);
+            PtrProduct->Release();
             std::cout << "Failed to query AV product definition state.";
             continue;
         }
@@ -123,9 +151,13 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         PtrProduct->Release();
     }
 
-    if (thirdPartyAVSoftwareMap.size() == 0)
-    {
-        return false;
-    }
-    return true;
+    //
+    // Before returning, need to make sure the memory allocated is freed
+    //
+    PtrProductList->Release();
+    
+    /*
+    * Just a quick style change. Although it is not really required.
+    */
+    return !thirdPartyAVSoftwareMap.empty();
 }
