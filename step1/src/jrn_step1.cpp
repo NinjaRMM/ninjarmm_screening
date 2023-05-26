@@ -121,5 +121,33 @@ int main() {
 	std::cout<<"Integers:"<<SumElements<int>(1,2,3,4,5)<<std::endl;
 	std::cout<<"Floats:"<<SumElements<float>(3.5,4.2,5.9,6.1)<<std::endl;
 	std::cout<<"Strings:"<<SumElements<std::string>("Hello ", "I ", "am ", "a ", "programmer.")<<std::endl;
+	
+	/*
+	* Unit Tests
+	*/
+	std::cout<<"\n===Unit Tests===\n";
+	
+	//Classes
+	Job* testJob = new Programmer();
+	Test(std::string("Programmer"), testJob->getName(), "Testing programmers default initialization");
+	Test(8, testJob->getRequiredHours());
+	Test(std::string(" doing my Programmer Job"), testJob->getDescription());
+	delete testJob;
+	testJob = new Pilot();
+	Test(std::string("Pilot"), testJob->getName(), "Testing pilot default initialization");
+	Test(16, testJob->getRequiredHours());
+	Test(std::string(" doing my Pilot Job"), testJob->getDescription());
+	delete testJob;
+	
+	//ContainsTheString function
+	Test(3, ContainsTheString([](const std::string& tested) { return tested == "test";}, theStrings), "Contains 3 matches");
+	Test(1, ContainsTheString([](const std::string& tested) { return tested == "one";}, theStrings), "Contains 1 match");
+	
+	
+	//Variadic template
+	Test(10 , SumElements<int>(5,5), "Sum of Integers");
+	Test(22.4 , SumElements<double>(5,7.4,10), "Sum of Doubles");
+	Test(std::string("Hi I am Jesus") , SumElements<std::string>("Hi"," I am", " Jesus"), std::string("Sum of Strings"));
+	
     return 0;
 }
