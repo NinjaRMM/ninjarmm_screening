@@ -84,6 +84,14 @@ int main() {
     
     std::for_each(jobs.begin(), jobs.end(), [](Job* p){delete p;});
     
+    /*
+    * Create a function that will take a vector of strings and a test function, 
+    * It should return how many items in the collection matched the test. 
+    * Then print out the result.
+    */
+    auto theStrings = std::vector<std::string> { "one", "two",  "test", "test", "test"};
+	auto count = ContainsTheString([](const std::string& tested) { return tested == "test";}, theStrings);
+	std::cout<<"There were "<<count<<" matches."<<std::endl;
 
     return 0;
 }
