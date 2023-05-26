@@ -101,5 +101,11 @@ int main() {
 	auto count = ContainsTheString([](const std::string& tested) { return tested == "test";}, theStrings);
 	std::cout<<"There were "<<count<<" matches."<<std::endl;
 
+	/*
+	* Variadic function examples
+	*/
+	std::cout<<"Integers:"<<SumElements<int>(1,2,3,4,5)<<std::endl;
+	std::cout<<"Floats:"<<SumElements<float>(3.5,4.2,5.9,6.1)<<std::endl;
+	std::cout<<"Strings:"<<SumElements<std::string>("Hello ", "I ", "am ", "a ", "programmer.")<<std::endl;
     return 0;
 }
