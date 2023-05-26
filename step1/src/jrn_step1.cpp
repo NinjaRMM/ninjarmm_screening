@@ -40,6 +40,26 @@ class Programmer: public Job {
     }
 
 };
+
+//Pilot Job's child sub class
+class Pilot: public Job {
+    
+    public:
+    Pilot(){
+        m_name = "Pilot";
+        m_description = " doing my Pilot Job";
+        m_requiredHours = 16;
+    }
+    ~Pilot(){}
+    
+    std::string getName() {return m_name;}
+    std::string getDescription() {return m_description;}
+    int getRequiredHours() {return m_requiredHours;}
+    void DoWork() {
+       std::cout<<"My work involves" + m_description;
+    }
+};
+
 int main() {
 
     return 0;
