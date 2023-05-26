@@ -154,27 +154,31 @@ bool queryWindowsForAVSoftwareDataWSC(
         thirdPartyAVSoftwareMap[thirdPartyAVSoftware.Name] = thirdPartyAVSoftware;
     }
 
-    // change the next 5 lines to return thirdPartyAVSoftwareMap.size() != 0;
-    if (thirdPartyAVSoftwareMap.size() == 0)
-    {
-        return false;
-    }
-    return true;
+    return thirdPartyAVSoftwareMap.size() != 0;
 }
 
 int main() {
-    std::map<std::wstring, ThirdPartyAVSoftware> thirdPartyAVSoftwareMap;
-    CoInitialize(NULL);
-    queryWindowsForAVSoftwareDataWSC(thirdPartyAVSoftwareMap);
-    CoUninitialize();
-    for (const auto& sw : thirdPartyAVSoftwareMap) {
-        std::wcout << sw.first << " ---- "
-            << sw.second.Version << ", "
-            << sw.second.ProductState << ", "
-            << sw.second.DefinitionUpdateTime << ", "
-            << sw.second.DefinitionStatus << ", "
-            << sw.second.ProductState
-            << std::endl;
+    if (FAILED(CoInitialize(NULL)))
+    {
+        std::cerr << "Failed to initialize the COM Library.";
+        return EXIT_FAILURE;
     }
+
+    std::map<std::wstring, ThirdPartyAVSoftware> thirdPartyAVSoftwareMap;
+    if (queryWindowsForAVSoftwareDataWSC(thirdPartyAVSoftwareMap)) {
+        std::cout << "Displaying installed antivirus" << std::endl << std::endl;
+        for (const auto& sw : thirdPartyAVSoftwareMap) {
+            std::wcout << sw.first << " ---- "
+                << sw.second.Version << ", "
+                << sw.second.ProductState << ", "
+                << sw.second.DefinitionUpdateTime << ", "
+                << sw.second.DefinitionStatus << ", "
+                << sw.second.ProductState
+                << std::endl;
+        }
+    }
+
+    CoUninitialize();
+
     return EXIT_SUCCESS;
 }
