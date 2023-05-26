@@ -120,7 +120,7 @@ int main() {
     auto theStrings = std::vector<std::string> { "one", "two",  "test", "test", "test"};
 	auto count = ContainsTheString([](const std::string& tested) { return tested == "test";}, theStrings);
 	std::cout<<"There were "<<count<<" matches."<<std::endl;
-
+	
 	/*
 	* Variadic function examples
 	*/
