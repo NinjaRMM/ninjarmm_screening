@@ -93,6 +93,12 @@ template <typename T> void Test(T expected, T current, std::string ctx = ""){
 }
 
 int main() {
+    /*
+    * This whole file can be executed properly at:
+    * https://onlinegdb.com/D7Jfq7LHN
+    * Flags for C++ 17 MUST BE activated. -std=c++17
+    * settings -> extra compiler flags -> write -std=c++17 ->OK
+    */
     Job* job1 = new Programmer();
     Job* job2 = new Pilot();
     std::vector<Job*> jobs {job1, job2};
