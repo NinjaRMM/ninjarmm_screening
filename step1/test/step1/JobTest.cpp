@@ -15,9 +15,9 @@ struct TestLogger {
 };
 
 struct MockJob: public step1::Job<TestLogger> {
-    MOCK_METHOD(std::string, GetName, (),  (const, override));
-    MOCK_METHOD(std::string, GetDescription, (),  (const, override));
-    MOCK_METHOD(unsigned int, GetRequiredHours, (),  (const, override));
+    MockJob(const std::string &name, unsigned requiredHours)
+        : step1::Job<TestLogger>(name, requiredHours){};
+    MOCK_METHOD(std::string, GetDescription, (), (const, override));
 };
 
 std::weak_ptr<TestLogger> TestLogger::instance;
@@ -30,20 +30,13 @@ struct JobTest: public testing::Test {
     const unsigned int hours = 10;
 
     MockJob job;
+
+    JobTest(): job(name, hours) {}
 };
 
-TEST_F(JobTest, Getters) {
-    // I decided to leave this test to showcase my GooGleMock and Test Fixture usage
-    using testing::Return;
-    EXPECT_CALL(job, GetName).Times(2).WillRepeatedly(Return(name));
-    EXPECT_CALL(job, GetDescription).Times(2).WillRepeatedly(Return(description));
-    EXPECT_CALL(job, GetRequiredHours).WillOnce(Return(hours));
-
+TEST_F(JobTest, Construction) {
     EXPECT_EQ(job.GetName(), name);
-    EXPECT_EQ(job.GetDescription(), description);
     EXPECT_EQ(job.GetRequiredHours(), hours);
-
-    EXPECT_NE(job.GetName(), job.GetDescription());
 }
 
 TEST_F(JobTest, DoWork) {

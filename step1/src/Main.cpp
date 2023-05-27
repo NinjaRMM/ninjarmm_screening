@@ -8,7 +8,7 @@
 #include <ranges>
 #include <vector>
 
-inline void PrintDivision() {
+inline void PrintSeparator() {
     std::cout << std::endl << std::string(80, '-') << std::endl << std::endl;
 }
 
@@ -27,13 +27,29 @@ std::size_t ContainsTheString(std::function<bool(const std::string&)> tester,
 }
 
 int main(int argc, char** argv) {
-    auto pilot = std::make_unique<step1::Pilot>();
-    auto programmer = std::make_unique<step1::Programmer>();
+    using Category = step1::Pilot::Category;
+    using step1::Programmer;
+    using step1::Pilot;
+    using step1::Job;
+    using PilotInitList = std::initializer_list<Category>;
+    using ProgrammerInitList = std::initializer_list<std::string>;
 
-    std::vector<std::unique_ptr<step1::Job<>>> jobs;
+    auto pilot = std::make_unique<Pilot>(
+        8, PilotInitList{Category::Formula1, Category::Formula2});
+    auto programmer =
+        std::make_unique<Programmer>(ProgrammerInitList{"C++"});
+
+    std::vector<std::unique_ptr<Job<>>> jobs;
 
     jobs.emplace_back(std::move(pilot));
     jobs.emplace_back(std::move(programmer));
+
+    jobs.emplace_back(std::make_unique<Pilot>(
+        12, PilotInitList{Category::Formula1, step1::Pilot::Category::Formula2,
+                          step1::Pilot::Category::WEC}));
+
+    jobs.emplace_back(
+        std::make_unique<Programmer>(ProgrammerInitList{"C++", "Rust"}));
 
     for (const auto& job: jobs) {
         std::cout << "Job Name: " << job->GetName() << std::endl;
@@ -42,7 +58,7 @@ int main(int argc, char** argv) {
         std::cout << std::endl << "Now Working..." << std::endl;
         job->DoWork();
 
-        PrintDivision();
+        PrintSeparator();
     }
 
     uint32_t httpResonseCode = 503;
@@ -55,7 +71,7 @@ int main(int argc, char** argv) {
                       : "No, it is not!")
               << std::endl;
 
-    PrintDivision();
+    PrintSeparator();
 
     auto theStrings = std::vector<std::string>{"one", "two", "test"};
     auto count = ContainsTheString(
