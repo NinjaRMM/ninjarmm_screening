@@ -24,12 +24,12 @@ I used GoogleTest and GoogleMock for testing and the build requires an internet 
 
 ### Step2
 
-There is a step2 executable that only runs on Windows due to the Win32 dependency.
+There is a `step2` executable that only runs on Windows due to the Win32 dependency.
 I made a few changes regarding style and resource management that are described in comments.
 
 ### Step3
 
-There is a step3 executable that runs on both Windows and Linux compiled with the CodeChallenge.cpp source code.
+There is a `step3` executable that runs on both Windows and Linux compiled with the CodeChallenge.cpp source code.
 I solved the problem using variadic templates but allowing only one parameter as an int reference and assigning the total to it.
 I thought about using std::is_same to make sure that the function would only work with an int and not a variation of int but
-I preferred to only change the section marked as editable and not include the <type_tratis> header.
+I preferred to only change the section marked as editable and not include the <type_traits> header.
