@@ -23,64 +23,73 @@ struct ThirdPartyAVSoftware
 
 bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftware>& thirdPartyAVSoftwareMap)
 {
-    HRESULT hr = S_OK;
-    IWscProduct* PtrProduct = nullptr;
     IWSCProductList* PtrProductList = nullptr;
-    BSTR PtrVal = nullptr;
-    LONG ProductCount = 0;
-    WSC_SECURITY_PRODUCT_STATE ProductState;
-    WSC_SECURITY_SIGNATURE_STATUS ProductStatus;
 
-    std::wstring displayName, versionNumber, state, timestamp;
-    std::string definitionState;
-
-    hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&PtrProductList));
+    HRESULT hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&PtrProductList));
     if (FAILED(hr))
     {
-        std::cout << "Failed to create WSCProductList object. ";
+        if (PtrProductList != nullptr)
+        {
+            PtrProductList->Release();
+        }
+        logError("Failed to create WSCProductList object.", hr);
         return false;
     }
 
     hr = PtrProductList->Initialize(WSC_SECURITY_PROVIDER_ANTIVIRUS);
     if (FAILED(hr))
     {
-        std::cout << "Failed to query antivirus product list. ";
+        PtrProductList->Release();
+        logError("Failed to query antivirus product list.", hr);
         return false;
     }
 
+    LONG ProductCount = 0;
     hr = PtrProductList->get_Count(&ProductCount);
     if (FAILED(hr))
     {
-        std::cout << "Failed to query product count.";
+        PtrProductList->Release();
+        logError("Failed to query product count.", hr);
         return false;
     }
 
-    for (uint32_t i = 0; i < ProductCount; i++)
+    for (auto i = 0; i < ProductCount; i++)
     {
+        IWscProduct* PtrProduct = nullptr;
         hr = PtrProductList->get_Item(i, &PtrProduct);
         if (FAILED(hr))
         {
-            std::cout << "Failed to query AV product.";
+            if (PtrProduct != nullptr)
+            {
+                PtrProduct->Release();
+            }
+            logError("Failed to query AV product.", hr);
             continue;
         }
 
+        BSTR PtrVal = nullptr;
         hr = PtrProduct->get_ProductName(&PtrVal);
         if (FAILED(hr))
         {
             PtrProduct->Release();
-            std::cout << "Failed to query AV product name.";
+            SysFreeString(PtrVal);  //No need to check for Null because it is a NOOP
+            logError("Failed to query AV product name.", hr);
             continue;
         }
 
-        displayName = std::wstring(PtrVal, SysStringLen(PtrVal));
+        std::wstring displayName = std::wstring(PtrVal, SysStringLen(PtrVal));
+        SysFreeString(PtrVal);
 
+        WSC_SECURITY_PRODUCT_STATE ProductState;
         hr = PtrProduct->get_ProductState(&ProductState);
         if (FAILED(hr))
         {
-            std::cout << "Failed to query AV product state.";
+            PtrProduct->Release();
+            logError("Failed to query AV product state.", hr);
             continue;
         }
 
+        std::wstring state;
         if (ProductState == WSC_SECURITY_PRODUCT_STATE_ON)
         {
             state = L"On";
@@ -94,22 +103,26 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
             state = L"Expired";
         }
 
+        WSC_SECURITY_SIGNATURE_STATUS ProductStatus;
         hr = PtrProduct->get_SignatureStatus(&ProductStatus);
         if (FAILED(hr))
         {
-            std::cout << "Failed to query AV product definition state.";
+            PtrProduct->Release();
+            logError("Failed to query AV product definition state.", hr);
             continue;
         }
 
-        definitionState = (ProductStatus == WSC_SECURITY_PRODUCT_UP_TO_DATE) ? "UpToDate" : "OutOfDate";
+        std::string definitionState = (ProductStatus == WSC_SECURITY_PRODUCT_UP_TO_DATE) ? "UpToDate" : "OutOfDate";
 
         hr = PtrProduct->get_ProductStateTimestamp(&PtrVal);
         if (FAILED(hr))
         {
-            std::cout << "Failed to query AV product definition state.";
+            PtrProduct->Release();
+            SysFreeString(PtrVal);  //No need to check for Null because it is a NOOP
+            logError("Failed to query AV product definition state.", hr);
             continue;
         }
-        timestamp = std::wstring(PtrVal, SysStringLen(PtrVal));
+        std::wstring timestamp = std::wstring(PtrVal, SysStringLen(PtrVal));
         SysFreeString(PtrVal);
 
         ThirdPartyAVSoftware thirdPartyAVSoftware;
@@ -123,9 +136,12 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         PtrProduct->Release();
     }
 
-    if (thirdPartyAVSoftwareMap.size() == 0)
-    {
-        return false;
-    }
-    return true;
+    PtrProductList->Release();
+
+    return !thirdPartyAVSoftwareMap.empty();
+}
+
+void logError(const std::string& text, const HRESULT& errorCode)
+{
+    std::cerr << text << " Error Code: " << errorCode << std::endl;
 }

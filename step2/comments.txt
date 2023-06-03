@@ -1,0 +1,12 @@
+The following issues should be addressed:
+1.	The variable versionNumber is not used and can be deleted.
+2.	The pointer PtrProductList should be released before each return of the function.
+3.	The pointer PtrProduct is only released when PtrProduct->get_ProductName fails or when everything is ok. This should be changed so that it is released after use.
+4.	The pointer PtrVal should be freed with the call to SysFreeString after use or in case of error.
+I have the following recommendations:
+1.	The field Version of the struct ThirdPartyAVSoftware is not used in this context. Since there is also an unused variable called versionNumber, I am assuming that they could relate to a non-final implementation. Therefore, it should be checked if the struct field is used in the rest of the project code, and if not, it could be deleted.
+2.	In order to minimise the issues that were mentioned above, a solution would be to use smart pointers for the variables PtrProductList and PtrProduct. This could be done by using the ComPtr class.
+3.	In the for loop, I would prefer to change the type of i to LONG, ULONG, or auto. Although it can be considered correct as it is, since LONG is a signed 32-bit integer, there is the remote possibility of that changing at some point in the future.
+4.	It may be interesting to see the value of hr when it is different from S_OK. This could help us diagnose any errors that could occur. Additionally, I prefer to have error messages reported through a function. The use of a function gives the flexibility to have error logging enabled or change the output iostream. Furthermore, I recommend using cerr instead of cout and adding std::endl at the end of each error.
+5.	Unless otherwise specified in the Coding Standard, for performance and safety reasons, I prefer to postpone variable declaration until use. Similarly, I prefer to initialise them with a value instead of a default and then assigning a value.
+6.	I would replace the if block with thirdPartyAVSoftwareMap.size() == 0 with !thirdPartyAVSoftwareMap.empty().
