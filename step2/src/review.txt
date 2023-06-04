@@ -1,0 +1,106 @@
+The code seems to achieve the requested functionality that seems to be
+querying Windows Operational System for third party anti viruses software data.
+
+However there are certain points that can be improved and also be a cleaner code.
+
+1 -  A message is printed directly in the stdout using "std::cout" functionality.
+It would be better to throw an exception or at least use a logging mechanism
+to get a more robust error handling with more information and details. Also the return
+valeu is just a boolean. This way the caller will not be able to distinguish the
+error that happened. An exception generation would help with this point.
+
+2 - Consider using std::string instead of std::wstring. std::string is more usual
+in the c++ world and would help to make the implementation easier and also get a
+better interoperability with other components which would interact with this function.
+
+3 - The PtrProduct is released in the end of the execution and also in case it fails when getting product name.
+In the following possible fails conditions that breaks the loop it is not being released which can generate
+possible memory leak. I would recommend to use an exception handling approach so that it would be releasing
+the PtrProduct in the excepetion handler and it would not be necessary to have repeated code anymore.
+
+4 - The PtrProductList is not being freed, which can also lead to a memory leak. I would recommend the
+addition of a function call to release this pointer in the exception handler as well and also at the end
+of the loop execution in the same way it is being done for the PtrProduct variable.
+
+5 - I would suggest using naming conventions such as the camelCase convention. CamelCase is very
+common in the c++ world, so most c++ programmers are more familiar with this nomenclature which makes
+the code better readable.
+
+6 - The function "queryWindowsForAVSoftwareDataWSC" is too big. I would recommend breaking the function
+into smaller functions as this will make the code cleaner.
+
+Below are some examples that might help show how to make this code a little cleaner.
+
+For example you can create a getProductCount, getDisplayName and getProductState function like below
+and use it in queryWindowsForAVSoftwareDataWSC function, facilitating the understanding in the reading
+of the function.
+
+HRESULT getProductCount(IWSCProductList* productList, LONG* productCount)
+{
+    HRESULT hr = productList->get_Count(productCount);
+
+    if (FAILED(hr)) {
+        throw std::runtime_error("Failed to query product count.");
+    }
+
+    return hr;
+}
+
+std::string getDisplayName(IWscProduct* product)
+{
+    std::string displayName;
+    BSTR ptrVal = nullptr;
+    HRESULT hr = product->get_ProductName(&ptrVal);
+
+    if (SUCCEEDED(hr)) {
+        displayName = std::string(ptrVal, SysStringLen(ptrVal));
+        SysFreeString(ptrVal);
+    } else {
+        throw std::runtime_error("Failed to query AV product name.");
+    }
+
+    return displayName;
+}
+
+std::string getProductState(IWscProduct* product)
+{
+    std::string state;
+    WSC_SECURITY_PRODUCT_STATE productState;
+    HRESULT hr = product->get_ProductState(&productState);
+
+    if (SUCCEEDED(hr))
+    {
+        if (productState == WSC_SECURITY_PRODUCT_STATE_ON) {
+            state = L"On";
+        } else if (productState == WSC_SECURITY_PRODUCT_STATE_OFF) {
+            state = L"Off";
+        } else {
+            state = L"Expired";
+        }
+    } else {
+        throw std::runtime_error("Failed to query AV product state.");
+    }
+    return state;
+}
+
+7 - You should consider adding unit tests to make sure everything is working as expected.
+Also consider creating a rule that all code will only be approved by reviewers if it comes
+with unit tests. Following this rule, the entire code base will be more reliable.
+
+8 - You should consider create it using object oriented paradigm. Doing in that way you
+could use the full potencial of C++ language. Given this I would sugest you to create an interface
+called AvSoftwareDataInteface and create the methods queryAVSoftwareData() and getAVSoftwareMap();
+Then you could create the OS specific implementation in a subclass of the AvSoftwareDataInterface.
+You should try as much as possible invert the dependency in a way that you don't dependent
+enterily of your system to test your implementation. Also I would sugest to create a simulator or
+at list a mock of the OS API calls. This way it would be possible to unit test all the implementation
+without the specif system dependency.
+
+9 - I did a demonstration version with the changes I suggested. As I didn't have much time to go deep
+on it and also as I am running Linux in my machine, I was not able to test it as much I would test
+when professionally creating an implementation like that one and I didn't have the time to create the
+API simulator as I sugested. Given this, I created a unit test that depends on the specif system but
+I would never do that professionally. The sample code that I wrote is just for demonstrating the steps
+that I would recommend when reviewing a PR. The code can be found on files av_software_data.h and 
+av_software_data.cpp. The test can be found on file av_software_data_test.cpp and I have GoogleTest
+unit test framework for demonstrating it. I didn't execute the code as I am in a Linux machine.
