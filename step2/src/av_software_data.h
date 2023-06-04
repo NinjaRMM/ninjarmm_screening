@@ -1,57 +1,62 @@
-#include <map>
 #include <string>
-#include <stdexcept>
 
 #pragma once
 
 /**
- * @brief Structure representing the third-party antivirus software information.
+ * @class AVSoftwareData
+ * @brief A class representing an AVSoftwareData entity.
  */
-struct ThirdPartyAVSoftware
-{
-    std::string name;                   /**< Name of the antivirus software. */
-    std::string description;            /**< Description of the antivirus software. */
-    std::string definitionUpdateTime;   /**< Time of the last definition update. */
-    std::string definitionStatus;       /**< Status of the definition (up-to-date or out-of-date). */
-    std::string productState;           /**< State of the antivirus product (on, off, or expired). */
-};
-
-/**
- * @brief Class for retrieving antivirus software information using the Windows API.
- */
-class AVSoftwareData
-{
+class AVSoftwareData {
 public:
     /**
-     * @brief Queries the Windows API for antivirus software data.
-     * @throw std::runtime_error if an error occurs during the data retrieval process.
+     * @brief Default constructor.
+     * @param ptrProduct A pointer to the IWscProduct object.
+     * @throws std::runtime_error if failed to query AV product name.
+     * @throws std::runtime_error if failed to query AV product state.
+     * @throws std::runtime_error if failed to query AV product definition state.
      */
-    void queryAVSoftwareData();
+    AVSoftwareData(IWscProduct* ptrProduct);
 
     /**
-     * @brief Gets the map of third-party antivirus software.
-     * @return const reference to the map of third-party antivirus software.
+     * @brief Getter for the name of the antivirus software.
+     * @return The name of the antivirus software.
      */
-    const std::map<std::string, ThirdPartyAVSoftware>& getAVSoftwareMap() const;
+    std::string getName() const;
+
+    /**
+     * @brief Getter for the description of the antivirus software.
+     * @return The description of the antivirus software.
+     */
+    std::string getDescription() const;
+
+    /**
+     * @brief Getter for the time of the last definition update.
+     * @return The time of the last definition update.
+     */
+    std::string getDefinitionUpdateTime() const;
+
+    /**
+     * @brief Getter for the status of the definition.
+     * @return The status of the definition (up-to-date or out-of-date).
+     */
+    std::string getDefinitionStatus() const;
+
+    /**
+     * @brief Getter for the state of the antivirus product.
+     * @return The state of the antivirus product (on, off, or expired).
+     */
+    std::string getProductState() const;
 
 private:
-    // Helper methods
-    HRESULT createWSCProductList(IWSCProductList** productList);
-    HRESULT initializeWSCProductList(IWSCProductList* productList);
-    HRESULT getProductCount(IWSCProductList* productList, LONG* productCount);
-    std::string getDisplayName(IWscProduct* product);
-    std::string getProductState(IWscProduct* product);
-    std::string getDefinitionState(IWscProduct* product);
-    std::string getProductStateTimestamp(IWscProduct* product);
-    void processAVProduct(IWscProduct* product);
-    void releasePtrProduct(IWscProduct* product);
-    void releasePtrProductList(IWSCProductList* productList);
-    IWSCProductList* createAndInitializeWSCProductList();
-    LONG getProductsCount(IWSCProductList* ptrProductList);
-    void getProductItemFromListAndFillItInAvSoftwareMap(LONG indexInList, IWSCProductList* productList);
-    void getProductsData(IWSCProductList* productList, LONG productCount);
+    getDisplayNameFromSystemAPI(IWscProduct* ptrProduct);
+    getProductStateFromSystemAPI(IWscProduct* ptrProduct);
+    getDefinitionStateFromSystemAPI(IWscProduct* ptrProduct);
+    getProductStateTimestampFromSystemAPI(IWscProduct* ptrProduct);
 
 private:
-    std::map<std::string, ThirdPartyAVSoftware> thirdPartyAVSoftwareMap; /**< Map containing the third-party antivirus software information. */
-
+    std::string m_name;                  /**< Name of the antivirus software. */
+    std::string m_description;           /**< Description of the antivirus software. */
+    std::string m_definitionUpdateTime;  /**< Time of the last definition update. */
+    std::string m_definitionStatus;      /**< Status of the definition (up-to-date or out-of-date). */
+    std::string m_productState;          /**< State of the antivirus product (on, off, or expired). */
 };

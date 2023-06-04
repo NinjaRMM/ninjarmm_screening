@@ -89,18 +89,24 @@ with unit tests. Following this rule, the entire code base will be more reliable
 
 8 - You should consider create it using object oriented paradigm. Doing in that way you
 could use the full potencial of C++ language. Given this I would sugest you to create an interface
-called AvSoftwareDataInteface and create the methods queryAVSoftwareData() and getAVSoftwareMap();
-Then you could create the OS specific implementation in a subclass of the AvSoftwareDataInterface.
-You should try as much as possible invert the dependency in a way that you don't dependent
+called AvSoftwareDataQuerierInterface. This interface will create the signatures of the methods
+queryAVSoftwareData() and getAVSoftwareMap();
+Then you could create the OS specific implementation in a subclass of the AvSoftwareDataQuerierInterface.
+You should try as much as possible invert the dependency in a way that you don't be dependent
 enterily of your system to test your implementation. Also I would sugest to create a simulator or
 at list a mock of the OS API calls. This way it would be possible to unit test all the implementation
-without the specif system dependency.
+without the specific system dependency. Also I would sugest to create another class to control
+the specifiq product details and OS apis specific of this product. You could name this class as
+AVSoftwareData. This way you will encapsulate better the responsability of each AVSoftwareData object
+to get its own data from OS.
 
 9 - I did a demonstration version with the changes I suggested. As I didn't have much time to go deep
 on it and also as I am running Linux in my machine, I was not able to test it as much I would test
 when professionally creating an implementation like that one and I didn't have the time to create the
-API simulator as I sugested. Given this, I created a unit test that depends on the specif system but
-I would never do that professionally. The sample code that I wrote is just for demonstrating the steps
-that I would recommend when reviewing a PR. The code can be found on files av_software_data.h and 
-av_software_data.cpp. The test can be found on file av_software_data_test.cpp and I have GoogleTest
-unit test framework for demonstrating it. I didn't execute the code as I am in a Linux machine.
+API simulator as I sugested. Given this, I created a unit test that uses GoogleMock.
+The sample code that I wrote is just for demonstrating the steps that I would recommend when reviewing a PR.
+The code can be found on files av_software_data.h, av_software_data.cpp, av_software_data_querier.h and
+av_software_data_querier.cpp. The tests can be found on files av_software_data_test.cpp and 
+av_software_data_querier_test.cpp. I have used GoogleTest unit test framework for demonstrating it.
+I didn't execute the code as I am in a Linux machine therefore I am not sure if it is compiling and running.
+The nomenclatures of GoogleTest and GoogleMock are wide expressive and I could have made some errors when writing it.
