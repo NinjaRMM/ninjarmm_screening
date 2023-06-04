@@ -1,6 +1,6 @@
 HEADERS=
 CXXFLAGS+=-std=c++17 -Wall -pedantic -DDEBUG -ggdb3
-LDFLAGS= -pthread -lpthread
+LDFLAGS=
 SRC=$(wildcard *.cpp)
 OBJ=$(SRC:%.cpp=%.o)
 

@@ -46,6 +46,13 @@ T checkIfPositive(const U& u, const int& param1, const int& param2, int param3 =
     return u.getResult(param1, param2, param3);
 }
 
+/** I would solve this problem with the following implementation of checkIfPositive
+template function. With this approach I have chosen, it will be necessary to have param3
+placed in the function call when the caller wants to calculate the total sum as well.
+The function's previous behavior continues to be maintained, meeting the task requirement.
+I have also uncommented the hint calls in main function to make sure the solution is
+meeting the requirements.
+*/
 template <typename T, typename U>
 T checkIfPositive(const U& u, const int& param1, const int& param2, int param3, int& total)
 {
