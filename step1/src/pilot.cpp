@@ -6,11 +6,8 @@ const std::string Pilot::m_defaultName("Pilot");
 const std::string Pilot::m_defaultDescription("Driving a plane from takeoff to landing.");
 const std::uint16_t Pilot::m_defaultHoursRequired(12);
 
-Pilot::Pilot()
+Pilot::Pilot() : CommonJob(m_defaultName, m_defaultDescription, m_defaultHoursRequired)
 {
-    m_name = m_defaultName;
-    m_description = m_defaultDescription;
-    m_hoursRequired = m_defaultHoursRequired;
 }
 
 Pilot::Pilot(const std::string& name, const std::string& description, const uint16_t& hoursRequired) : CommonJob(name, description, hoursRequired)

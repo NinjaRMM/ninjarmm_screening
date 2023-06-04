@@ -15,21 +15,6 @@ for the virtual methods defined in the base class.
 class CommonJob : public Job {
 public:
     /**
-    @brief Default constructor.
-    Constructs a CommonJob object with default values for its member variables.
-    */
-    CommonJob();
-
-    /**
-    @brief Parameterized constructor.
-    Constructs a CommonJob object with the specified name, description, and hours required.
-    @param name The name of the job.
-    @param description The description of the job.
-    @param hoursRequired The number of hours required for the job.
-    */
-    CommonJob(const std::string& name, const std::string& description, const uint16_t& hoursRequired);
-
-    /**
     @brief Get the name of the job.
     @return The name of the job as a string.
     */
@@ -53,6 +38,16 @@ public:
     It does not return any value.
     */
     void doWork() const override;
+
+protected:
+    /**
+    @brief Parameterized constructor.
+    Constructs a CommonJob object with the specified name, description, and hours required.
+    @param name The name of the job.
+    @param description The description of the job.
+    @param hoursRequired The number of hours required for the job.
+    */
+    CommonJob(const std::string& name, const std::string& description, const uint16_t& hoursRequired);
 
 protected:
     std::string m_name;

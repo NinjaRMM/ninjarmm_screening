@@ -11,6 +11,8 @@ and also some solutions I came up with could have been easier if I had used thir
 The reason for this is to demonstrate some of my pure C++ knowledge and also to make the solution
 lighter to compile on different machines.
 
+In solution step1, I created a CommonJob class to not have duplicated code in the implementation of the methods that would be common for the Programmer and Pilot classes.
+
 In solution step1, I created unit tests only for the developed classes and not for all other functions
 that were requested. The reason for this is that I have little time available and also I understood
 that the purpose of the tasks is just to show how important unit tests are and how I, in my day to day,
@@ -31,32 +33,23 @@ The step1 and step3 were developed in a OpenSuse Linux machine and the requireme
 solutions are the following:
 
 * A PC running a Linux O.S. distribution such as Ubuntu, OpenSuse, Fedora, etc.
-
 * C++ Compiler: You will need a C++ compiler installed on your machine. The Makefile uses g++ as
   the compiler, so make sure g++ is available in the machine.
-
-* Standard C++ Library: The Makefile uses the C++17 standard, so the target machine should 
+* Standard C++ Library: The Makefile uses the C++17 standard, so the target machine should
   have the C++17 standard library installed.
-
 * GNU Make: Ensure that your machine has GNU Make installed. Most Linux distributions come
   with Make preinstalled, but it's worth confirming.
-
 * It's important to note that the availability and versions of these dependencies may vary
   depending on the specific Linux distribution and its package management system. However,
   in most cases, a standard Linux distribution should have these requirements available by
   default or easily installable through the package manager.
-
 * Navigate to the step${1,3}/src and run the program "make" in a linux bash terminal.
-
 * The make program will compile the source code and generate a binary file called "step1"
   for the first task and "step3" for the third task.
-
 * You can execute the generated binary file by tapping "./step1" in a linux bash terminal
   inside the step1/src directory and get the results on the terminal screen.
-
 * You can execute the generated binary file by tapping "./step3" in a linux bash terminal
   inside the step3/src directory and get the results on the terminal screen.
-  
 * The step2 exercise is note executing as it was developed to work on a Windows machine
   and my personal O.S. is Linux. I understood that the execution of this task was not a
   requirement so I didn't make it.

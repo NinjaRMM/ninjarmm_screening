@@ -19,64 +19,6 @@ void runTest(std::function<bool()> unitTest, std::string unitTestName)
     }
 }
 
-bool commonJobGetNameWithDefaultConstructorTest()
-{
-    CommonJob job;
-    return job.getName() == "" ? true : false;
-}
-
-bool commonJobGetDescriptionWithDefaultConstructorTest()
-{
-    CommonJob job;
-    return job.getDescription() == "" ? true : false;
-}
-
-bool commonJobGetHoursRequiredWithDefaultConstructorTest()
-{
-    CommonJob job;
-    return job.getHoursRequired() == 0 ? true : false;
-}
-
-bool commonJobDoWorkWithDefaultConstructorTest()
-{
-    CommonJob job;
-    try {
-        job.doWork();
-        return true;
-    } catch (...) {
-        return false;
-    }
-}
-
-bool commonJobGetNameWithParameterizedConstructorTest()
-{
-    CommonJob job("common", "description", 1);
-    return job.getName() == "common" ? true : false;
-}
-
-bool commonJobGetDescriptionWithParameterizedConstructorTest()
-{
-    CommonJob job("common", "description", 1);
-    return job.getDescription() == "description" ? true : false;
-}
-
-bool commonJobGetHoursRequiredWithParameterizedConstructorTest()
-{
-    CommonJob job("common", "description", 1);
-    return job.getHoursRequired() == 1 ? true : false;
-}
-
-bool commonJobDoWorkWithWithParameterizedConstructorTest()
-{
-    CommonJob job;
-    try {
-        job.doWork();
-        return true;
-    } catch (...) {
-        return false;
-    }
-}
-
 bool programmerGetNameWithDefaultConstructorTest()
 {
     Programmer job;
@@ -96,6 +38,35 @@ bool programmerGetHoursRequiredWithDefaultConstructorTest()
 }
 
 bool programmerDoWorkWithDefaultConstructorTest()
+{
+    Programmer job;
+    try {
+        job.doWork();
+        return true;
+    } catch (...) {
+        return false;
+    }
+}
+
+bool programmerGetNameWithParameterizedConstructorTest()
+{
+    Programmer job("common", "description", 1);
+    return job.getName() == "common" ? true : false;
+}
+
+bool programmerGetDescriptionWithParameterizedConstructorTest()
+{
+    Programmer job("common", "description", 1);
+    return job.getDescription() == "description" ? true : false;
+}
+
+bool programmerGetHoursRequiredWithParameterizedConstructorTest()
+{
+    Programmer job("common", "description", 1);
+    return job.getHoursRequired() == 1 ? true : false;
+}
+
+bool programmerDoWorkWithParameterizedConstructorTest()
 {
     Programmer job;
     try {
@@ -141,23 +112,40 @@ bool pilotToStringWithDefaultConstructorTest()
     return job.toString() == "name: Pilot description: Driving a plane from takeoff to landing. hoursRequired: 12" ? true : false;
 }
 
+bool pilotGetNameWithParameterizedConstructorTest()
+{
+    Pilot job("common", "description", 1);
+    return job.getName() == "common" ? true : false;
+}
+
+bool pilotGetDescriptionWithParameterizedConstructorTest()
+{
+    Pilot job("common", "description", 1);
+    return job.getDescription() == "description" ? true : false;
+}
+
+bool pilotGetHoursRequiredWithParameterizedConstructorTest()
+{
+    Pilot job("common", "description", 1);
+    return job.getHoursRequired() == 1 ? true : false;
+}
+
+bool pilotDoWorkWithParameterizedConstructorTest()
+{
+    Pilot job;
+    try {
+        job.doWork();
+        return true;
+    } catch (...) {
+        return false;
+    }
+}
+
 bool pilotToStringWithParameterizedConstructorTest()
 {
     Pilot job("pilot", "drive airplane.", 20);
     std::cout << job.toString() << std::endl;
     return job.toString() == "name: pilot description: drive airplane. hoursRequired: 20" ? true : false;
-}
-
-void runCommonJobUnitTests()
-{
-    runTest(commonJobGetNameWithDefaultConstructorTest, "commonJobGetNameWithDefaultConstructorTest");
-    runTest(commonJobGetDescriptionWithDefaultConstructorTest, "commonJobGetDescriptionWithDefaultConstructorTest");
-    runTest(commonJobGetHoursRequiredWithDefaultConstructorTest, "commonJobGetHoursRequiredWithDefaultConstructorTest");
-    runTest(commonJobDoWorkWithDefaultConstructorTest, "commonJobDoWorkWithDefaultConstructorTest");
-    runTest(commonJobGetNameWithParameterizedConstructorTest, "commonJobGetNameWithParameterizedConstructorTest");
-    runTest(commonJobGetDescriptionWithParameterizedConstructorTest, "commonJobGetDescriptionWithParameterizedConstructorTest");
-    runTest(commonJobGetHoursRequiredWithParameterizedConstructorTest, "commonJobGetHoursRequiredWithParameterizedConstructorTest");
-    runTest(commonJobDoWorkWithWithParameterizedConstructorTest, "commonJobDoWorkWithWithParameterizedConstructorTest");
 }
 
 void runProgrammerUnitTests()
@@ -166,6 +154,10 @@ void runProgrammerUnitTests()
     runTest(programmerGetDescriptionWithDefaultConstructorTest, "programmerGetDescriptionWithDefaultConstructorTest");
     runTest(programmerGetHoursRequiredWithDefaultConstructorTest, "programmerGetHoursRequiredWithDefaultConstructorTest");
     runTest(programmerDoWorkWithDefaultConstructorTest, "programmerDoWorkWithDefaultConstructorTest");
+    runTest(programmerGetNameWithParameterizedConstructorTest, "programmerGetNameWithParameterizedConstructorTest");
+    runTest(programmerGetDescriptionWithParameterizedConstructorTest, "programmerGetDescriptionWithParameterizedConstructorTest");
+    runTest(programmerGetHoursRequiredWithParameterizedConstructorTest, "programmerGetHoursRequiredWithParameterizedConstructorTest");
+    runTest(programmerDoWorkWithParameterizedConstructorTest, "programmerDoWorkWithParameterizedConstructorTest");
 }
 
 void runPilotUnitTests()
@@ -175,12 +167,15 @@ void runPilotUnitTests()
     runTest(pilotGetHoursRequiredWithDefaultConstructorTest, "pilotGetHoursRequiredWithDefaultConstructorTest");
     runTest(pilotDoWorkWithDefaultConstructorTest, "pilotDoWorkWithDefaultConstructorTest");
     runTest(pilotToStringWithDefaultConstructorTest, "pilotToStringWithDefaultConstructorTest");
+    runTest(pilotGetNameWithParameterizedConstructorTest, "pilotGetNameWithParameterizedConstructorTest");
+    runTest(pilotGetDescriptionWithParameterizedConstructorTest, "pilotGetDescriptionWithParameterizedConstructorTest");
+    runTest(pilotGetHoursRequiredWithParameterizedConstructorTest, "pilotGetHoursRequiredWithParameterizedConstructorTest");
+    runTest(pilotDoWorkWithParameterizedConstructorTest, "pilotDoWorkWithParameterizedConstructorTest");
     runTest(pilotToStringWithParameterizedConstructorTest, "pilotToStringWithParameterizedConstructorTest");
 }
 
 void runUnitTests()
 {
-    runCommonJobUnitTests();
     runProgrammerUnitTests();
     runPilotUnitTests();
 }
