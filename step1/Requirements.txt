@@ -2,11 +2,8 @@
 	a. Create a class Job
 	b. Create a subclass Programmer
 	c. Create a subclass Pilot
-	d. The job class should provide an interface that can do the following
-		i. Get the name of the job
-		ii. Get the description of the job. 
-		iii. Get the number of hours required by the job
-		iv. A DoWork function that prints out “My work involves ” + the description.  
+	d. The job class should provide an interface that does at least 4 actions. 
+		i. Please decide what 4 actions you would like your job to do, with each action being represented as a function.
 	e. Dynamically allocate each type of job.
 	f. Store each instance in a collection.
 	g. Iterate the collection and call each of the available interface functions.
