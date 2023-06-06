@@ -30,4 +30,8 @@
 *.exe
 *.out
 *.app
+step1/sample/x64
+step1/sample/.vs
 step2/~$quirements.docx
+step3/x64
+step3/.vs
