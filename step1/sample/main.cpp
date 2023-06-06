@@ -4,6 +4,7 @@
 #include <memory>
 #include <type_traits>
 #include <functional>
+#include <sstream>
 
 class Job
 {
@@ -98,6 +99,26 @@ size_t ContainsTheString(std::function<bool(const std::string&)> testFunction, s
 	return counter;
 }
 
+
+class Person
+{
+public:
+	Person(const std::string& name, const std::uint16_t age) : m_name(name), m_age(age)
+	{
+	}
+
+	std::string toString() const
+	{
+		std::string toString;
+		toString = m_name + ", " + std::to_string(m_age) + " years old.";
+		return toString;
+	}
+
+private:
+	std::string m_name;
+	std::uint16_t m_age;
+};
+
 std::string StringConcat()
 {
 	return "";
@@ -114,7 +135,9 @@ std::string StringConcat(const T& head, const Args&... tail)
 	}
 	else if constexpr (std::is_convertible_v<T, std::string>)
 	{
-		result += std::string(head);
+		std::ostringstream oss;
+		oss << head;
+		result += oss.str();
 	}
 	else if constexpr (std::is_same_v<T, char>)
 	{
@@ -124,9 +147,14 @@ std::string StringConcat(const T& head, const Args&... tail)
 	{
 		result += std::to_string(head);
 	}
+	else if constexpr (std::is_same_v<decltype(head.toString()), std::string>)
+	{
+		result += head.toString();
+	}
 	else
 	{
-		// normally I would throw an exception here
+		// Just in case...
+		throw std::exception("StringConcat unsupported type");
 	}
 	
 	result += StringConcat(tail...);
@@ -190,10 +218,27 @@ int main()
 
 	// *** Task j
 	std::cout << std::endl << "---------------" << std::endl;
+
+	try
+	{
+		std::string begin = "I have ";
+		auto resultedString = StringConcat(begin, 2, " beautiful dogs. Their names starts with ", 'J', " and ", 'Z');
+		std::cout << "Result of StringConcat: " << resultedString << std::endl;
+
+		Person person("Wesley", 35);
+		resultedString = StringConcat("Person info: ", person);
+		std::cout << "Result of StringConcat: " << resultedString << std::endl;
+
+		Job job("a", "a", 20);
+		// Note: Below code wont compile because object job no member named toString
+		// resultedString = StringConcat("Job info: ", job);
+		// std::cout << "Result of StringConcat: " << resultedString << std::endl;
+	}
+	catch (std::exception& e)
+	{
+		std::cerr << "Error: " << e.what() << std::endl;
+	}
 	
-	std::string begin = "I have ";
-	auto resultedString = StringConcat(begin, 2, " beautiful dogs. Their names starts with ", 'J', " and ", 'Z');
-	std::cout << "Result of StringConcat: " << resultedString << std::endl;
 
 	return 0;
 }
