@@ -16,7 +16,7 @@ struct ThirdPartyAVSoftware
     std::wstring Name;
     std::wstring Description;
     std::wstring DefinitionUpdateTime;
-    std::string DefinitionStatus; // wouldnt be wstring?
+    std::string DefinitionStatus; // Suggestion: I would change it to wstring in order to follow the pattern.
     std::wstring Version;
     std::wstring ProductState;
 };
@@ -77,7 +77,12 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         hr = PtrProduct->get_ProductState(&ProductState);
         if (FAILED(hr))
         {
-			// release PtrProduct
+            /* Review - change required 
+             * the pointer PtrProduct must be released before it leaves the loop, as it was done at the end of this function. 
+             * However, if it's necessary to stop the loopexecution before that (an error situation), 
+             * it's necessary to call PtrProduct->Release().
+             */
+
             std::cout << "Failed to query AV product state.";
             continue;
         }
@@ -98,7 +103,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         hr = PtrProduct->get_SignatureStatus(&ProductStatus);
         if (FAILED(hr))
         {
-			// release PtrProduct
+            // Review - change required - Same situation commented above
             std::cout << "Failed to query AV product definition state.";
             continue;
         }
@@ -108,7 +113,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         hr = PtrProduct->get_ProductStateTimestamp(&PtrVal);
         if (FAILED(hr))
         {
-			// release PtrProduct
+            // Review - change required - Same situation commented above
             std::cout << "Failed to query AV product definition state.";
             continue;
         }
