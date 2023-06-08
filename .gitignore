@@ -31,3 +31,9 @@
 *.out
 *.app
 step2/~$quirements.docx
+
+# Build
+build
+
+# VSCode
+*.vscode
