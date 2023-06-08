@@ -13,6 +13,9 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
 ENDIF()
 
 add_subdirectory(step1)
+IF (WIN32)
+add_subdirectory(step2)
+ENDIF()
 add_subdirectory("thirdparty/googletest")
 
 

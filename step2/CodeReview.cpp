@@ -10,6 +10,18 @@ Comments are encouraged.
 
 */
 
+/* Start Code review block
+   Author: Ruben Mardones 
+   Comment: Missing header files to make it build
+   Action: Add the header files needed
+*/
+#include "iwscapi.h"
+#include "wscapi.h"
+
+#include <string>
+#include <map>
+#include <iostream>
+/* End Code review block */
 
 struct ThirdPartyAVSoftware
 {
@@ -27,6 +39,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
     IWscProduct* PtrProduct = nullptr;
     IWSCProductList* PtrProductList = nullptr;
     BSTR PtrVal = nullptr;
+    
     LONG ProductCount = 0;
     WSC_SECURITY_PRODUCT_STATE ProductState;
     WSC_SECURITY_SIGNATURE_STATUS ProductStatus;
@@ -38,6 +51,16 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
     if (FAILED(hr))
     {
         std::cout << "Failed to create WSCProductList object. ";
+        /* Start Code review block
+           Author: Ruben Mardones 
+           Comment: Possible memory leak here
+           Action: Free allocated memory
+        */
+        if(PtrProductList != nullptr)
+        {
+            PtrProductList->Release();
+        }
+        /* End Code review block */
         return false;
     }
 
@@ -45,6 +68,16 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
     if (FAILED(hr))
     {
         std::cout << "Failed to query antivirus product list. ";
+        /* Start Code review block
+           Author: Ruben Mardones 
+           Comment: Possible memory leak here
+           Action: Free allocated memory
+        */
+        if(PtrProductList != nullptr)
+        {
+            PtrProductList->Release();
+        }
+        /* End Code review block */
         return false;
     }
 
@@ -52,15 +85,43 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
     if (FAILED(hr))
     {
         std::cout << "Failed to query product count.";
+        /* Start Code review block
+           Author: Ruben Mardones 
+           Comment: Possible memory leak here
+           Action: Free allocated memory
+        */
+        if(PtrProductList != nullptr)
+        {
+            PtrProductList->Release();
+        }
+        /* End Code review block */
         return false;
     }
-
-    for (uint32_t i = 0; i < ProductCount; i++)
+    
+   
+    /* Start Code review block
+       Author: Ruben Mardones 
+       Comment: Comparison betweeen unsigned and signed gives a warning
+       Action: Replace uint32_t with LONG, to compare same type
+    */
+    for (LONG i = 0; i < ProductCount; i++)
     {
+        /* End Code review block */
         hr = PtrProductList->get_Item(i, &PtrProduct);
         if (FAILED(hr))
         {
             std::cout << "Failed to query AV product.";
+            /* Start Code review block
+               Author: Ruben Mardones 
+               Comment: Possible memory leak here
+               Action: Free allocated memory
+            */
+            if(PtrProduct != nullptr)
+            {
+                PtrProduct->Release();
+                PtrProduct = nullptr;
+            }
+            /* End Code review block */
             continue;
         }
 
@@ -69,6 +130,22 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         {
             PtrProduct->Release();
             std::cout << "Failed to query AV product name.";
+            /* Start Code review block
+               Author: Ruben Mardones 
+               Comment: Possible memory leak here
+               Action: Free allocated memory
+            */
+            if(PtrProduct != nullptr)
+            {
+                PtrProduct->Release();
+                PtrProduct = nullptr;
+            }
+            if(PtrVal != nullptr)
+            {
+                SysFreeString(PtrVal);
+                PtrVal = nullptr;
+            }
+            /* End Code review block */
             continue;
         }
 
@@ -78,6 +155,22 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         if (FAILED(hr))
         {
             std::cout << "Failed to query AV product state.";
+            /* Start Code review block
+               Author: Ruben Mardones 
+               Comment: Possible memory leak here
+               Action: Free allocated memory
+            */
+            if(PtrProduct != nullptr)
+            {
+                PtrProduct->Release();
+                PtrProduct = nullptr;
+            }
+            if(PtrVal != nullptr)
+            {
+                SysFreeString(PtrVal);
+                PtrVal = nullptr;
+            }
+            /* End Code review block */
             continue;
         }
 
@@ -98,6 +191,22 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         if (FAILED(hr))
         {
             std::cout << "Failed to query AV product definition state.";
+            /* Start Code review block
+               Author: Ruben Mardones 
+               Comment: Possible memory leak here
+               Action: Free allocated memory
+            */
+            if(PtrProduct != nullptr)
+            {
+                PtrProduct->Release();
+                PtrProduct = nullptr;
+            }
+            if(PtrVal != nullptr)
+            {
+                SysFreeString(PtrVal);
+                PtrVal = nullptr;
+            }
+            /* End Code review block */
             continue;
         }
 
@@ -107,10 +216,32 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         if (FAILED(hr))
         {
             std::cout << "Failed to query AV product definition state.";
+            /* Start Code review block
+               Author: Ruben Mardones 
+               Comment: Possible memory leak here
+               Action: Free allocated memory
+            */
+            if(PtrProduct != nullptr)
+            {
+                PtrProductList->Release();
+                PtrProduct = nullptr;
+            }
+            if(PtrVal != nullptr)
+            {
+                SysFreeString(PtrVal);
+                PtrVal = nullptr;
+            }
+            /* End Code review block */
             continue;
         }
         timestamp = std::wstring(PtrVal, SysStringLen(PtrVal));
         SysFreeString(PtrVal);
+        /* Start Code review block
+           Author: Ruben Mardones 
+           Comment: Reset pointer to nullptr for next iteration
+        */
+        PtrVal = nullptr;
+        /* End Code review block */
 
         ThirdPartyAVSoftware thirdPartyAVSoftware;
         thirdPartyAVSoftware.Name = displayName;
@@ -121,11 +252,41 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         thirdPartyAVSoftwareMap[thirdPartyAVSoftware.Name] = thirdPartyAVSoftware;
 
         PtrProduct->Release();
+        /* Start Code review block
+           Author: Ruben Mardones 
+           Comment: Reset pointer to nullptr for next iteration
+        */
+        PtrProduct = nullptr;
+        /* End Code review block */
     }
+
+    /* Start Code review block
+       Author: Ruben Mardones 
+       Comment: Possible memory leak here
+       Action: Free allocated memory
+    */
+    if(PtrProductList != nullptr)
+    {
+        PtrProductList->Release();
+    }
+    /* End Code review block */
 
     if (thirdPartyAVSoftwareMap.size() == 0)
     {
         return false;
     }
+    
     return true;
+}
+
+/* Start Code review block
+   Author: Ruben Mardones 
+   Comment: Code for releasing memory is duplicated in many parts
+   Action: TODO: Create a function to deallocate memory to avoid code duplication
+*/
+/* End Code review block */
+
+int main()
+{
+    return 0;
 }
