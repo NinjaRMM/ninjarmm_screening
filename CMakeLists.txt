@@ -16,6 +16,7 @@ add_subdirectory(step1)
 IF (WIN32)
 add_subdirectory(step2)
 ENDIF()
+add_subdirectory(step3)
 add_subdirectory("thirdparty/googletest")
 
 
