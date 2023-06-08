@@ -286,7 +286,24 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
 */
 /* End Code review block */
 
+
+/* Start Code review block
+   Author: Ruben Mardones 
+   Comment: This is not actually a code review, but using the function in the app to check that works
+   Action: Add some functionality to main to show the name of the third party AV Software
+*/
 int main()
 {
+    std::map<std::wstring, ThirdPartyAVSoftware> thirdPartyAVSoftwareMap;
+    CoInitializeEx(0, COINIT_APARTMENTTHREADED);
+    if(queryWindowsForAVSoftwareDataWSC(thirdPartyAVSoftwareMap))
+    {
+        for(auto const& [name,extraData] : thirdPartyAVSoftwareMap)
+        {
+            std::wcout << name << std::endl;
+        }
+    }
+    CoUninitialize();
     return 0;
 }
+/* End Code review block */
