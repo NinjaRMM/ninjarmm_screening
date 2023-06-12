@@ -14,6 +14,8 @@ Comments are encouraged.
 #include <map>
 #include <iostream>
 
+// Missing platform related includes.
+
 struct ThirdPartyAVSoftware
 {
     std::wstring Name;
@@ -40,6 +42,8 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
     hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&PtrProductList));
     if (FAILED(hr))
     {
+		// it may not be a good practice to log directly to the standard output. It might be interesting to use
+		// log levels and log options, logging to a file, logging to the error output etc.
         std::cout << "Failed to create WSCProductList object. ";
         return false;
     }
@@ -58,6 +62,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         return false;
     }
 
+	// i++ can be written as ++i, as its value won't be read locally.
     for (uint32_t i = 0; i < ProductCount; i++)
     {
         hr = PtrProductList->get_Item(i, &PtrProduct);
