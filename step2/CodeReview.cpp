@@ -10,6 +10,9 @@ Comments are encouraged.
 
 */
 
+#include <string>
+#include <map>
+#include <iostream>
 
 struct ThirdPartyAVSoftware
 {
