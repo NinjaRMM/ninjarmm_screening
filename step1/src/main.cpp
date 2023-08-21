@@ -3,6 +3,8 @@
 #include <vector>
 
 #include "Jobs.hpp"
+#include "TemplatedBounds.hpp"
+#include "StringCount.hpp"
 
 int main() {
 
@@ -18,6 +20,13 @@ int main() {
     std::cout << "Need vacation: " << job->needVacation() << "\n";
     std::cout << job->flexOnParty() << "\n\n";
   }
+
+  uint32_t httpResonseCode = 420;
+  std::cout << "Is within bounds: " << IsInBounds<uint32_t>(httpResonseCode, 500, 599) << "\n\n";
+
+  auto theStrings = std::vector<std::string> { "one", "two",  "test"};
+  auto count = ContainsTheString([](const std::string& tested) { return tested == "test";}, theStrings);
+  std::cout << "Number of occurences of string: " << count << "\n";
 
   return 0;
 }
