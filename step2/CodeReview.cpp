@@ -41,6 +41,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         return false;
     }
 
+    // Is it guaranteed that PrtProductList cannot be null at this point?
     hr = PtrProductList->Initialize(WSC_SECURITY_PROVIDER_ANTIVIRUS);
     if (FAILED(hr))
     {
@@ -64,6 +65,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
             continue;
         }
 
+        // Same here. Is there any case where the method does not fail but PtrProduct is null?
         hr = PtrProduct->get_ProductName(&PtrVal);
         if (FAILED(hr))
         {
@@ -73,7 +75,9 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         }
 
         displayName = std::wstring(PtrVal, SysStringLen(PtrVal));
-
+        // Shouldn't we deallocate PtrVal like bellow, in timestamp? What about the other functions we've passed 
+        // the references to the pointer we declared at the begining? Who own the object they point to?
+    
         hr = PtrProduct->get_ProductState(&ProductState);
         if (FAILED(hr))
         {
