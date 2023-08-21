@@ -109,3 +109,47 @@ int main()
 
 }
 
+//<<<<<<<< START EXTRA COMMENT <<<<<<<<<<<
+// In this case I'd still tryout and check with the team (by calling) if refactoring 
+// the methods signature shown bellow would be acceptable.
+//
+// Reasoning:
+// 1. If the memory pointed by the first two references is guaranteed not to be changed elsewhere 
+//    by concurrent access they could be passed by copy instead
+// 2. If the third parameter if used as a temporary variable in the business logic session it could be 
+//    passed as const and have it copied to a non-constant variable inside the method.
+// 
+// If the this way it is possible to have an additional overload for the method so we also have the 
+// two parameters tota.
+// 
+// ---------------------------------------------------------------------------------------------------------
+// 
+// template <typename T, typename U>
+// T checkIfPositive(const U& u, const int param1, const int param2, const int param3 = 0)
+// {
+// 
+//     // Assume there's already some existing code in here, some business logic that we are not interested in this exercise. 
+//     /*
+// 
+//     SOME EXISTING CODE
+// 
+//     */
+// 
+//     return u.getResult(param1, param2, param3);
+// }
+// 
+// template <typename T, typename U>
+// T checkIfPositive(const U& u, const int param1, const int param2, int& total)
+// {
+//     total = param1 + param2;
+//     return checkIfPositive<T, U>(u, param1, param2);
+// }
+// 
+// template <typename T, typename U>
+// T checkIfPositive(const U& u, const int param1, const int param2, const int param3, int& total)
+// {
+//     total = param1 + param2 + param3;
+//     return checkIfPositive<T, U>(u, param1, param2, param3);
+// }
+//
+//<<<<<<<< END EXTRA COMMENT <<<<<<<<<<<<<
