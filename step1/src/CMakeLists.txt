@@ -7,3 +7,12 @@ install(
   DESTINATION 
     ${CMAKE_INSTALL_PREFIX}/step1
 )
+
+add_executable("VirtualTable" VirtualTable.cpp)
+
+install(
+  TARGETS
+        VirtualTable
+  DESTINATION 
+    ${CMAKE_INSTALL_PREFIX}/step1-free-play
+)
