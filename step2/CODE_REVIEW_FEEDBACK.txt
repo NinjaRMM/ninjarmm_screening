@@ -5,9 +5,10 @@ The major changes proposed in this piece of code were:
  - create constants to store some values of states descriptions and error messages.
  - use exceptions and handle the errors properly. Be careful because some errors stop all 
    the queries and others stop just the current product query, but keep the loop running.
- - the Builder pattern was used to give flexibility to the WSC_SECURITY_PROVIDER, separating 
-   the logic of the construction of the list element from the implementation of the queries themselves.
+ - maybe the Builder pattern would be a good choice to give flexibility to the WSC_SECURITY_PROVIDER.
+   It would separate the logic of the construction of the list element from the implementation of 
+   the queries themselves.
    In this case just the WSC_SECURITY_PROVIDER_ANTIVIRUS provided is implemented, but other 
-   provides may be implemented too. 
+   provides may be implemented too (depending on demand). 
  - One question: why the "Release" method is called only in one case of error? Maybe all 
    the cases inside the loop need to be released.
