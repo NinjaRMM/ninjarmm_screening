@@ -1,11 +1,11 @@
 /*
 
 NINJARMM Code Review
- 
-Please review the below code. 
-We do not expect you to execute this code, but you are welcome to try. 
 
-Make any code updates that you see fit (If any). 
+Please review the below code.
+We do not expect you to execute this code, but you are welcome to try.
+
+Make any code updates that you see fit (If any).
 Comments are encouraged.
 
 */
@@ -16,7 +16,7 @@ struct ThirdPartyAVSoftware
     std::wstring Name;
     std::wstring Description;
     std::wstring DefinitionUpdateTime;
-    std::string DefinitionStatus;
+    std::string DefinitionStatus;//COMMENT: Is there any readon why this is a std::string and not std::wstring like the others?
     std::wstring Version;
     std::wstring ProductState;
 };
@@ -31,7 +31,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
     WSC_SECURITY_PRODUCT_STATE ProductState;
     WSC_SECURITY_SIGNATURE_STATUS ProductStatus;
 
-    std::wstring displayName, versionNumber, state, timestamp;
+    std::wstring displayName, versionNumber, state, timestamp;//COMMENT: For readability is better to declare every variable in a single line
     std::string definitionState;
 
     hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&PtrProductList));
@@ -123,7 +123,8 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         PtrProduct->Release();
     }
 
-    if (thirdPartyAVSoftwareMap.size() == 0)
+    //COMMENT: this whole conditional could be removed and replace the final return with !thirdPartyAVSoftwareMap.empty()
+    if (thirdPartyAVSoftwareMap.size() == 0)//COMMENT: this could be replaced to thirdPartyAVSoftwareMap.empty()
     {
         return false;
     }
