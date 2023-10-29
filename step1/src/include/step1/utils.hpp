@@ -60,6 +60,11 @@ bool IsInBounds(T target, T lower_boundary, T upper_boundary, RangePolicy range_
 {
     auto [left_operator, right_operator] = GetRangeOperators<T>(range_policy);
 
+    if (lower_boundary > upper_boundary)
+    {
+        std::swap(lower_boundary, upper_boundary);
+    }
+
     return left_operator(target, lower_boundary) && right_operator(target, upper_boundary);
 }
 
