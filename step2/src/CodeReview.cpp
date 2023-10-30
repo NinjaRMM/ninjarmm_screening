@@ -1,16 +1,29 @@
 /*
 
 NINJARMM Code Review
- 
-Please review the below code. 
-We do not expect you to execute this code, but you are welcome to try. 
 
-Make any code updates that you see fit (If any). 
+Please review the below code.
+We do not expect you to execute this code, but you are welcome to try.
+
+Make any code updates that you see fit (If any).
 Comments are encouraged.
 
 */
 
+#include <combaseapi.h>
+#include <iwscapi.h>
+#include <winerror.h>
+#include <winnt.h>
+#include <wscapi.h>
+#include <wtypes.h>
+#include <wtypesbase.h>
 
+#include <cstdint>
+#include <iostream>
+#include <map>
+#include <string>
+
+// <string> should be included because it contains the definition for std::wstring and std::string
 struct ThirdPartyAVSoftware
 {
     std::wstring Name;
@@ -21,8 +34,14 @@ struct ThirdPartyAVSoftware
     std::wstring ProductState;
 };
 
+// <map> should be included because it contains the definition for std::map<T>
 bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftware>& thirdPartyAVSoftwareMap)
 {
+    // <iwscapi.h> should be included because it contains the definition for IWscProduct, IWSCProductList,
+    // WSC_SECURITY_PRODUCT_STATE, WSC_SECURITY_SIGNATURE_STATUS, and WSCProductList
+    // <winerror.h> should be included because it contains the definition for S_OK
+    // <winnt.h> should be included because it contains the definition for HRESULT, LONG, and LPVOID
+    // <wtypes.h> should be included because it contains the definition for BSTR
     HRESULT hr = S_OK;
     IWscProduct* PtrProduct = nullptr;
     IWSCProductList* PtrProductList = nullptr;
@@ -34,13 +53,17 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
     std::wstring displayName, versionNumber, state, timestamp;
     std::string definitionState;
 
+    // <combaseapi.h> should be included because it contains the definition for CoCreateInstance
+    // <wtypesbase.h> should be included because it contains the definition for CLSCTX_INPROC_SERVER
     hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&PtrProductList));
     if (FAILED(hr))
     {
+        // <iostream> should be included because it contains the definition for std::cout
         std::cout << "Failed to create WSCProductList object. ";
         return false;
     }
 
+    // <wscapi.h> should be included because it contains the definition for WSC_SECURITY_PROVIDER_ANTIVIRUS
     hr = PtrProductList->Initialize(WSC_SECURITY_PROVIDER_ANTIVIRUS);
     if (FAILED(hr))
     {
@@ -55,6 +78,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         return false;
     }
 
+    // <cstdint> should be included because it contains the definition for uint32_t
     for (uint32_t i = 0; i < ProductCount; i++)
     {
         hr = PtrProductList->get_Item(i, &PtrProduct);
