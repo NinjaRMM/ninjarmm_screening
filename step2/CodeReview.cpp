@@ -16,13 +16,15 @@ struct ThirdPartyAVSoftware
     std::wstring Name;
     std::wstring Description;
     std::wstring DefinitionUpdateTime;
-    std::string DefinitionStatus;
+    std::string DefinitionStatus; // CODE REVIEW: This should be a std::wstring
     std::wstring Version;
     std::wstring ProductState;
 };
 
 bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftware>& thirdPartyAVSoftwareMap)
 {
+    //CODE REVIEW: This function is too long. It should be broken up into smaller functions.
+    //CODE REVIEW: There are several variables definitions that need some include not in the file.
     HRESULT hr = S_OK;
     IWscProduct* PtrProduct = nullptr;
     IWSCProductList* PtrProductList = nullptr;
@@ -32,7 +34,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
     WSC_SECURITY_SIGNATURE_STATUS ProductStatus;
 
     std::wstring displayName, versionNumber, state, timestamp;
-    std::string definitionState;
+    std::string definitionState; // CODE REVIEW: This should be a std::wstring
 
     hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&PtrProductList));
     if (FAILED(hr))
@@ -74,6 +76,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
 
         displayName = std::wstring(PtrVal, SysStringLen(PtrVal));
 
+        //CODE REVIEW: ProductState could be an enum and be returned in a function
         hr = PtrProduct->get_ProductState(&ProductState);
         if (FAILED(hr))
         {
@@ -100,7 +103,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
             std::cout << "Failed to query AV product definition state.";
             continue;
         }
-
+        //CODE REVIEW: ProductStatus can set in a function
         definitionState = (ProductStatus == WSC_SECURITY_PRODUCT_UP_TO_DATE) ? "UpToDate" : "OutOfDate";
 
         hr = PtrProduct->get_ProductStateTimestamp(&PtrVal);
@@ -116,7 +119,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         thirdPartyAVSoftware.Name = displayName;
         thirdPartyAVSoftware.DefinitionStatus = definitionState;
         thirdPartyAVSoftware.DefinitionUpdateTime = timestamp;
-        thirdPartyAVSoftware.Description = state;
+        thirdPartyAVSoftware.Description = state; // CODE REVIEW: Description and ProcuctState are the same?
         thirdPartyAVSoftware.ProductState = state;
         thirdPartyAVSoftwareMap[thirdPartyAVSoftware.Name] = thirdPartyAVSoftware;
 
