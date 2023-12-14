@@ -24,23 +24,23 @@ public:
   virtual void   stop  () = 0;
   virtual Status status() const = 0;
 protected:
-  Status status_m = Status::kUninitialized;
+  Status status_ = Status::kUninitialized;
 };
 
 class Programmer : public Job {
 public:
-  void   create() override { status_m = Status::kProgrammerJobCreated; }
-  void   start () override { status_m = Status::kProgrammerJobStarted; }
-  void   stop  () override { status_m = Status::kProgrammerJobStopped; }
-  Status status() const override { return status_m; }
+  void   create() override { status_ = Status::kProgrammerJobCreated; }
+  void   start () override { status_ = Status::kProgrammerJobStarted; }
+  void   stop  () override { status_ = Status::kProgrammerJobStopped; }
+  Status status() const override { return status_; }
 };
 
 class Pilot : public Job {
 public:
-  void   create() override { status_m = Status::kPilotJobCreated; }
-  void   start () override { status_m = Status::kPilotJobStarted; }
-  void   stop  () override { status_m = Status::kPilotJobStopped; }
-  Status status() const override { return status_m; }
+  void   create() override { status_ = Status::kPilotJobCreated; }
+  void   start () override { status_ = Status::kPilotJobStarted; }
+  void   stop  () override { status_ = Status::kPilotJobStopped; }
+  Status status() const override { return status_; }
 };
 
 uint32_t containsTheString(
