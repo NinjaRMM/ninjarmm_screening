@@ -60,6 +60,9 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
     if (FAILED(hr))
     {
         std::cout << "Failed to query antivirus product list. " << std::endl;
+
+        // PR-COMMENT: Product list should be released at this point.
+        PtrProductList->Release();
         return false;
     }
 
@@ -67,6 +70,9 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
     if (FAILED(hr))
     {
         std::cout << "Failed to query product count." << std::endl;
+
+        // PR-COMMENT: Product list should be released at this point.
+        PtrProductList->Release();
         return false;
     }
 
@@ -94,6 +100,8 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         }
 
         displayName = std::wstring(PtrVal, SysStringLen(PtrVal));
+        // PR-COMMENT: Missing resource release.
+        SysFreeString(PtrVal);
 
         hr = PtrProduct->get_ProductState(&ProductState);
         if (FAILED(hr))
@@ -150,6 +158,9 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
 
         PtrProduct->Release();
     }
+
+    // PR-COMMENT: Product list should be released at this point.
+    PtrProductList->Release();
 
     // PR-COMMENT: See API comment above. Based on that, this might not be required.
     if (thirdPartyAVSoftwareMap.size() == 0)
