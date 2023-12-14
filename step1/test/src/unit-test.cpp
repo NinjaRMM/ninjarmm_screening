@@ -8,13 +8,13 @@ TEST_CASE("Status is correctly set for Programmer job class") {
   CHECK_EQ(job.status(), Job::Status::kUninitialized);
 
   job.create();
-  CHECK_EQ(job.status(), Job::Status::kProgrammerJobCreated);
+  CHECK_EQ(job.status(), Job::Status::kJobCreated);
 
   job.start();
-  CHECK_EQ(job.status(), Job::Status::kProgrammerJobStarted);
+  CHECK_EQ(job.status(), Job::Status::kJobStarted);
 
   job.stop();
-  CHECK_EQ(job.status(), Job::Status::kProgrammerJobStopped);
+  CHECK_EQ(job.status(), Job::Status::kJobStopped);
 }
 
 TEST_CASE("Status is correctly set for Pilot job class") {
@@ -23,13 +23,13 @@ TEST_CASE("Status is correctly set for Pilot job class") {
   CHECK_EQ(job.status(), Job::Status::kUninitialized);
 
   job.create();
-  CHECK_EQ(job.status(), Job::Status::kPilotJobCreated);
+  CHECK_EQ(job.status(), Job::Status::kJobCreated);
 
   job.start();
-  CHECK_EQ(job.status(), Job::Status::kPilotJobStarted);
+  CHECK_EQ(job.status(), Job::Status::kJobStarted);
 
   job.stop();
-  CHECK_EQ(job.status(), Job::Status::kPilotJobStopped);
+  CHECK_EQ(job.status(), Job::Status::kJobStopped);
 }
 
 TEST_CASE("containsTheString returns the number of occurrences satisfying a predicate") {

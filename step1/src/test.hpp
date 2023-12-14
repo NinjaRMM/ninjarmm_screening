@@ -11,12 +11,9 @@ class Job {
 public:
   enum class Status {
     kUninitialized,
-    kProgrammerJobCreated,
-    kProgrammerJobStarted,
-    kProgrammerJobStopped,
-    kPilotJobCreated,
-    kPilotJobStarted,
-    kPilotJobStopped,
+    kJobCreated,
+    kJobStarted,
+    kJobStopped,
   };
 
   virtual void   create() = 0;
@@ -29,17 +26,17 @@ protected:
 
 class Programmer : public Job {
 public:
-  void   create() override { status_ = Status::kProgrammerJobCreated; }
-  void   start () override { status_ = Status::kProgrammerJobStarted; }
-  void   stop  () override { status_ = Status::kProgrammerJobStopped; }
+  void   create() override { status_ = Status::kJobCreated; }
+  void   start () override { status_ = Status::kJobStarted; }
+  void   stop  () override { status_ = Status::kJobStopped; }
   Status status() const override { return status_; }
 };
 
 class Pilot : public Job {
 public:
-  void   create() override { status_ = Status::kPilotJobCreated; }
-  void   start () override { status_ = Status::kPilotJobStarted; }
-  void   stop  () override { status_ = Status::kPilotJobStopped; }
+  void   create() override { status_ = Status::kJobCreated; }
+  void   start () override { status_ = Status::kJobStarted; }
+  void   stop  () override { status_ = Status::kJobStopped; }
   Status status() const override { return status_; }
 };
 

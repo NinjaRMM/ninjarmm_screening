@@ -7,28 +7,16 @@
 
 void printJobStatus(Job::Status status) {
   switch (status) {
-  case Job::Status::kProgrammerJobCreated:
-    std::cout << "Programmer Job Created" << std::endl;
+  case Job::Status::kJobCreated:
+    std::cout << "Job Created" << std::endl;
     break;
 
-  case Job::Status::kProgrammerJobStarted:
-    std::cout << "Programmer Job Started" << std::endl;
+  case Job::Status::kJobStarted:
+    std::cout << "Job Started" << std::endl;
     break;
 
-  case Job::Status::kProgrammerJobStopped:
-    std::cout << "Programmer Job Stopped" << std::endl;
-    break;
-
-  case Job::Status::kPilotJobCreated:
-    std::cout << "Pilot Job Created" << std::endl;
-    break;
-
-  case Job::Status::kPilotJobStarted:
-    std::cout << "Pilot Job Started" << std::endl;
-    break;
-
-  case Job::Status::kPilotJobStopped:
-    std::cout << "Pilot Job Stopped" << std::endl;
+  case Job::Status::kJobStopped:
+    std::cout << "Job Stopped" << std::endl;
     break;
 
   default:
