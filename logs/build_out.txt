@@ -1,0 +1,12 @@
+make -C step1 all
+g++ -std=c++14   -c -o build/obj/Pilot.o src/Pilot.cpp
+g++ -std=c++14   -c -o build/obj/Programmer.o src/Programmer.cpp
+g++ -std=c++14   -c -o build/obj/step1Main.o src/step1Main.cpp
+g++ -std=c++14   -c -o build/obj/Job.o src/Job.cpp
+g++ -std=c++14   -c -o build/obj/DemoCode.o src/DemoCode.cpp
+g++ -std=c++14 -o build/bin/step1Exe build/obj/Pilot.o build/obj/Programmer.o build/obj/step1Main.o build/obj/Job.o build/obj/DemoCode.o
+g++ -std=c++14   -c -o build/obj/unitTest.o src/unitTest.cpp
+g++ -std=c++14   -lgtest -o build/bin/unit_test build/obj/unitTest.o build/obj/Pilot.o build/obj/Programmer.o build/obj/Job.o
+make -C step3 all
+g++ -std=c++14   -c -o build/obj/CodeChallenge.o CodeChallenge.cpp
+g++ -std=c++14 -o build/bin/codeChallengeExe build/obj/CodeChallenge.o

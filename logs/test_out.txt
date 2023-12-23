@@ -1,0 +1,22 @@
+make -C step1 test
+
+
+******* Tests from step1 *******
+./build/bin/unit_test	
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from JobTest
+[ RUN      ] JobTest.PilotTest
+[       OK ] JobTest.PilotTest (0 ms)
+[ RUN      ] JobTest.ProgrammerTest
+[       OK ] JobTest.ProgrammerTest (0 ms)
+[----------] 2 tests from JobTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 2 tests.
+make -C step3 test
+
+
+******* Tests from step3 (Code Challenge) *******
+No tests in directory step3

@@ -9,7 +9,10 @@ Make any code updates that you see fit (If any).
 Comments are encouraged.
 
 */
+#include <string>
+#include <map>
 
+using namespace std;
 
 struct ThirdPartyAVSoftware
 {
@@ -34,33 +37,50 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
     std::wstring displayName, versionNumber, state, timestamp;
     std::string definitionState;
 
+    //Code comment by Alex Joseph:
+    // 1. Need to log different return codes to differentiate between different types of failures.
+    // 2. Also need to log to system wide logger instead of stdout. Assuming a singleton logger 'Logger' exists in the application.
+    // 3. Consider using code that cleans up memory allocation automatically when the variable goes out of scope.
+    //     Option a) Use something similar to scope_gard for RAII https://ricab.github.io/scope_guard/.
+    //	   Option b) Associate custom "free" function with std::unique_ptr. Eg: using scoped_ptr_PtrProduct = std::unique_ptr<PtrProduct, decltype(&PtrProduct->Release)>;
     hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&PtrProductList));
     if (FAILED(hr))
     {
-        std::cout << "Failed to create WSCProductList object. ";
+        Logger::getInstance->getErrorStream() << "Failed to create WSCProductList object. Error code: " << hr;
         return false;
     }
 
+    //Code comment by Alex Joseph:
+    // Need to log different return codes to differentiate between different types of failures.
+    // Also need to log to system wide logger instead of logging to stdout. Assuming a singleton logger 'Logger' exists in the application.
     hr = PtrProductList->Initialize(WSC_SECURITY_PROVIDER_ANTIVIRUS);
     if (FAILED(hr))
     {
-        std::cout << "Failed to query antivirus product list. ";
+    	Logger::getInstance->getErrorStream() << "Failed to query antivirus product list. Error code: " << hr;
         return false;
     }
 
+	//Code comment by Alex Joseph:
+	// Need to log different return codes to differentiate between different types of failures.
+	// Also need to log to system wide logger instead of logging to stdout. Assuming a singleton logger 'Logger' exists in the application.
     hr = PtrProductList->get_Count(&ProductCount);
     if (FAILED(hr))
     {
-        std::cout << "Failed to query product count.";
+    	Logger::getInstance->getErrorStream() << "Failed to query product count. Error code: " << hr;
         return false;
     }
 
-    for (uint32_t i = 0; i < ProductCount; i++)
+    //Code comment by Alex Joseph:
+    // consider using a meaningful variable name 'productIdx' instead of 'i'.
+    for (uint32_t productIdx = 0; productIdx < ProductCount; productIdx++)
     {
-        hr = PtrProductList->get_Item(i, &PtrProduct);
+		//Code comment by Alex Joseph:
+		// Need to log different return codes to differentiate between different types of failures.
+		// Also need to log to system wide logger instead of logging to stdout. Assuming a singleton logger 'Logger' exists in the application.
+        hr = PtrProductList->get_Item(productIdx, &PtrProduct);
         if (FAILED(hr))
         {
-            std::cout << "Failed to query AV product.";
+        	Logger::getInstance->getErrorStream() << "Failed to query AV product. Error code: " << hr;
             continue;
         }
 
@@ -68,16 +88,21 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         if (FAILED(hr))
         {
             PtrProduct->Release();
-            std::cout << "Failed to query AV product name.";
+            Logger::getInstance->getErrorStream() << "Failed to query AV product name. Error code: " << hr;
             continue;
         }
 
         displayName = std::wstring(PtrVal, SysStringLen(PtrVal));
 
+        //Code comment by Alex Joseph:
+        // Need to free 'PtrVal' immediately after use (SysFreeString)
+        SysFreeString(PtrVal);
+        PtrVal = nullptr;
+
         hr = PtrProduct->get_ProductState(&ProductState);
         if (FAILED(hr))
         {
-            std::cout << "Failed to query AV product state.";
+        	Logger::getInstance->getErrorStream() << "Failed to query AV product state. Error code: " << hr;
             continue;
         }
 
@@ -97,7 +122,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         hr = PtrProduct->get_SignatureStatus(&ProductStatus);
         if (FAILED(hr))
         {
-            std::cout << "Failed to query AV product definition state.";
+        	Logger::getInstance->getErrorStream() << "Failed to query AV product definition state. Error code: " << hr;
             continue;
         }
 
@@ -106,7 +131,7 @@ bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftwar
         hr = PtrProduct->get_ProductStateTimestamp(&PtrVal);
         if (FAILED(hr))
         {
-            std::cout << "Failed to query AV product definition state.";
+        	Logger::getInstance->getErrorStream() << "Failed to query AV product definition state. Error code: " << hr;
             continue;
         }
         timestamp = std::wstring(PtrVal, SysStringLen(PtrVal));

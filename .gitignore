@@ -31,3 +31,10 @@
 *.out
 *.app
 step2/~$quirements.docx
+step1/build
+step3/build
+.DS_Store
+.cproject
+.project
+.settings/
+

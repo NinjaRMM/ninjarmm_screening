@@ -1,0 +1,73 @@
+make -C step1 run
+
+
+******* Executing binary ./build/bin/step1Exe from step1 *******
+./build/bin/step1Exe
+
+=========================================================================
+==Question a..j dynamically create object on vector
+=========================================================================
+Creating 2 pair of jobs
+Software Engineer:
+	HasUniform: 0
+	IsRemoteWorker: 1
+	Work: I write computer programs.
+Co-pilot:
+	HasUniform: 1
+	IsRemoteWorker: 0
+	Work: I fly planes.
+Software Engineer:
+	HasUniform: 0
+	IsRemoteWorker: 1
+	Work: I write computer programs.
+Co-pilot:
+	HasUniform: 1
+	IsRemoteWorker: 0
+	Work: I fly planes.
+
+=========================================================================
+==== Question h: Template function IsInBounds test ==
+=========================================================================
+IsInBounds value: 15 low: 1 high: 10
+numeric test result: false
+
+IsInBounds value: c low: a high: d
+string test result: true
+
+
+=========================================================================
+==== Question i: test function on array 
+=========================================================================
+Input vector: [one,two,three,test,test,]
+test String: test
+totalCount: 2
+
+=========================================================================
+==== Custom demo automatic cleanup of variables allocated via malloc 
+=========================================================================
+
+=========================================================================
+==== Custom demo Variadic templates. 
+==== Variadic templates allow variable number of template arguments to be 
+==== provided to a function.
+=========================================================================
+expects 12: result: 12
+expects 21: result: 21
+expects ABC + DEF = ABCDEF: result: ABCDEF
+make -C step3 run
+
+
+******* Executing step3 (Code Challenge) *******
+./build/bin/codeChallengeExe
+1
+0
+1
+true
+false
+true
+1
+0
+1 6
+true
+false
+true 6
