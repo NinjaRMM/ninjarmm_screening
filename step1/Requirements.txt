@@ -12,7 +12,19 @@
 	i. Create a function that will take a vector of strings and a test function, It should return how many items in the collection matched the test. Then print out the result.
 		i. auto theStrings = vector<std::string> { “one”, “two”,  “test”};
 		ii. auto count = ContainsTheString([](const std::string& tested) { return tested == “test” }, theStrings);
-	j. Write any other code you feel would show off your understanding of C/C++ and programming in general. Bonus: Variadic Template /w usage. 
-	k. Please add passing unit tests. 
-	l. All The source can be in 1 file, it should compile and there should be no runtime errors, and no memory leaks. Use built in types freely to help you manage resources. 
-
+	j. Write a CVS file of your choice to the system, then read the data and transpose it’s content.
+		For example:
+			example.csv has the following content:
+				id,type,name
+				0,bird,blue
+				1,cat,felix
+				2,dog,toto
+			Transposed, it would be: 	
+				id 0 1 2
+				type bird cat dog
+				name blue felix toto
+		
+		i. Write the CSV file of your choice to your filesystem, then have your code read the data and output it. 
+	k. Write any other code you feel would show off your understanding of C/C++ and programming in general. Bonus: Variadic Template /w usage. 
+	l. Please add passing unit tests. 
+	m. All The source can be in 1 file, it should compile and there should be no runtime errors, and no memory leaks. Use built in types freely to help you manage resources. 
