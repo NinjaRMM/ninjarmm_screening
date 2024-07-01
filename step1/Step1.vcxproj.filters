@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="test.cpp" />
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="JobTests.cpp">
+      <Filter>test</Filter>
+    </ClCompile>
+    <ClCompile Include="Requirements.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="RequirementsTests.cpp">
+      <Filter>test</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="Job.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="Pilot.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="Programmer.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="Requirements.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{bf7c2d8a-c633-471c-a89e-acc23c5f6237}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="test">
+      <UniqueIdentifier>{f289a4f4-0d27-4bea-b8aa-6a3037a9a17f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+</Project>

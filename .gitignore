@@ -31,3 +31,15 @@
 *.out
 *.app
 step2/~$quirements.docx
+
+# Debug Symbols
+*.pdb
+*.ilk
+
+# google test
+googletest/
+
+# msvs ignores
+.vs/
+packages/
+x64/
