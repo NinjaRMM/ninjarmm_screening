@@ -7,7 +7,7 @@
 	e. Dynamically allocate each type of job.
 	f. Store each instance in a collection.
 	g. Iterate the collection and call each of the available interface functions.
-	h. Create a template function that will test if the provided values are within a range. Call the function and print out the inputs and result. The following should execute assuming httpResonse is a uint32_t value:
+	h. Create a template function that will test if the provided values are within a range. Call the function and print out the inputs and result. The following should execute assuming httpResonseCode is a uint32_t value:
 		i. IsInBounds<uint32_t>(httpResonseCode, 500, 599)
 	i. Create a function that will take a vector of strings and a test function, It should return how many items in the collection matched the test. Then print out the result.
 		i. auto theStrings = vector<std::string> { “one”, “two”,  “test”};

@@ -1,0 +1,239 @@
+Note: For readability, I added line numbers for reference. Lines with
+a number are the original source, comments between, similar to what
+a tool like ReviewBoard would do.
+
+1	/*
+2	
+3	NINJARMM Code Review
+4	 
+5	Please review the below code. 
+6	We do not expect you to execute this code, but you are welcome to try. 
+7	
+8	Make any code updates that you see fit (If any). 
+9	Comments are encouraged.
+10	
+11	*/
+12	
+13	
+14	struct ThirdPartyAVSoftware
+15	{
+16	    std::wstring Name;
+17	    std::wstring Description;
+18	    std::wstring DefinitionUpdateTime;
+
+Seems like this should be a better defined time type, but it looks
+like this is what the underlying Windows API does, so maybe it's ok.
+
+19	    std::string DefinitionStatus;
+
+DefinitionStatus would be better as an enum type.
+If you were going to keep this a string, why is this not wide for consistency?
+
+20	    std::wstring Version;
+
+Version doesn't seem to be populated below anywhere.
+
+21	    std::wstring ProductState;
+
+Should also be an enum.
+
+22	};
+23	
+24	bool queryWindowsForAVSoftwareDataWSC(std::map<std::wstring, ThirdPartyAVSoftware>& thirdPartyAVSoftwareMap)
+25	{
+26	    HRESULT hr = S_OK;
+27	    IWscProduct* PtrProduct = nullptr;
+28	    IWSCProductList* PtrProductList = nullptr;
+29	    BSTR PtrVal = nullptr;
+30	    LONG ProductCount = 0;
+31	    WSC_SECURITY_PRODUCT_STATE ProductState;
+32	    WSC_SECURITY_SIGNATURE_STATUS ProductStatus;
+
+IMO, this is an archaic C style. Modern C++ practice is to declare and initialize at first use
+rather than at the top of the block.
+
+Does the coding standard cover naming? A mix of UpperCamelCase and lowerCamelCase
+variables in the same function is hard to read.
+
+33	
+34	    std::wstring displayName, versionNumber, state, timestamp;
+35	    std::string definitionState;
+
+I think this is largely unecessary, I would populate an instance of ThirdPartyAVSoftware
+directly as you went, rather than duplicate all the fields on the stack and then incur
+a copy, in addition to performance more code means harder to follow and more opportunites
+to make a mistake.
+
+As an aside, some standards discourage multiple declarations in the same line, largely
+becauseif you get in the habit of it and then do something like "std::string* foo, bar;"
+it doesn't do what you expect; only the first variable ends up being a pointer.
+
+36	
+37	    hr = CoCreateInstance(__uuidof(WSCProductList), NULL, CLSCTX_INPROC_SERVER, __uuidof(IWSCProductList), reinterpret_cast<LPVOID*>(&PtrProductList));
+38	    if (FAILED(hr))
+39	    {
+40	        std::cout << "Failed to create WSCProductList object. ";
+41	        return false;
+
+This pattern seems deficient for error handling in the long run. At a minium I would
+want some sort of structured logger framework for error messages rather than cout, 
+but also whether this should return a more detailed result than a boolean
+for the caller to understand where it failed and if conditions are retryable, etc.
+
+(Aside, none of these have newlines at the end, and some have a trailing space)
+
+42	    }
+43	
+44	    hr = PtrProductList->Initialize(WSC_SECURITY_PROVIDER_ANTIVIRUS);
+45	    if (FAILED(hr))
+46	    {
+47	        std::cout << "Failed to query antivirus product list. ";
+48	        return false;
+49	    }
+50	
+51	    hr = PtrProductList->get_Count(&ProductCount);
+52	    if (FAILED(hr))
+53	    {
+54	        std::cout << "Failed to query product count.";
+55	        return false;
+56	    }
+57	
+58	    for (uint32_t i = 0; i < ProductCount; i++)
+
+"i" should match the type of ProductCount (long).
+
+Unless you absolutely need the post-increment behavior, I recommend being in the
+habit of always using pre-increment (++i) since it avoids the copy and discarded return
+of the prior value. For an int it's negligible but being consistent means you get it
+right when using more expensive types.
+
+59	    {
+60	        hr = PtrProductList->get_Item(i, &PtrProduct);
+61	        if (FAILED(hr))
+62	        {
+63	            std::cout << "Failed to query AV product.";
+64	            continue;
+65	        }
+66	
+67	        hr = PtrProduct->get_ProductName(&PtrVal);
+68	        if (FAILED(hr))
+69	        {
+70	            PtrProduct->Release();
+
+I find the lifecycle of these objects hard to follow, and manually doing it on early returns is error prone.
+I would use a ScopeGuard / RAII to ensure Release() to the end of the appropriate scope, something like this
+at a minium (though a more specialized guard / smart pointer that includes early release is also possible)
+
+    IWscProduct* PtrProduct = nullptr;
+    hr = PtrProductList->get_Item(i, &PtrProduct);
+    if (FAILED(hr)) { ... }
+    ScopeGuard PtrProductRelease([&PtrProduct]() {PtrProduct->Release();});
+
+71	            std::cout << "Failed to query AV product name.";
+72	            continue;
+73	        }
+74	
+75	        displayName = std::wstring(PtrVal, SysStringLen(PtrVal));
+
+This is repeated so often I'd be tempted to go throw a utility function somewhere
+to do it. Minimally something like:
+
+     inline std::wstring WString(BSTR ptr) { return std::wstring(ptr, SysStringLen(ptr)); }
+
+I also notice some of these are calling SysFreeString(PtrVal) and some aren't, assuming it
+is required in all cases the helper could ensure it's done consistently.
+
+76	
+77	        hr = PtrProduct->get_ProductState(&ProductState);
+78	        if (FAILED(hr))
+79	        {
+80	            std::cout << "Failed to query AV product state.";
+81	            continue;
+82	        }
+83	
+84	        if (ProductState == WSC_SECURITY_PRODUCT_STATE_ON)
+85	        {
+86	            state = L"On";
+87	        }
+88	        else if (ProductState == WSC_SECURITY_PRODUCT_STATE_OFF)
+89	        {
+90	            state = L"Off";
+91	        }
+92	        else
+93	        {
+94	            state = L"Expired";
+95	        }
+
+As noted above, this really seems like it should be an enum.
+
+96	
+97	        hr = PtrProduct->get_SignatureStatus(&ProductStatus);
+98	        if (FAILED(hr))
+99	        {
+100	            std::cout << "Failed to query AV product definition state.";
+101	            continue;
+102	        }
+103	
+104	        definitionState = (ProductStatus == WSC_SECURITY_PRODUCT_UP_TO_DATE) ? "UpToDate" : "OutOfDate";
+105	
+106	        hr = PtrProduct->get_ProductStateTimestamp(&PtrVal);
+107	        if (FAILED(hr))
+108	        {
+109	            std::cout << "Failed to query AV product definition state.";
+110	            continue;
+
+All these continues mean if we fail halfway through a valid definition, it just gets skipped in the output.
+Without a better requirement, I'm not sure if that's ok or not.
+
+111	        }
+112	        timestamp = std::wstring(PtrVal, SysStringLen(PtrVal));
+113	        SysFreeString(PtrVal);
+114	
+115	        ThirdPartyAVSoftware thirdPartyAVSoftware;
+
+Personal opinion, "thirdPartyAVSoftware" is a really long variable name
+when the scope is this contained and obvious, but the coding standard
+would dictate here. Something like "entry" would be just as clear and
+shorter to read IMO.
+
+116	        thirdPartyAVSoftware.Name = displayName;
+117	        thirdPartyAVSoftware.DefinitionStatus = definitionState;
+118	        thirdPartyAVSoftware.DefinitionUpdateTime = timestamp;
+119	        thirdPartyAVSoftware.Description = state;
+
+This looks fishy like it assigned the wrong value (one reason to just populate the result
+directly instead of this intermediate copy on the stack)
+
+120	        thirdPartyAVSoftware.ProductState = state;
+121	        thirdPartyAVSoftwareMap[thirdPartyAVSoftware.Name] = thirdPartyAVSoftware;
+
+This would be more idiomatic IMO: 
+    thirdPartyAVSoftwareMap.insert(
+	    std::make_pair(thirdPartyAVSoftware.Name, thirdPartyAVSoftware))
+
+and the return value from insert() would let you detect a collision if that matters.
+This one's probably really subjective though, and there are cases where doing something
+like this would be the most optimized answer if collisions can't happen and you don't have
+the partial failure cases above:
+
+    auto& entry = thirdPartyAVSoftwareMap[displayName];
+    // Populate entry fields directly here
+
+122	
+123	        PtrProduct->Release();
+124	    }
+125	
+126	    if (thirdPartyAVSoftwareMap.size() == 0)
+127	    {
+128	        return false;
+129	    }
+130	    return true;
+
+Most containers the difference is negligible, but empty() is clearer than "size() == 0"
+when that's what you are testing for, and is always O(1) for sane containers where size()
+could be O(N).
+
+126 - 130 can just be condensed to:
+    return !thirdPartyAVSoftwareMap.empty();
+
+131	}

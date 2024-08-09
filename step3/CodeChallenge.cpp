@@ -50,6 +50,19 @@ T checkIfPositive(const U& u, const int& param1, const int& param2, int param3 =
     return u.getResult(param1, param2, param3);
 }
 
+// checkIfPositive with an output param for the total. Note that if the total is required, 3 inputs
+// are necessary - there's no foolproof way to infer otherwise if "c" is an input or output in the call
+// to checkIfPositive<>(x, a, b, c) without additional changes to the signature.
+template <typename T, typename U>
+T checkIfPositive(const U& u, const int& param1, const int& param2, const int& param3, int& total)
+{
+    // All the inputs are const, so order doesn't really matter. If for whatever reason we did need
+    // to ensure any side effects of the original checkIfPositive() call happened first, we'd have to
+    // incur the copy cost of stashing that result first and then evaluate total.
+    total = param1 + param2 + param3;
+    return checkIfPositive<T, U>(u, param1, param2, param3);
+}
+
 //<<<<<<<< END OF EDITABLE SECTION OF CODE <<<<<<<<<<<
 
 int main()
@@ -78,7 +91,6 @@ int main()
     //How are you going to solve this problem? 
     //You can only change the code inside the EDITABLE SECTION OF CODE
     //Hint, the following calls should now be valid moving forward:
-    /*
     int total = 0;
 
     iResult = checkIfPositive<int, OBJ_INT>(objInt, 1, 2);
@@ -98,7 +110,6 @@ int main()
 
     sResult = checkIfPositive<std::string, OBJ_STR>(objStr, 1, 2, 3, total); //<-- Total is output param
     std::cout << sResult << " " << total << std::endl;
-    */
 
     return 0;
 
